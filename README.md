@@ -1,45 +1,100 @@
-# Pillow
+# LeetSee
 
-*The question: can we build the Google Maps of human achievement?*
+*Don’t just see the answer. See how it thinks.*
 
-**Short answer:** not by drawing better maps. Plans are free now, and they
-were never the bottleneck. Maps won because of the **blue dot**: knowing
-where you are. For most goals, no product knows where you actually stand.
+LeetSee turns LeetCode problems into visual, step-by-step lessons. You start
+with the brute-force approach and see why it's slow. Then you discover the
+better approach, watch it run line by line, and see every variable,
+pointer and data structure change. You leave with the pattern, not just
+the answer.
 
-> **A goal is a test you can't pass yet.**
-> Pillow compiles your goal into an arrival test, measures where you stand
-> in about fifteen minutes, tells you what you can skip, gives you the next
-> turn, re-measures as you go, and says honestly when you're ready.
+LeetSee complements LeetCode: LeetCode gives you problems to solve, and
+LeetSee shows how they're solved.
 
-**See it:** [sdukea.github.io/pillow](https://sdukea.github.io/pillow/)
+## How it works
 
-**Start with:** [docs/THESIS.md](docs/THESIS.md), the final strategic
-document (verdict, insight, product, wedge, MVP, moat, risks, and the "kill
-this idea" section).
+Every visualization comes from **real execution**, never an animation
+someone scripted and never a sequence an AI made up:
 
-## Research behind it
+```
+reference solution ──► tracer (Python sys.settrace) ──► trace: every line, every variable, every object
+                                                          │
+                     visualization spec (per approach) ──►│──► interpreter ──► views: array · pointers ·
+                     how to show the real state           │                   window · hash map · stack ·
+                                                          ▼                   linked list · tree · call stack
+                                                 narration rendered from the actual values at each step
+```
 
-| Doc | Phases | Contents |
-|---|---|---|
-| [01-market](docs/research/01-market.md) | 1 | Category saturation; competitor teardowns; user language |
-| [02-human-problem](docs/research/02-human-problem.md) | 2–3 | Why people fail; problems A–F ranked; the avoidance loop; ethical mechanisms |
-| [03-models-and-moments](docs/research/03-models-and-moments.md) | 4–5 | 12 models of "roadmap"; goal types; 25 "holy shit" candidates |
-| [04-engine](docs/research/04-engine.md) | 6–8 | What to know about a user; architecture; the next-action policy |
-| [05-experience](docs/research/05-experience.md) | 9–10 | The 16-stage journey; 12 home-screen models; the "Now" screen |
-| [06-features](docs/research/06-features.md) | 11 | 60 features classified A–E; top 10 |
-| [07-company](docs/research/07-company.md) | 12–16, 19 | Wedge scoring, business model, moat, virality, metrics, product history |
-| [08-build](docs/research/08-build.md) | 17–18 | v0 concierge → v1 → V2 → V3, with kill criteria; the 10x version |
-| [SOURCES](docs/research/SOURCES.md) | — | 29 typed, confidence-rated sources |
+- The **same tracer** runs at build time (CPython, for precomputed traces
+  that load instantly) and in the learner's browser (Pyodide in a Web
+  Worker, for custom inputs). A test keeps the two identical.
+- Code never runs on our servers. Live traces run in a sandboxed worker on
+  the learner's device, with a step limit and a timeout.
+- AI helps draft lessons offline. Every draft is checked by tests,
+  differential testing and measured complexity, then reviewed by a person,
+  before a learner sees it.
 
-Claims are tagged **[F]** fact, **[I]** inference, **[H]** hypothesis,
-**[S]** speculation.
+The full reasoning is in [docs/ASSESSMENT.md](docs/ASSESSMENT.md) and
+[docs/adr/](docs/adr/).
 
 ## Status
 
-Desk research is complete. **The thin app is built:** [app/](app/) runs the
-whole student flow (sign-up → 15-minute check → result → daily task → weekly
-check-in → mock → ready) plus an admin dashboard with the stop-or-continue
-thresholds. Next: deploy it and put it in front of 15–20 students with real
-test dates. The manual version of the same test is in [concierge/](concierge/).
+**Milestone M0, the execution engine, is in progress.**
 
-The previous project (Nue) is preserved at tag `archive/nue-v1`.
+| Milestone | Status |
+|---|---|
+| M0 Tracer: real execution, stable object ids, step limits, CPython ↔ Pyodide parity | **Built and tested** (24 tests) |
+| M1 Interpreter and playback | Next |
+| M2 Visual views and the workspace | |
+| M3 Teaching layer: Two Sum and Reverse Linked List to full quality | |
+| M4 The other four MVP problems | |
+| M5 Live custom input, polish, deploy | |
+| M6 AI-assisted content pipeline | |
+
+**MVP problems:** Two Sum, Valid Parentheses, Binary Search, Longest
+Substring Without Repeating Characters, Reverse Linked List, and Maximum
+Depth of Binary Tree.
+
+## Run it
+
+Needs Node 22+ and Python 3.14 (it must match the Python inside Pyodide,
+so build-time and browser traces stay identical).
+
+```bash
+npm install
+```
+
+```bash
+npm test
+```
+
+```bash
+npm run dev
+```
+
+Trace any solution from the command line:
+
+```bash
+npm run -s trace < request.json
+```
+
+`request.json` looks like this:
+
+```json
+{ "source": "def f(n):\n    return n * 2\n", "entry": "f", "args": [{ "kind": "value", "value": 21 }] }
+```
+
+## Layout
+
+| Path | What's there |
+|---|---|
+| `engine/tracer/` | `tracer.py` (the tracer), `types.ts` (the trace format), `pyodide.ts` (running it in the browser), tests, and reference-solution fixtures |
+| `src/` | The web app (a development shell until M2) |
+| `docs/` | The product and technical assessment, plus architecture decision records |
+| `scripts/` | Build helpers (copying the Pyodide runtime into `public/`) |
+
+## History
+
+This repository was previously Pillow (an interview-readiness app) and
+before that Nue. Both are preserved at the tags `archive/pillow-v1` and
+`archive/nue-v1`. The repository keeps the name `pillow`.

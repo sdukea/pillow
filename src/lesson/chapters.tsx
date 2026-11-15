@@ -56,8 +56,8 @@ export function ApproachIntro({ problem, approach, index }: { problem: Problem; 
       <p className="lede"><Rich text={al.intuition} /></p>
       {al.insight ? (
         <div className="insight">
-          <section><h3>What was slow</h3><p><Rich text={al.insight.inefficiency} /></p></section>
-          <section><h3>The repeated work</h3><p><Rich text={al.insight.repeatedWork} /></p></section>
+          <section><h3>What held it back</h3><p><Rich text={al.insight.inefficiency} /></p></section>
+          <section><h3>The wasted effort</h3><p><Rich text={al.insight.repeatedWork} /></p></section>
           <section className="key"><h3>The key observation</h3><p><Rich text={al.insight.observation} /></p></section>
           <section><h3>The tool</h3><p><Rich text={al.insight.technique} /></p></section>
           <section><h3>Why it works</h3><p><Rich text={al.insight.whyItWorks} /></p></section>
@@ -91,12 +91,12 @@ export function ApproachAfter({ problem, approach, onNext, nextLabel }: { proble
         <div className="complexity">
           <div className="cx">
             <span className="cx-kind">Time</span>
-            <span className="cx-big">{O(c.time)}</span>
+            <span className="cx-big">{c.timeLabel ?? O(c.time)}</span>
             <p><Rich text={c.timeWhy} /></p>
           </div>
           <div className="cx">
             <span className="cx-kind">Extra memory</span>
-            <span className="cx-big">{O(c.space)}</span>
+            <span className="cx-big">{c.spaceLabel ?? O(c.space)}</span>
             <p><Rich text={c.spaceWhy} /></p>
           </div>
         </div>
@@ -120,6 +120,12 @@ export function ApproachAfter({ problem, approach, onNext, nextLabel }: { proble
 }
 
 // ------------------------------------------------------------------ last chapter: compare
+/** A memory chart only earns its place when the approaches actually use memory differently. */
+function memoryDiffers(growth: NonNullable<ReturnType<typeof growthOf>>, problem: Problem) {
+  const [first, ...rest] = problem.approaches.map((a) => growth.approaches[a.id].space.join());
+  return rest.some((s) => s !== first);
+}
+
 export function Compare({ problem, onBack }: { problem: Problem; onBack: () => void }) {
   const lesson = problem.lesson!;
   const growth = growthOf(problem);
@@ -139,8 +145,8 @@ export function Compare({ problem, onBack }: { problem: Problem; onBack: () => v
               return (
                 <tr key={a.id}>
                   <th scope="row">{a.name}</th>
-                  <td><code className="inline-code">{O(al.complexity.time)}</code></td>
-                  <td><code className="inline-code">{O(al.complexity.space)}</code></td>
+                  <td><code className="inline-code">{al.complexity.timeLabel ?? O(al.complexity.time)}</code></td>
+                  <td><code className="inline-code">{al.complexity.spaceLabel ?? O(al.complexity.space)}</code></td>
                   <td>{stepsOf(preparedFor(problem, a).trace).toLocaleString()}</td>
                   {growth && <td>{growth.approaches[a.id].steps.at(-1)!.toLocaleString()}</td>}
                 </tr>
@@ -153,8 +159,16 @@ export function Compare({ problem, onBack }: { problem: Problem; onBack: () => v
       {growth && (
         <section>
           <h3>Lines run as the input grows</h3>
-          <p className="muted-p">Each point is a real run on a worst-case input of that size.</p>
-          <GrowthChart sizes={growth.sizes} series={problem.approaches.map((a) => ({ name: a.name, values: growth.approaches[a.id].steps }))} />
+          <p className="muted-p">Each point is a real run on <Rich text={lesson.growth.describe} />.</p>
+          <GrowthChart measure="Lines run" sizes={growth.sizes} series={problem.approaches.map((a) => ({ name: a.name, values: growth.approaches[a.id].steps }))} />
+        </section>
+      )}
+
+      {growth && memoryDiffers(growth, problem) && (
+        <section>
+          <h3>Memory as the input grows</h3>
+          <p className="muted-p">The most items held at once in structures the code creates, plus calls waiting on the call stack. Same inputs as above.</p>
+          <GrowthChart measure="Peak extra memory" sizes={growth.spaceSizes} series={problem.approaches.map((a) => ({ name: a.name, values: growth.approaches[a.id].space }))} />
         </section>
       )}
 

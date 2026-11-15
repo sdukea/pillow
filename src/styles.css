@@ -173,7 +173,9 @@ svg path, svg circle, svg line { fill: none; stroke: currentColor; stroke-width:
 .cell.st-updated { background: var(--chg-soft); border-color: var(--chg); }
 .cell.focused { box-shadow: 0 0 0 2px var(--accent); }
 .array-range { position: absolute; top: -4px; left: 0; height: 56px; border-radius: 13px; background: var(--accent-soft); transition: transform 0.3s var(--ease), width 0.3s var(--ease); z-index: 0; }
-.array-range span { position: absolute; right: 8px; top: -18px; font-size: 11px; color: var(--accent-ink); white-space: nowrap; }
+/* The band's label sits above the index row, so it never covers an index. */
+.array.has-range-label { margin-top: 34px; }
+.array-range span { position: absolute; right: 8px; top: -34px; font-size: 11px; color: var(--accent-ink); white-space: nowrap; }
 .pointer { position: absolute; left: 0; top: 0; transition: transform 0.3s var(--ease); z-index: 2; }
 .pointer span { display: block; transform: translateX(-50%); font-family: var(--mono); font-size: 12px; font-weight: 600; color: var(--accent-ink); white-space: nowrap; padding-top: 2px; }
 .pointer span::before { content: "▲"; display: block; text-align: center; font-size: 8px; line-height: 1; margin-bottom: 1px; }

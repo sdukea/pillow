@@ -6,12 +6,14 @@ interface Series { name: string; values: number[] }
 const W = 560, H = 260, PAD = { l: 64, r: 120, t: 16, b: 44 };
 
 function niceMax(v: number) {
+  if (v <= 10) return Math.max(2, Math.ceil(v / 2) * 2);
   const p = 10 ** Math.floor(Math.log10(v));
   return Math.ceil(v / p) * p;
 }
 
-export function GrowthChart({ sizes, series }: { sizes: number[]; series: Series[] }) {
-  const max = niceMax(Math.max(...series.flatMap((s) => s.values)));
+/** `measure` names what's on the y axis, e.g. "Lines run" or "Peak extra memory". */
+export function GrowthChart({ sizes, series, measure }: { sizes: number[]; series: Series[]; measure: string }) {
+  const max = niceMax(Math.max(1, ...series.flatMap((s) => s.values)));
   // n is drawn to scale (not evenly spaced), so a straight line really means linear growth
   // and a curve really means faster-than-linear growth.
   const maxN = Math.max(...sizes);
@@ -21,7 +23,7 @@ export function GrowthChart({ sizes, series }: { sizes: number[]; series: Series
 
   return (
     <figure className="chart">
-      <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`Lines run as the input grows: ${series.map((s) => `${s.name} goes from ${s.values[0]} to ${s.values.at(-1)}`).join("; ")}`}>
+      <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`${measure} as the input grows: ${series.map((s) => `${s.name} goes from ${s.values[0]} to ${s.values.at(-1)}`).join("; ")}`}>
         {ticks.map((t) => (
           <g key={t}>
             <line x1={PAD.l} x2={W - PAD.r} y1={y(t)} y2={y(t)} className="chart-grid" />
@@ -40,7 +42,7 @@ export function GrowthChart({ sizes, series }: { sizes: number[]; series: Series
           </g>
         ))}
       </svg>
-      <figcaption className="sr-only">Measured lines run per input size</figcaption>
+      <figcaption className="sr-only">{measure}, measured at each input size</figcaption>
       <table className="chart-table">
         <thead><tr><th scope="col">n</th>{series.map((s) => <th key={s.name} scope="col">{s.name}</th>)}</tr></thead>
         <tbody>

@@ -124,6 +124,7 @@ export const twoSum: Lesson = {
     spaceSizes: [8, 16, 32],
     // Worst case for both: the only pair is the last two numbers.
     input: (n) => [{ kind: "value", value: [...Array.from({ length: n - 2 }, (_, i) => 100 + i), 1, 2] }, { kind: "value", value: 3 }],
+    describe: "n numbers where the only pair that works is the last two",
   },
 
   edgeCases: [

@@ -39,11 +39,10 @@ The full reasoning is in [docs/ASSESSMENT.md](docs/ASSESSMENT.md) and
 
 ## Status
 
-**M0–M3 are done.** Two Sum and Reverse Linked List are complete lessons:
-understand the problem, brute force first, the better approach and why it
-works, a note for every line, and complexity measured from real runs. The
-other four MVP problems can be watched step by step; they get full lessons
-in M4.
+**M0–M4 are done.** All six MVP problems are complete lessons: understand
+the problem, a first approach, the better approach and why it works, a note
+for every line, and time and memory measured from real runs. Every lesson
+runs on the precomputed example; running your own input comes in M5.
 
 | Milestone | Status |
 |---|---|
@@ -51,8 +50,8 @@ in M4.
 | M1 Interpreter: moments and changes, visualization specs, narration from real values, playback, validation | **Done** |
 | M2 Workspace: views for arrays, pointers, windows, maps, stacks, linked lists, trees and the call stack; synced code pane; playback controls; keyboard; light and dark | **Done** |
 | M3 Teaching layer: four-chapter lessons, line notes, measured complexity, lesson validation (Two Sum, Reverse Linked List) | **Done** |
-| M4 Full lessons for the other four MVP problems | Next |
-| M5 Live custom input, polish, deploy | |
+| M4 Full lessons for Valid Parentheses, Binary Search, Longest Substring and Maximum Depth, each with a first approach; measured memory charts | **Done** |
+| M5 Live custom input (Pyodide in a worker), polish, end-to-end tests, deploy | Next |
 | M6 AI-assisted content pipeline | |
 
 **MVP problems:** Two Sum, Valid Parentheses, Binary Search, Longest

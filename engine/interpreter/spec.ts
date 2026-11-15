@@ -26,7 +26,16 @@ export type ViewSpec =
    * A binary tree. `root` is read from the entry frame at the start. `current` names the
    * variable holding each call's node, so the active call's node can be highlighted.
    */
-  | { kind: "tree"; id: string; root: string; current: string; label?: string }
+  | {
+      kind: "tree"; id: string; root: string; current: string; label?: string;
+      /**
+       * A list or queue of nodes waiting to be handled (e.g. "queue" in breadth-first search).
+       * Those nodes are ringed. Without it, nodes held by calls on the call stack are ringed.
+       */
+      waiting?: string;
+      /** Show the value each call returned on its node. Default true; turn off for non-recursive code. */
+      showReturns?: boolean;
+    }
   /** The call stack, showing these expressions for each frame (e.g. ["root.val"]). */
   | { kind: "call-stack"; id: string; show: string[]; label?: string };
 

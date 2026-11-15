@@ -127,6 +127,7 @@ export const reverseLinkedList: Lesson = {
     sizes: [8, 16, 32, 64, 128],
     spaceSizes: [8, 16, 32],
     input: (n) => [{ kind: "linked_list", values: Array.from({ length: n }, (_, i) => i + 1) }],
+    describe: "a linked list of n nodes",
   },
 
   edgeCases: [

@@ -15,8 +15,10 @@ export function traceCPython(request: TraceRequest): Trace {
     input: JSON.stringify(request),
     env: { ...process.env, PYTHONHASHSEED: "0" },
     encoding: "utf8",
+    // Space is measured on full traces of the larger inputs, which run to tens of megabytes.
+    maxBuffer: 256 * 1024 * 1024,
   });
-  if (out.status !== 0) throw new Error(out.stderr);
+  if (out.status !== 0) throw new Error(out.error?.message ?? out.stderr);
   return JSON.parse(out.stdout) as Trace;
 }
 

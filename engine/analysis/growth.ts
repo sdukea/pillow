@@ -14,14 +14,15 @@ export function stepsOf(trace: Trace): number {
 
 /**
  * Peak extra memory, in elements: at each step, add up the size of every list, dict and set the
- * algorithm created (not the input), counting each new object such as a node as one. Take the peak.
+ * algorithm created (not the input), counting each new object such as a node as one, plus one for
+ * every call waiting on the call stack (recursion uses memory too). Take the peak.
  */
 export function extraSpace(trace: Trace): number {
   if (!trace.steps.length) return 0;
   const input = new Set(Object.keys(trace.steps[0].heap));
   let peak = 0;
   for (const step of trace.steps) {
-    let total = 0;
+    let total = step.frames.length - 1;
     for (const [id, obj] of Object.entries(step.heap)) {
       if (input.has(id)) continue;
       if ("items" in obj) total += obj.items.length;

@@ -24,8 +24,15 @@ export interface LineNote {
 }
 
 export interface Complexity {
+  /** The class the measurements must match. */
   time: GrowthClass;
   space: GrowthClass;
+  /**
+   * How to show it, when the class alone would mislead. For example recursion on trees uses
+   * O(h) memory: measured on a balanced tree that's O(log n), but a lopsided tree reaches O(n).
+   */
+  timeLabel?: string;
+  spaceLabel?: string;
   /** The operation we count, in plain words, e.g. "comparisons of two numbers". */
   counted: string;
   timeWhy: string;
@@ -79,7 +86,13 @@ export interface Lesson {
    * Inputs of growing size used to measure each approach. Sizes should double so growth is easy
    * to read (and to classify). Make the input a worst case for the approaches being compared.
    */
-  growth: { sizes: number[]; spaceSizes: number[]; input: (n: number) => Arg[] };
+  growth: {
+    sizes: number[];
+    spaceSizes: number[];
+    input: (n: number) => Arg[];
+    /** What the input of size n looks like, finishing "Each point is a real run on …". */
+    describe: string;
+  };
   /**
    * Inputs that exercise rarely-run lines (no answer, an empty list). The build traces them,
    * validates narration on them, and counts their lines as lines that need explanations.

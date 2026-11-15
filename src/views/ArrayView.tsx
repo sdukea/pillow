@@ -28,7 +28,7 @@ export function ArrayView({ label, present, cells, pointers, range }: Props) {
       ) : (
         <div className="array-scroll">
           {/* Room under the cells for every row of pointer labels (each label is a caret plus a name). */}
-          <div className="array" style={{ width, paddingBottom: pointerRows ? 18 + pointerRows * 24 : 4 }}>
+          <div className={`array ${range?.label ? "has-range-label" : ""}`} style={{ width, paddingBottom: pointerRows ? 18 + pointerRows * 24 : 4 }}>
             {range && range.to >= range.from && (
               <div
                 className="array-range"

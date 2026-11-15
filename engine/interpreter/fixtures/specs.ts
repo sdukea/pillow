@@ -55,6 +55,8 @@ export const validParentheses: VizSpec = {
     { kind: "vars", id: "vars", show: ["ch"] },
   ],
   lines: {
+    2: { tag: "init", narrate: [{ text: "Note which opening bracket each closing bracket needs." }] },
+    3: { tag: "init", narrate: [{ text: "Start with an empty stack of open brackets." }] },
     4: { tag: "loop", narrate: [{ when: "_next_line == 11", text: "Every character has been read." }, { text: "Read '{ch}'." }] },
     5: { tag: "branch", narrate: [{ when: "ch in pairs", text: "'{ch}' is a closing bracket." }, { text: "'{ch}' is an opening bracket." }] },
     6: {
@@ -78,7 +80,7 @@ export const binarySearch: VizSpec = {
     { kind: "vars", id: "vars", show: ["target"] },
   ],
   lines: {
-    2: { tag: "init", narrate: [{ text: "The target could be anywhere from index {lo} to {hi}." }] },
+    2: { tag: "init", narrate: [{ when: "hi < lo", text: "The list is empty, so there's nowhere to look." }, { text: "The target could be anywhere from index {lo} to {hi}." }] },
     3: { tag: "loop", narrate: [{ when: "lo > hi", text: "The range is empty: the target isn't here." }, { text: "Indices {lo} to {hi} are still possible." }] },
     4: { tag: "update", narrate: [{ text: "Check the middle: index {mid}, which holds {nums[mid]}." }] },
     5: { tag: "compare", narrate: [{ when: "nums[mid] == target", text: "{nums[mid]} is the target." }, { text: "{nums[mid]} isn't {target}." }] },
@@ -97,6 +99,9 @@ export const longestSubstring: VizSpec = {
     { kind: "vars", id: "vars", show: ["right - left + 1", "best"] },
   ],
   lines: {
+    2: { tag: "init", narrate: [{ text: "Start a map from each character to where it was last seen." }] },
+    3: { tag: "init", narrate: [{ text: "The window starts at the beginning of the string." }] },
+    4: { tag: "init", narrate: [{ text: "No window measured yet, so the best is 0." }] },
     5: { tag: "loop", narrate: [{ when: "_next_line == 10", text: "The window has reached the end of the string." }, { text: "Extend the window to include '{ch}' at {right}." }] },
     6: {
       tag: "lookup",
@@ -157,5 +162,87 @@ export const maxDepth: VizSpec = {
     4: { tag: "call", narrate: [{ when: "_entered", text: "Go down into {root.val}'s left side." }, { text: "{root.val}'s left side is {left} deep." }] },
     5: { tag: "call", narrate: [{ when: "_entered", text: "Now go down into {root.val}'s right side." }, { text: "{root.val}'s right side is {right} deep." }] },
     6: { tag: "return", narrate: [{ text: "So {root.val} is 1 + max({left}, {right}) = {1 + max(left, right)} deep." }] },
+  },
+};
+
+export const validParenthesesDelete: VizSpec = {
+  views: [
+    { kind: "array", id: "chars", of: "chars", pointers: ["i"], label: "chars (pairs get deleted)" },
+    { kind: "vars", id: "vars", show: ["removed"] },
+  ],
+  lines: {
+    2: { tag: "init", narrate: [{ text: "Note which closing bracket each opening bracket needs." }] },
+    3: { tag: "init", narrate: [{ text: "Copy the characters into a list, so matched pairs can be deleted from it." }] },
+    4: { tag: "init", narrate: [{ text: "Pretend something was removed, so the first pass runs." }] },
+    5: { tag: "loop", narrate: [{ when: "_next_line == 12", text: "A whole pass found no pair, so stop." }, { text: "Scan the list again from the start." }] },
+    6: { tag: "init", narrate: [{ text: "Nothing removed yet in this pass." }] },
+    7: { tag: "loop", narrate: [{ when: "_next_line == 5", text: "Reached the end of the list without finding a pair." }, { text: "Look at positions {i} and {i + 1}." }] },
+    8: {
+      tag: "compare",
+      narrate: [
+        { when: "chars[i] in pairs and pairs[chars[i]] == chars[i + 1]", text: "{chars[i]} is closed right away by {chars[i + 1]}: a matching pair." },
+        { when: "chars[i] in pairs", text: "{chars[i]} is followed by {chars[i + 1]}, not by {pairs[chars[i]]}. Keep looking." },
+        { text: "{chars[i]} is a closing bracket, so it can't start a pair. Keep looking." },
+      ],
+    },
+    9: { tag: "update", narrate: [{ text: "Delete the pair. {len(chars)} characters left." }] },
+    10: { tag: "update", narrate: [{ text: "Remember that this pass removed something." }] },
+    11: { tag: "loop", narrate: [{ text: "Start over from the beginning: deleting may have brought a new pair together." }] },
+    12: { tag: "return", narrate: [{ when: "not chars", text: "Everything paired off: valid." }, { text: "Some brackets never found a partner: not valid." }] },
+  },
+};
+
+export const binarySearchLinear: VizSpec = {
+  views: [
+    { kind: "array", id: "nums", of: "nums", pointers: ["i"] },
+    { kind: "vars", id: "vars", show: ["target"] },
+  ],
+  lines: {
+    2: { tag: "loop", narrate: [{ when: "_next_line == 5", text: "Every number has been checked." }, { text: "Look at index {i}: {nums[i]}." }] },
+    3: { tag: "compare", narrate: [{ when: "nums[i] == target", text: "{nums[i]} is the target." }, { text: "{nums[i]} isn't {target}. Move on." }] },
+    4: { tag: "return", narrate: [{ text: "Found it at index {i}, after checking {i + 1} numbers." }] },
+    5: { tag: "return", narrate: [{ text: "{target} isn't in the list. Every number had to be checked to be sure." }] },
+  },
+};
+
+export const longestSubstringBrute: VizSpec = {
+  views: [
+    { kind: "array", id: "s", of: "s", pointers: ["start", "end"], range: { from: "start", to: "end", label: "substring" } },
+    { kind: "set", id: "seen", of: "seen", label: "seen (in this substring)" },
+    { kind: "vars", id: "vars", show: ["best"] },
+  ],
+  lines: {
+    2: { tag: "init", narrate: [{ text: "Nothing measured yet, so the best length is 0." }] },
+    3: { tag: "loop", narrate: [{ when: "_next_line == 10", text: "Every starting point has been tried." }, { text: "Start a new substring at index {start}." }] },
+    4: { tag: "init", narrate: [{ text: "Begin with an empty set for this starting point." }] },
+    5: { tag: "loop", narrate: [{ when: "_next_line == 3", text: "This substring reached the end of the string." }, { text: "Try extending it to '{s[end]}' at {end}." }] },
+    6: { tag: "lookup", focus: { view: "seen", key: "s[end]" }, narrate: [{ when: "s[end] in seen", text: "'{s[end]}' is already in this substring, so it can't grow any further." }, { text: "'{s[end]}' is new to this substring." }] },
+    7: { tag: "loop", narrate: [{ text: "Stop extending, and try the next starting point." }] },
+    8: { tag: "update", narrate: [{ text: "Add '{s[end]}' to the set." }] },
+    9: { tag: "update", narrate: [{ text: "This substring is {end - start + 1} long. The best so far is {best}." }] },
+    10: { tag: "return", narrate: [{ text: "The longest substring without repeats was {best} long." }] },
+  },
+};
+
+export const maxDepthBfs: VizSpec = {
+  views: [
+    { kind: "tree", id: "tree", root: "root", current: "node", waiting: "queue", showReturns: false },
+    { kind: "queue", id: "queue", of: "queue", label: "queue (the next level, front first)" },
+    { kind: "vars", id: "vars", show: ["depth"] },
+  ],
+  lines: {
+    2: { tag: "branch", narrate: [{ when: "root == None", text: "The tree is empty." }, { text: "There's a root, so there's at least one level." }] },
+    3: { tag: "return", narrate: [{ text: "An empty tree has depth 0." }] },
+    4: { tag: "init", narrate: [{ text: "No levels counted yet." }] },
+    5: { tag: "init", narrate: [{ text: "Put the root in the queue. On its own, it's the whole first level." }] },
+    6: { tag: "loop", narrate: [{ when: "_next_line == 14", text: "The queue is empty: there are no more levels." }, { when: "len(queue) == 1", text: "The queue holds the next level: 1 node." }, { text: "The queue holds the next level: {len(queue)} nodes." }] },
+    7: { tag: "update", narrate: [{ text: "Count this level. Depth is now {depth}." }] },
+    8: { tag: "loop", narrate: [{ when: "_next_line == 6", text: "Every node on this level has been handled." }, { text: "Handle the next node on this level." }] },
+    9: { tag: "update", narrate: [{ text: "Take {node.val} from the front of the queue." }] },
+    10: { tag: "branch", narrate: [{ when: "node.left", text: "{node.val} has a left child, {node.left.val}." }, { text: "{node.val} has no left child." }] },
+    11: { tag: "update", narrate: [{ text: "Queue {node.left.val} for the next level." }] },
+    12: { tag: "branch", narrate: [{ when: "node.right", text: "{node.val} has a right child, {node.right.val}." }, { text: "{node.val} has no right child." }] },
+    13: { tag: "update", narrate: [{ text: "Queue {node.right.val} for the next level." }] },
+    14: { tag: "return", narrate: [{ text: "The tree is {depth} levels deep." }] },
   },
 };

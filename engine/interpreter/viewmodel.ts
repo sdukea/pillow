@@ -39,6 +39,16 @@ export interface MomentView {
 }
 
 const describeValue = (v: Value, heap: Heap) => format(v, heap);
+/**
+ * An item drawn inside a list, set, map, queue or stack. Nodes read as their value ("9", not
+ * "TreeNode(9)"), and single characters as plain letters ("a", not "'a'"). Digits and spaces keep
+ * their quotes, so '1' isn't mistaken for 1. Variables still read as Python values.
+ */
+const describeItem = (v: Value, heap: Heap) => {
+  if (typeof v === "string" && v.length === 1 && !/[\d\s]/.test(v)) return v;
+  const obj = isRef(v) ? heap[String(v.ref)] : undefined;
+  return obj && "fields" in obj && "val" in obj.fields ? format(obj.fields.val, heap) : format(v, heap);
+};
 
 function tryEval(expr: string, scope: Scope): { ok: true; v: Value } | { ok: false } {
   try {
@@ -114,8 +124,8 @@ function buildView(spec: ViewSpec, ctx: { step: Step; moment: Moment; scope: Sco
           if (c.kind === "set-item" && c.index === index) state = "updated";
           if (c.kind === "push" && index === values.length - 1) state = "added";
         }
-        // Characters of a string read as plain letters; list items read as Python values.
-        return { index, text: isString && typeof v === "string" ? v : describeValue(v, heap), state, focused: focusAt === index };
+        // Characters of a string read as plain letters; list items as items.
+        return { index, text: isString && typeof v === "string" ? v : describeItem(v, heap), state, focused: focusAt === index };
       });
       const pointers = (spec.pointers ?? []).flatMap((name) => {
         const p = tryEval(name, active);
@@ -136,9 +146,9 @@ function buildView(spec: ViewSpec, ctx: { step: Step; moment: Moment; scope: Sco
       const entries = obj && "entries" in obj ? obj.entries.map(([k, v]) => {
         const c = own.find((x) => x.kind === "dict-set" && sameValue(x.key, k));
         const state: CellState = !c ? "same" : (c as { from?: Value }).from === undefined ? "added" : "updated";
-        return { key: describeValue(k, heap), value: describeValue(v, heap), state, focused: !!focusKey?.ok && sameValue(focusKey.v, k) };
+        return { key: describeItem(k, heap), value: describeValue(v, heap), state, focused: !!focusKey?.ok && sameValue(focusKey.v, k) };
       }) : [];
-      const removed = own.flatMap((c) => (c.kind === "dict-delete" ? [describeValue(c.key, heap)] : []));
+      const removed = own.flatMap((c) => (c.kind === "dict-delete" ? [describeItem(c.key, heap)] : []));
       return { kind: "map", id: spec.id, label, present: !!obj, entries, removed };
     }
     case "set": {
@@ -147,11 +157,11 @@ function buildView(spec: ViewSpec, ctx: { step: Step; moment: Moment; scope: Sco
       const own = target.ok && isRef(target.v) ? changesFor(target.v.ref, moment.changes) : [];
       const focusKey = focus?.key ? tryEval(focus.key, ctx.scope) : undefined;
       const items = obj && "items" in obj ? obj.items.map((v) => ({
-        text: describeValue(v, heap),
+        text: describeItem(v, heap),
         state: (own.some((c) => c.kind === "set-add" && sameValue(c.value, v)) ? "added" : "same") as CellState,
         focused: !!focusKey?.ok && sameValue(focusKey.v, v),
       })) : [];
-      const removed = own.flatMap((c) => (c.kind === "set-remove" ? [describeValue(c.value, heap)] : []));
+      const removed = own.flatMap((c) => (c.kind === "set-remove" ? [describeItem(c.value, heap)] : []));
       return { kind: "set", id: spec.id, label, present: !!obj, items, removed };
     }
     case "stack":
@@ -161,10 +171,10 @@ function buildView(spec: ViewSpec, ctx: { step: Step; moment: Moment; scope: Sco
       const own = target.ok && isRef(target.v) ? changesFor(target.v.ref, moment.changes) : [];
       const list = obj && "items" in obj ? obj.items : [];
       const items = list.map((v, i) => ({
-        text: describeValue(v, heap),
+        text: describeItem(v, heap),
         state: (own.some((c) => (c.kind === "push" && i === list.length - 1) || (c.kind === "unshift" && i === 0)) ? "added" : "same") as CellState,
       }));
-      const removed = own.flatMap((c) => (c.kind === "pop" || c.kind === "shift" ? [describeValue(c.value, heap)] : []));
+      const removed = own.flatMap((c) => (c.kind === "pop" || c.kind === "shift" ? [describeItem(c.value, heap)] : []));
       return { kind: spec.kind, id: spec.id, label, present: !!obj, items, removed };
     }
     case "vars": {
@@ -197,7 +207,14 @@ function buildView(spec: ViewSpec, ctx: { step: Step; moment: Moment; scope: Sco
     case "tree": {
       const layout = ctx.tree!;
       const cur = tryEval(spec.current, active);
-      const onStack = new Set(step.frames.flatMap((f) => { const v = f.locals[spec.current]; return isRef(v) ? [v.ref] : []; }));
+      let onStack: Set<number>;
+      if (spec.waiting) {
+        const w = tryEval(spec.waiting, active);
+        const obj = w.ok ? deref(w.v, heap) : undefined;
+        onStack = new Set(obj && "items" in obj ? obj.items.flatMap((x) => (isRef(x) ? [x.ref] : [])) : []);
+      } else {
+        onStack = new Set(step.frames.flatMap((f) => { const v = f.locals[spec.current]; return isRef(v) ? [v.ref] : []; }));
+      }
       const nodes = [...layout.nodes.entries()].map(([id, pos]) => {
         const obj = heap[String(id)] ?? ctx.trace.steps[0].heap[String(id)];
         const val = obj && "fields" in obj ? obj.fields.val : null;
@@ -274,7 +291,7 @@ export function prepare(trace: Trace, spec: VizSpec): Prepared {
     const first = steps[0];
     const root = tryEval(treeSpec.root, { locals: first.frames[0].locals, heap: first.heap });
     tree = root.ok && isRef(root.v) ? layoutTree(root.v.ref, first.heap) : { nodes: new Map(), edges: [] };
-    returns = treeReturns(moments, steps, treeSpec.current);
+    if (treeSpec.showReturns !== false) returns = treeReturns(moments, steps, treeSpec.current);
   }
 
   function view(index: number): MomentView {

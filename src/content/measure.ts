@@ -31,7 +31,7 @@ export function measureLesson(problem: Problem, sourceOf: (solution: string) => 
     for (const args of lesson.edgeCases) {
       const t = run({ source, entry: approach.entry, args });
       if (!t.ok) throw new Error(`${approach.name} failed on edge case ${JSON.stringify(args)}: ${t.error?.message}`);
-      const issues = validateSpec(approach.spec, source, [t]);
+      const issues = validateSpec(approach.spec, source, [t], { requireViews: false });
       if (issues.length) throw new Error(`${approach.name} on edge case ${JSON.stringify(args)}:\n${issues.map((p) => `      ${p.where}: ${p.message}`).join("\n")}`);
       addLines(t);
     }

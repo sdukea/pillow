@@ -10,7 +10,13 @@ import type { VizSpec } from "./spec";
 
 export interface Problem { where: string; message: string }
 
-export function validateSpec(spec: VizSpec, source: string, traces: Trace[]): Problem[] {
+export function validateSpec(
+  spec: VizSpec,
+  source: string,
+  traces: Trace[],
+  /** Edge cases (an empty string, an empty tree) can legitimately end before a view's data exists. */
+  { requireViews = true }: { requireViews?: boolean } = {},
+): Problem[] {
   const problems: Problem[] = [];
   const lineCount = source.trimEnd().split("\n").length;
   const ids = new Set<string>();
@@ -26,7 +32,10 @@ export function validateSpec(spec: VizSpec, source: string, traces: Trace[]): Pr
       if (v.range) exprs.push([`view ${v.id} range`, v.range.from], [`view ${v.id} range`, v.range.to]);
     }
     if (v.kind === "vars" || v.kind === "call-stack") for (const e of v.show) exprs.push([`view ${v.id}`, e]);
-    if (v.kind === "tree") exprs.push([`view ${v.id} root`, v.root], [`view ${v.id} current`, v.current]);
+    if (v.kind === "tree") {
+      exprs.push([`view ${v.id} root`, v.root], [`view ${v.id} current`, v.current]);
+      if (v.waiting) exprs.push([`view ${v.id} waiting`, v.waiting]);
+    }
   }
   for (const [line, ls] of Object.entries(spec.lines)) {
     const n = Number(line);
@@ -41,7 +50,7 @@ export function validateSpec(spec: VizSpec, source: string, traces: Trace[]): Pr
   // Every view must find its data at some point in each trace.
   for (const [t, trace] of traces.entries()) {
     for (const v of spec.views) {
-      if (!("of" in v)) continue;
+      if (!requireViews || !("of" in v)) continue;
       const found = trace.steps.some((s) => {
         try { evaluate(v.of, { locals: s.frames.at(-1)!.locals, heap: s.heap }); return true; } catch { return false; }
       });

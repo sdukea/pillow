@@ -39,17 +39,19 @@ The full reasoning is in [docs/ASSESSMENT.md](docs/ASSESSMENT.md) and
 
 ## Status
 
-**M0–M2 are done: all six MVP problems can be watched step by step in the
-browser.** Next is M3, the teaching layer (plain-language problem chapters,
-brute force first, line-by-line explanations, the comparison).
+**M0–M3 are done.** Two Sum and Reverse Linked List are complete lessons:
+understand the problem, brute force first, the better approach and why it
+works, a note for every line, and complexity measured from real runs. The
+other four MVP problems can be watched step by step; they get full lessons
+in M4.
 
 | Milestone | Status |
 |---|---|
 | M0 Tracer: real execution, stable object ids, step limits, CPython ↔ Pyodide parity | **Done** |
 | M1 Interpreter: moments and changes, visualization specs, narration from real values, playback, validation | **Done** |
 | M2 Workspace: views for arrays, pointers, windows, maps, stacks, linked lists, trees and the call stack; synced code pane; playback controls; keyboard; light and dark | **Done** |
-| M3 Teaching layer: Two Sum and Reverse Linked List to full quality | |
-| M4 The other four MVP problems | |
+| M3 Teaching layer: four-chapter lessons, line notes, measured complexity, lesson validation (Two Sum, Reverse Linked List) | **Done** |
+| M4 Full lessons for the other four MVP problems | Next |
 | M5 Live custom input, polish, deploy | |
 | M6 AI-assisted content pipeline | |
 
@@ -92,7 +94,9 @@ npm run -s trace < request.json
 |---|---|
 | `engine/tracer/` | `tracer.py` (the tracer), `types.ts` (the trace format), `pyodide.ts` (running it in the browser), tests, and reference-solution fixtures |
 | `engine/interpreter/` | Moments and changes, the visualization spec, the expression and narration language, view models, playback, validation, and specs for the six MVP problems |
-| `src/content/` | The problem library: examples, approaches and their specs |
+| `src/content/` | The problem library, the lesson format, lessons, and lesson measurement and validation |
+| `src/lesson/` | Chapter pages: Understand, approach intro and wrap-up, Compare, checks, the growth chart |
+| `engine/analysis/` | Measuring how steps and memory grow, and classifying the growth |
 | `src/views/` | Generic renderers, one per kind of view |
 | `src/workspace/` | The workspace: stage, narration, controls, code pane |
 | `src/home/` | Home: search, recently explored, problems by pattern |

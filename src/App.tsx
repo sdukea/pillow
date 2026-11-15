@@ -29,8 +29,8 @@ export function App() {
       {problem ? (
         <Workspace
           problem={problem}
-          approachId={route.search.get("approach")}
-          onApproach={(id) => go(`/p/${problem.slug}?approach=${id}`, { replace: true })}
+          chapter={route.search.get("chapter")}
+          onChapter={(id) => go(`/p/${problem.slug}?chapter=${id}`)}
           onHome={() => go("/")}
         />
       ) : slug ? (

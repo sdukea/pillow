@@ -128,6 +128,24 @@ export const reverseList: VizSpec = {
   },
 };
 
+export const reverseListCopy: VizSpec = {
+  views: [
+    { kind: "linked-list", id: "list", pointers: ["node", "new_head"] },
+    { kind: "array", id: "values", of: "values", label: "values (copied out)" },
+  ],
+  lines: {
+    2: { tag: "init", narrate: [{ text: "Start an empty list to copy the values into." }] },
+    3: { tag: "init", narrate: [{ when: "node == None", text: "The list is empty, so there's nothing to copy." }, { text: "Start reading at the head, {node.val}." }] },
+    4: { tag: "loop", narrate: [{ when: "node == None", text: "We've read every node." }, { text: "There's still a node to read: {node.val}." }] },
+    5: { tag: "update", narrate: [{ text: "Copy {values[-1]} into the list. That's {len(values)} copied so far." }] },
+    6: { tag: "move", narrate: [{ when: "node == None", text: "Move on: that was the last node." }, { text: "Move on to {node.val}." }] },
+    7: { tag: "init", narrate: [{ text: "Now build a new list. It starts empty." }] },
+    8: { tag: "loop", narrate: [{ when: "_next_line == 10", text: "Every value has been placed." }, { text: "Take the next copied value, {v}." }] },
+    9: { tag: "update", narrate: [{ text: "Create a new node for {v} in front of the new list, so the first value ends up last." }] },
+    10: { tag: "return", narrate: [{ when: "new_head == None", text: "The list was empty, so return nothing." }, { text: "Return the new list, which starts at {new_head.val}." }] },
+  },
+};
+
 export const maxDepth: VizSpec = {
   views: [
     { kind: "tree", id: "tree", root: "root", current: "root" },

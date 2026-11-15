@@ -11,7 +11,7 @@ export function usePlayback(moments: Moment[], resetKey: string) {
   );
 
   // A different approach or problem starts from the beginning.
-  useEffect(() => dispatch({ type: "reset" }), [resetKey]);
+  useEffect(() => { dispatch({ type: "reset" }); }, [resetKey]);
 
   useEffect(() => {
     if (!state.playing) return;

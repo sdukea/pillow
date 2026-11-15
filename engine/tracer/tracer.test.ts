@@ -153,6 +153,17 @@ describe("tracer behaviour", () => {
     expect(s.frames[0].locals.big).toEqual({ bigint: (2n ** 60n).toString() }); // exact, unlike a JS number
   });
 
+  it("count-only mode gives the same line counts without snapshots, in both runtimes", () => {
+    const full = traceCPython(CASES[0].request);
+    const count = traceCPython({ ...CASES[0].request, countOnly: true });
+    expect(count.steps).toEqual([]);
+    expect(count.lineHits).toEqual(full.lineHits);
+    expect(count.ok).toBe(true);
+    expect(tracePyodide({ ...CASES[0].request, countOnly: true })).toEqual(count);
+    const capped = traceCPython({ source: "def f():\n    while True:\n        pass\n", entry: "f", args: [], countOnly: true, maxSteps: 100 });
+    expect(capped.truncated).toBe(true);
+  });
+
   it("counts how often each line runs (the basis for operation counts)", () => {
     const t = traceCPython(CASES[0].request); // brute force two sum, found at (0, 1)
     expect(t.lineHits["4"]).toBe(1); // the comparison ran once before returning

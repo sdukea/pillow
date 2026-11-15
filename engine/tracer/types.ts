@@ -58,4 +58,6 @@ export interface TraceRequest {
   entry: string;
   args: Arg[];
   maxSteps?: number;
+  /** Record only how often each line runs (no snapshots); maxSteps then limits line runs. */
+  countOnly?: boolean;
 }

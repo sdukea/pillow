@@ -79,8 +79,12 @@ class StepLimitReached(BaseException):
 
 
 class Tracer:
-    def __init__(self, max_steps):
+    def __init__(self, max_steps, count_only=False):
         self.max_steps = max_steps
+        # Count-only mode records how often each line runs, without snapshots. Used to measure
+        # how work grows with input size, on inputs too large to snapshot every step.
+        self.count_only = count_only
+        self.line_count = 0
         self.ids = {}       # id(obj) -> stable sequential id for this trace
         self.alive = []     # keep traced objects alive so CPython can't reuse their id()
         self.steps = []
@@ -150,6 +154,11 @@ class Tracer:
         if event in ("call", "line", "return", "exception"):
             if event == "line":
                 self.line_hits[frame.f_lineno] = self.line_hits.get(frame.f_lineno, 0) + 1
+                self.line_count += 1
+            if self.count_only:
+                if self.line_count > self.max_steps:
+                    raise StepLimitReached()
+                return self.hook
             if len(self.steps) >= self.max_steps:
                 raise StepLimitReached()
             self.steps.append(self.snapshot(frame, event, arg))
@@ -185,8 +194,8 @@ class Tracer:
 
 
 def trace(request):
-    """Trace one call. request = {source, entry, args: [{kind, ...}], maxSteps?}."""
-    tracer = Tracer(int(request.get("maxSteps", DEFAULT_MAX_STEPS)))
+    """Trace one call. request = {source, entry, args: [{kind, ...}], maxSteps?, countOnly?}."""
+    tracer = Tracer(int(request.get("maxSteps", DEFAULT_MAX_STEPS)), bool(request.get("countOnly", False)))
     return tracer.run(request["source"], request["entry"], request.get("args", []))
 
 

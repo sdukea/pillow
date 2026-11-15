@@ -32,3 +32,32 @@ describe("problem library", () => {
     expect(steps[0]).toBeGreaterThan(steps[1]);
   });
 });
+
+// ------------------------------------------------------------------ lessons
+import { measureLesson } from "./measure";
+import { validateLesson } from "./validateLesson";
+
+describe("lessons", () => {
+  for (const problem of PROBLEMS.filter((p) => p.lesson)) {
+    it(`${problem.title}: every line is explained and narrated, checks are valid, and complexity matches measurement`, () => {
+      const measured = measureLesson(problem, fixtureSource, traceCPython);
+      expect(validateLesson(problem, measured)).toEqual([]);
+    });
+  }
+
+  it("the validator rejects a complexity claim that doesn't match reality", () => {
+    const two = PROBLEMS.find((p) => p.slug === "two-sum")!;
+    const measured = measureLesson(two, fixtureSource, traceCPython);
+    const lying = { ...two, lesson: { ...two.lesson!, approaches: { ...two.lesson!.approaches, "brute-force": { ...two.lesson!.approaches["brute-force"], complexity: { ...two.lesson!.approaches["brute-force"].complexity, time: "n" as const } } } } };
+    expect(validateLesson(lying, measured).join("\n")).toMatch(/claims O\(n\) time, but measured growth looks like O\(n²\)/);
+  });
+
+  it("the validator rejects a lesson with an unexplained line", () => {
+    const rev = PROBLEMS.find((p) => p.slug === "reverse-linked-list")!;
+    const measured = measureLesson(rev, fixtureSource, traceCPython);
+    const notes = { ...rev.lesson!.approaches["in-place"].notes };
+    delete notes[6];
+    const missing = { ...rev, lesson: { ...rev.lesson!, approaches: { ...rev.lesson!.approaches, "in-place": { ...rev.lesson!.approaches["in-place"], notes } } } };
+    expect(validateLesson(missing, measured).join("\n")).toMatch(/line 6 runs but has no explanation/);
+  });
+});

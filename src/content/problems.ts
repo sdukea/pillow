@@ -5,6 +5,9 @@
 import type { VizSpec } from "../../engine/interpreter/spec";
 import * as specs from "../../engine/interpreter/fixtures/specs";
 import type { Arg } from "../../engine/tracer/types";
+import type { Lesson } from "./lesson";
+import { reverseLinkedList } from "./lessons/reverse-linked-list";
+import { twoSum } from "./lessons/two-sum";
 
 export type Pattern = "Hashing" | "Stack" | "Binary search" | "Sliding window" | "Linked list" | "Trees and recursion";
 
@@ -30,6 +33,8 @@ export interface Problem {
   /** How the example input reads to a person, e.g. "nums = [2, 7, 11, 15], target = 9". */
   exampleLabel: string;
   approaches: Approach[];
+  /** The full four-chapter lesson. Problems without one show the visualizer only. */
+  lesson?: Lesson;
 }
 
 const v = (value: unknown): Arg => ({ kind: "value", value });
@@ -48,6 +53,7 @@ export const PROBLEMS: Problem[] = [
       { id: "brute-force", name: "Brute force", solution: "two_sum_brute", entry: "two_sum", spec: specs.twoSumBrute },
       { id: "hash-map", name: "Hash map", solution: "two_sum_hash", entry: "two_sum", spec: specs.twoSumHash },
     ],
+    lesson: twoSum,
   },
   {
     slug: "valid-parentheses",
@@ -87,7 +93,11 @@ export const PROBLEMS: Problem[] = [
     summary: "Reverse a linked list so the last node becomes the first, by re-pointing each link.",
     example: [{ kind: "linked_list", values: [1, 2, 3, 4] }],
     exampleLabel: "head = 1 → 2 → 3 → 4",
-    approaches: [{ id: "in-place", name: "Re-point in place", solution: "reverse_list", entry: "reverse_list", spec: specs.reverseList }],
+    approaches: [
+      { id: "copy", name: "Copy and rebuild", solution: "reverse_list_copy", entry: "reverse_list", spec: specs.reverseListCopy },
+      { id: "in-place", name: "Flip in place", solution: "reverse_list", entry: "reverse_list", spec: specs.reverseList },
+    ],
+    lesson: reverseLinkedList,
   },
   {
     slug: "maximum-depth-of-binary-tree",
@@ -102,3 +112,4 @@ export const PROBLEMS: Problem[] = [
 ];
 
 export const traceFile = (problem: Problem, approach: Approach) => `${problem.slug}--${approach.id}.json`;
+export const growthFile = (problem: Problem) => `${problem.slug}--growth.json`;

@@ -5,29 +5,41 @@ import { spawnSync } from "node:child_process";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { validateSpec } from "../engine/interpreter/validate";
-import type { Trace } from "../engine/tracer/types";
-import { PROBLEMS, traceFile } from "../src/content/problems";
+import type { Arg, Trace } from "../engine/tracer/types";
+import { growthFile, PROBLEMS, traceFile } from "../src/content/problems";
+import { measureLesson } from "../src/content/measure";
+import { type Measured, validateLesson } from "../src/content/validateLesson";
 
 const ROOT = join(import.meta.dirname, "..");
 const OUT = join(ROOT, "src", "generated");
 mkdirSync(OUT, { recursive: true });
 
+function runTracer(source: string, entry: string, args: Arg[], extra: { countOnly?: boolean; maxSteps?: number } = {}): Trace {
+  const run = spawnSync("python3", [join(ROOT, "engine", "tracer", "tracer.py")], {
+    input: JSON.stringify({ source, entry, args, ...extra }),
+    env: { ...process.env, PYTHONHASHSEED: "0" },
+    encoding: "utf8",
+    maxBuffer: 256 * 1024 * 1024,
+  });
+  if (run.status !== 0) throw new Error(`the tracer crashed\n${run.stderr}`);
+  return JSON.parse(run.stdout) as Trace;
+}
+
+const sourceOf = (solution: string) => readFileSync(join(ROOT, "engine", "tracer", "fixtures", `${solution}.py`), "utf8");
+
 let failures = 0;
 for (const problem of PROBLEMS) {
   for (const approach of problem.approaches) {
-    const source = readFileSync(join(ROOT, "engine", "tracer", "fixtures", `${approach.solution}.py`), "utf8");
-    const run = spawnSync("python3", [join(ROOT, "engine", "tracer", "tracer.py")], {
-      input: JSON.stringify({ source, entry: approach.entry, args: problem.example }),
-      env: { ...process.env, PYTHONHASHSEED: "0" },
-      encoding: "utf8",
-    });
+    const source = sourceOf(approach.solution);
     const name = `${problem.slug} / ${approach.name}`;
-    if (run.status !== 0) {
-      console.error(`✗ ${name}: the tracer crashed\n${run.stderr}`);
+    let trace: Trace;
+    try {
+      trace = runTracer(source, approach.entry, problem.example);
+    } catch (e) {
+      console.error(`✗ ${name}: ${(e as Error).message}`);
       failures++;
       continue;
     }
-    const trace = JSON.parse(run.stdout) as Trace;
     const problems = trace.ok ? validateSpec(approach.spec, source, [trace]) : [{ where: "trace", message: `${trace.error?.type}: ${trace.error?.message}` }];
     if (problems.length) {
       console.error(`✗ ${name}\n${problems.map((p) => `    ${p.where}: ${p.message}`).join("\n")}`);
@@ -38,6 +50,27 @@ for (const problem of PROBLEMS) {
     console.log(`✓ ${name}: ${trace.steps.length} steps`);
   }
 }
+// Lessons: measure how each approach's work and memory grow, and check every claim.
+for (const problem of PROBLEMS) {
+  if (!problem.lesson) continue;
+  let measured: Measured;
+  try {
+    measured = measureLesson(problem, sourceOf, (request) => runTracer(request.source, request.entry, request.args, { countOnly: request.countOnly, maxSteps: request.maxSteps }));
+  } catch (e) {
+    console.error(`✗ ${problem.slug} growth: ${(e as Error).message}`);
+    failures++;
+    continue;
+  }
+  const problems = validateLesson(problem, measured);
+  if (problems.length) {
+    console.error(`✗ ${problem.slug} lesson\n${problems.map((p) => `    ${p}`).join("\n")}`);
+    failures++;
+    continue;
+  }
+  writeFileSync(join(OUT, growthFile(problem)), JSON.stringify(measured));
+  console.log(`✓ ${problem.slug} lesson: ${problem.approaches.map((a) => `${a.name} ${measured.approaches[a.id].steps.join("/")} steps`).join(", ")}`);
+}
+
 if (failures) {
   console.error(`\n${failures} trace(s) failed.`);
   process.exit(1);

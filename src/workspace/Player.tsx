@@ -3,15 +3,32 @@ import type { LineNote } from "../content/lesson";
 import type { Approach, Problem } from "../content/problems";
 import { preparedFor, sourceOf } from "../lib/data";
 import { usePlayback } from "../lib/usePlayback";
+import { type LiveInput, useLiveRun } from "../lib/useLiveRun";
 import { Canvas } from "../views/Canvas";
 import { CodePane } from "./CodePane";
 import { Controls } from "./Controls";
+import { InputBar } from "./InputBar";
+
+interface Props {
+  problem: Problem;
+  approach: Approach;
+  notes?: Record<number, LineNote>;
+  /** The learner's own input, traced live. Null plays the precomputed example. */
+  input?: LiveInput | null;
+  onInput?: (input: LiveInput | null) => void;
+}
 
 /** The visualizer for one approach: stage, narration, controls, and the synced code pane. */
-export function Player({ problem, approach, notes }: { problem: Problem; approach: Approach; notes?: Record<number, LineNote> }) {
-  const prepared = useMemo(() => preparedFor(problem, approach), [problem, approach]);
+export function Player({ problem, approach, notes, input = null, onInput }: Props) {
+  const example = useMemo(() => preparedFor(problem, approach), [problem, approach]);
+  const run = useLiveRun(approach, input);
+  // While a live run loads (or if it fails), the example stays on screen, dimmed.
+  const live = input && run.status === "ready";
+  const waiting = !!input && !live;
+  const prepared = live ? run.prepared : example;
+  const label = live ? input.label : problem.exampleLabel;
   const source = useMemo(() => sourceOf(approach), [approach]);
-  const [state, dispatch] = usePlayback(prepared.moments, `${problem.slug}/${approach.id}`);
+  const [state, dispatch] = usePlayback(prepared.moments, `${problem.slug}/${approach.id}/${live ? input.key : "example"}`);
   const view = prepared.view(state.index);
   const step = prepared.trace.steps[prepared.moments[state.index].stepIndex];
   const recursive = prepared.moments.some((m) => m.depth > 1);
@@ -19,8 +36,9 @@ export function Player({ problem, approach, notes }: { problem: Problem; approac
   // Keyboard: ← → step, Space plays, R restarts, Shift+→ steps over, Shift+↑ steps out.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      const el = e.target as HTMLElement;
-      if (e.metaKey || e.ctrlKey || e.altKey || el.closest("input, select, textarea")) return;
+      const el = e.target instanceof Element ? e.target : document.body;
+      // While a live run loads, the dimmed example on screen isn't what's about to play.
+      if (waiting || e.metaKey || e.ctrlKey || e.altKey || el.closest("input, select, textarea, [contenteditable]")) return;
       if (e.key === "ArrowRight") { e.preventDefault(); dispatch({ type: e.shiftKey && recursive ? "stepOver" : "next" }); }
       else if (e.key === "ArrowLeft") { e.preventDefault(); dispatch({ type: "prev" }); }
       else if (e.key === "ArrowUp" && e.shiftKey && recursive) { e.preventDefault(); dispatch({ type: "stepOut" }); }
@@ -31,16 +49,16 @@ export function Player({ problem, approach, notes }: { problem: Problem; approac
     };
     addEventListener("keydown", onKey);
     return () => removeEventListener("keydown", onKey);
-  }, [dispatch, recursive]);
+  }, [dispatch, recursive, waiting]);
 
   const status = view.final
     ? view.error ? `Stopped: ${view.error}` : `Returned ${view.returned}`
-    : view.index === 0 ? `Starting with ${problem.exampleLabel}` : undefined;
+    : view.index === 0 ? `Starting with ${label}` : undefined;
 
   return (
     <div className="player">
-      <section className="stage" aria-label="Visualization">
-        <p className="example">{problem.exampleLabel}</p>
+      <section className={`stage ${waiting ? "is-waiting" : ""}`} aria-label="Visualization" aria-busy={run.status === "loading"}>
+        {onInput ? <InputBar problem={problem} input={input} run={run} onInput={onInput} /> : <p className="example">{label}</p>}
         <Canvas views={view.views} />
         <div className="story" aria-live="polite">
           <p className={`narration ${view.final ? "final" : ""}`}>

@@ -1,6 +1,8 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import type { LiveInput } from "../lib/useLiveRun";
 import type { Problem } from "../content/problems";
 import { ApproachAfter, ApproachIntro, Compare, Understand } from "../lesson/chapters";
+import { chaptersOf } from "./chapters";
 import { Player } from "./Player";
 
 interface Props {
@@ -11,12 +13,6 @@ interface Props {
   onHome: () => void;
 }
 
-interface Chapter { id: string; label: string }
-
-export function chaptersOf(problem: Problem): Chapter[] {
-  if (!problem.lesson) return problem.approaches.map((a) => ({ id: a.id, label: a.name }));
-  return [{ id: "understand", label: "Understand" }, ...problem.approaches.map((a) => ({ id: a.id, label: a.name })), { id: "compare", label: "Compare" }];
-}
 
 export function Workspace({ problem, chapter, onChapter, onHome }: Props) {
   const chapters = chaptersOf(problem);
@@ -25,6 +21,8 @@ export function Workspace({ problem, chapter, onChapter, onHome }: Props) {
   const next = chapters[index + 1];
   const approach = problem.approaches.find((a) => a.id === current.id);
   const lesson = problem.lesson;
+  // One custom input per visit, shared by every approach so they can be compared on it.
+  const [input, setInput] = useState<LiveInput | null>(null);
 
   useEffect(() => {
     document.title = `${problem.title} · LeetSee`;
@@ -59,14 +57,14 @@ export function Workspace({ problem, chapter, onChapter, onHome }: Props) {
         )}
       </header>
 
-      {!lesson && approach && <main className="ws-solo"><Player problem={problem} approach={approach} /></main>}
+      {!lesson && approach && <main className="ws-solo"><Player problem={problem} approach={approach} input={input} onInput={setInput} /></main>}
 
       {lesson && current.id === "understand" && <Understand problem={problem} onNext={() => onChapter(next.id)} />}
 
       {lesson && approach && (
         <>
           <ApproachIntro problem={problem} approach={approach} index={index - 1} />
-          <section className="player-band" aria-label="Watch it run"><Player problem={problem} approach={approach} notes={lesson.approaches[approach.id].notes} /></section>
+          <section className="player-band" aria-label="Watch it run"><Player problem={problem} approach={approach} notes={lesson.approaches[approach.id].notes} input={input} onInput={setInput} /></section>
           <ApproachAfter problem={problem} approach={approach} onNext={() => onChapter(next.id)} nextLabel={next.id === "compare" ? "Compare the approaches" : `Next: ${next.label.toLowerCase()}`} />
         </>
       )}

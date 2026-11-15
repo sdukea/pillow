@@ -5,6 +5,7 @@
 import type { VizSpec } from "../../engine/interpreter/spec";
 import * as specs from "../../engine/interpreter/fixtures/specs";
 import type { Arg } from "../../engine/tracer/types";
+import { bracketsOnly, type InputField, sortedUnique } from "./inputs";
 import type { Lesson } from "./lesson";
 import { binarySearch } from "./lessons/binary-search";
 import { longestSubstring } from "./lessons/longest-substring";
@@ -37,6 +38,8 @@ export interface Problem {
   /** How the example input reads to a person, e.g. "nums = [2, 7, 11, 15], target = 9". */
   exampleLabel: string;
   approaches: Approach[];
+  /** What a learner can type to run the approaches on their own input, one field per argument. */
+  inputs: InputField[];
   /** The full four-chapter lesson. Problems without one show the visualizer only. */
   lesson?: Lesson;
 }
@@ -53,6 +56,10 @@ export const PROBLEMS: Problem[] = [
     // The pair comes last, so brute force has to do real work before it finds it.
     example: [v([11, 15, 3, 8, 2, 7]), v(9)],
     exampleLabel: "nums = [11, 15, 3, 8, 2, 7], target = 9",
+    inputs: [
+      { name: "nums", type: "int-list", min: 2, max: 12 },
+      { name: "target", type: "int" },
+    ],
     approaches: [
       { id: "brute-force", name: "Brute force", solution: "two_sum_brute", entry: "two_sum", spec: specs.twoSumBrute },
       { id: "hash-map", name: "Hash map", solution: "two_sum_hash", entry: "two_sum", spec: specs.twoSumHash },
@@ -67,6 +74,7 @@ export const PROBLEMS: Problem[] = [
     summary: "Decide whether every bracket in a string is closed by the right kind, in the right order.",
     example: [v("{[()]}()")],
     exampleLabel: "s = \"{[()]}()\"",
+    inputs: [{ name: "s", type: "string", max: 16, hint: "Brackets only: ( ) [ ] { }", rule: bracketsOnly }],
     approaches: [
       { id: "delete-pairs", name: "Delete pairs", solution: "valid_parentheses_delete", entry: "is_valid", spec: specs.validParenthesesDelete },
       { id: "stack", name: "Stack", solution: "valid_parentheses", entry: "is_valid", spec: specs.validParentheses },
@@ -82,6 +90,10 @@ export const PROBLEMS: Problem[] = [
     // Long enough that checking every number visibly loses to halving.
     example: [v(Array.from({ length: 12 }, (_, i) => 2 * i + 1)), v(19)],
     exampleLabel: "nums = [1, 3, 5, …, 23], target = 19",
+    inputs: [
+      { name: "nums", type: "int-list", max: 16, hint: "Sorted, no repeats", rule: sortedUnique },
+      { name: "target", type: "int" },
+    ],
     approaches: [
       { id: "check-every", name: "Check every number", solution: "binary_search_linear", entry: "search", spec: specs.binarySearchLinear },
       { id: "halving", name: "Halving", solution: "binary_search", entry: "search", spec: specs.binarySearch },
@@ -96,6 +108,7 @@ export const PROBLEMS: Problem[] = [
     summary: "Find the length of the longest stretch of a string where no character repeats.",
     example: [v("abcabcbb")],
     exampleLabel: "s = \"abcabcbb\"",
+    inputs: [{ name: "s", type: "string", max: 16, hint: "Any characters, typed without quotes" }],
     approaches: [
       { id: "every-substring", name: "Every substring", solution: "longest_substring_brute", entry: "length_of_longest_substring", spec: specs.longestSubstringBrute },
       { id: "sliding-window", name: "Sliding window", solution: "longest_substring", entry: "length_of_longest_substring", spec: specs.longestSubstring },
@@ -110,6 +123,7 @@ export const PROBLEMS: Problem[] = [
     summary: "Reverse a linked list so the last node becomes the first, by re-pointing each link.",
     example: [{ kind: "linked_list", values: [1, 2, 3, 4] }],
     exampleLabel: "head = 1 → 2 → 3 → 4",
+    inputs: [{ name: "head", type: "linked-list", max: 8, hint: "The node values in order, e.g. [1, 2, 3]" }],
     approaches: [
       { id: "copy", name: "Copy and rebuild", solution: "reverse_list_copy", entry: "reverse_list", spec: specs.reverseListCopy },
       { id: "in-place", name: "Flip in place", solution: "reverse_list", entry: "reverse_list", spec: specs.reverseList },
@@ -124,6 +138,7 @@ export const PROBLEMS: Problem[] = [
     summary: "Find how many levels deep a binary tree goes.",
     example: [{ kind: "tree", values: [3, 9, 20, null, null, 15, 7] }],
     exampleLabel: "root = [3, 9, 20, null, null, 15, 7]",
+    inputs: [{ name: "root", type: "tree", max: 15, hint: "Level by level, as on LeetCode; null for a missing child" }],
     approaches: [
       { id: "level-by-level", name: "Level by level", solution: "max_depth_bfs", entry: "max_depth", spec: specs.maxDepthBfs },
       { id: "recursion", name: "Recursion", solution: "max_depth", entry: "max_depth", spec: specs.maxDepth },

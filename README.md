@@ -11,6 +11,8 @@ the answer.
 LeetSee complements LeetCode: LeetCode gives you problems to solve, and
 LeetSee shows how they're solved.
 
+**Try it:** [sdukea.github.io/pillow](https://sdukea.github.io/pillow/)
+
 ## How it works
 
 Every visualization comes from **real execution**, never an animation
@@ -28,8 +30,10 @@ reference solution ──► tracer (Python sys.settrace) ──► trace: every
 - The **same tracer** runs at build time (CPython, for precomputed traces
   that load instantly) and in the learner's browser (Pyodide in a Web
   Worker, for custom inputs). A test keeps the two identical.
-- Code never runs on our servers. Live traces run in a sandboxed worker on
-  the learner's device, with a step limit and a timeout.
+- There are no servers to run code on: LeetSee is a static site. Live traces
+  run in a Web Worker on the learner's device, with a step limit and a
+  timeout. Only the learner's *input* reaches Python, never code. It's
+  parsed strictly and checked against per-problem limits.
 - AI helps draft lessons offline. Every draft is checked by tests,
   differential testing and measured complexity, then reviewed by a person,
   before a learner sees it.
@@ -39,10 +43,12 @@ The full reasoning is in [docs/ASSESSMENT.md](docs/ASSESSMENT.md) and
 
 ## Status
 
-**M0–M4 are done.** All six MVP problems are complete lessons: understand
+**M0–M5 are done.** All six MVP problems are complete lessons: understand
 the problem, a first approach, the better approach and why it works, a note
-for every line, and time and memory measured from real runs. Every lesson
-runs on the precomputed example; running your own input comes in M5.
+for every line, and time and memory measured from real runs. Every
+approach can also run on your own input, or a one-click edge case, traced
+live by real Python in your browser. Each push to `main` is tested
+(unit and end-to-end) and deployed to GitHub Pages.
 
 | Milestone | Status |
 |---|---|
@@ -51,8 +57,8 @@ runs on the precomputed example; running your own input comes in M5.
 | M2 Workspace: views for arrays, pointers, windows, maps, stacks, linked lists, trees and the call stack; synced code pane; playback controls; keyboard; light and dark | **Done** |
 | M3 Teaching layer: four-chapter lessons, line notes, measured complexity, lesson validation (Two Sum, Reverse Linked List) | **Done** |
 | M4 Full lessons for Valid Parentheses, Binary Search, Longest Substring and Maximum Depth, each with a first approach; measured memory charts | **Done** |
-| M5 Live custom input (Pyodide in a worker), polish, end-to-end tests, deploy | Next |
-| M6 AI-assisted content pipeline | |
+| M5 Live custom input (Pyodide in a worker), input validation, end-to-end tests, GitHub Pages deploy | **Done** |
+| M6 AI-assisted content pipeline | Next |
 
 **MVP problems:** Two Sum, Valid Parentheses, Binary Search, Longest
 Substring Without Repeating Characters, Reverse Linked List, and Maximum
@@ -73,6 +79,16 @@ npm test
 
 ```bash
 npm run dev
+```
+
+End-to-end tests (production build, served at `/pillow/` as on Pages):
+
+```bash
+npx playwright install chromium
+```
+
+```bash
+npm run e2e
 ```
 
 Trace any solution from the command line:
@@ -97,7 +113,11 @@ npm run -s trace < request.json
 | `src/lesson/` | Chapter pages: Understand, approach intro and wrap-up, Compare, checks, the growth chart |
 | `engine/analysis/` | Measuring how steps and memory grow, and classifying the growth |
 | `src/views/` | Generic renderers, one per kind of view |
-| `src/workspace/` | The workspace: stage, narration, controls, code pane |
+| `src/workspace/` | The workspace: stage, narration, controls, code pane, the input bar |
+| `src/lib/live.ts`, `src/lib/python.worker.ts` | Live tracing: the lazily started Pyodide worker, timeouts and restarts |
+| `src/content/inputs.ts` | Custom-input fields, strict parsing, limits and labels |
+| `e2e/` | Playwright end-to-end tests |
+| `.github/workflows/deploy.yml` | Test, then deploy to GitHub Pages |
 | `src/home/` | Home: search, recently explored, problems by pattern |
 | `scripts/build-traces.ts` | Precomputes and validates the trace for every example (runs before `dev` and `build`) |
 | `docs/` | The product and technical assessment, plus architecture decision records |

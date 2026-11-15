@@ -334,3 +334,32 @@ svg path, svg circle, svg line { fill: none; stroke: currentColor; stroke-width:
 
 .pattern { background: var(--surface); border: 1px solid var(--hair); border-left: 3px solid var(--accent); border-radius: 12px; padding: 18px 20px; }
 .pattern h3 { font-size: 19px !important; }
+
+/* ------------------------------------------------------------------ custom input */
+.input-bar { display: flex; flex-direction: column; gap: 10px; }
+.input-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.input-row .example { min-width: 0; overflow-wrap: anywhere; }
+.input-actions { display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
+.pill-btn { border: 1px solid var(--hair); background: var(--surface); color: var(--text); border-radius: 999px; padding: 6px 14px; font-size: 13px; font-weight: 500; cursor: pointer; }
+.pill-btn:hover { border-color: var(--accent); color: var(--accent-ink); }
+.pill-btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; padding: 7px 20px; }
+.pill-btn.primary:hover { filter: brightness(1.08); color: #fff; }
+.link-btn { border: 0; background: none; color: var(--accent-ink); font-size: 13px; padding: 4px 0; cursor: pointer; }
+.link-btn:hover { text-decoration: underline; }
+.input-status { font-size: 13px; color: var(--muted); }
+.input-status.is-error { color: var(--del); }
+.input-form { display: flex; flex-direction: column; gap: 14px; padding: 16px; border: 1px solid var(--hair); border-radius: 14px; background: var(--surface); }
+.input-field { display: grid; grid-template-columns: 72px minmax(0, 1fr); align-items: center; column-gap: 12px; row-gap: 4px; }
+.input-field label code { font-family: var(--mono); font-size: 13px; color: var(--muted); }
+.input-field input { font-family: var(--mono); font-size: 14px; padding: 8px 10px; border: 1px solid var(--hair); border-radius: 9px; background: var(--bg); color: var(--text); min-width: 0; }
+.input-field input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.input-field input[aria-invalid] { border-color: var(--del); }
+.input-hint { grid-column: 2; font-size: 12px; color: var(--muted); }
+.input-hint.is-error { color: var(--del); }
+.input-form-actions { display: flex; align-items: center; gap: 16px; }
+.presets { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; border-top: 1px solid var(--hair); padding-top: 12px; }
+.presets-label { font-size: 12px; color: var(--muted); margin-right: 4px; }
+.preset { font-family: var(--mono); font-size: 12px; border: 1px solid var(--hair); background: var(--bg); color: var(--text); border-radius: 8px; padding: 4px 9px; cursor: pointer; }
+.preset:hover { border-color: var(--accent); }
+.stage.is-waiting > :not(.input-bar) { opacity: 0.35; pointer-events: none; transition: opacity 0.2s var(--ease); }
+@media (max-width: 520px) { .input-field { grid-template-columns: 1fr; } .input-hint { grid-column: 1; } }

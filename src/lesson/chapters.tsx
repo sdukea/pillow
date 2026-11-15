@@ -73,7 +73,7 @@ export function ApproachIntro({ problem, approach, index }: { problem: Problem; 
         <h3>The plan</h3>
         <ol className="walk">{al.steps.map((s, i) => <li key={i}><Rich text={s} /></li>)}</ol>
       </section>
-      <p className="watch-hint">Now watch it run on <code className="inline-code">{problem.exampleLabel}</code>. Click any line of code to read what it does.</p>
+      <p className="watch-hint">Now watch it run on <code className="inline-code">{problem.exampleLabel}</code>. Click any line of code to read what it does, or try it on your own input.</p>
     </article>
   );
 }

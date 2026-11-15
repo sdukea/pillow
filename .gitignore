@@ -4,3 +4,5 @@ public/pyodide/
 .DS_Store
 __pycache__/
 src/generated/
+test-results/
+playwright-report/

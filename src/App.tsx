@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { PROBLEMS } from "./content/problems";
 import { Home, rememberVisit } from "./home/Home";
-import { useRoute } from "./lib/router";
+import { href, useRoute } from "./lib/router";
 import { useTheme } from "./lib/theme";
 import { Workspace } from "./workspace/Workspace";
 
@@ -28,13 +28,14 @@ export function App() {
       </button>
       {problem ? (
         <Workspace
+          key={problem.slug}
           problem={problem}
           chapter={route.search.get("chapter")}
           onChapter={(id) => go(`/p/${problem.slug}?chapter=${id}`)}
           onHome={() => go("/")}
         />
       ) : slug ? (
-        <main className="home"><h1>Not found</h1><p>There’s no problem at this address. <a href="/" onClick={(e) => { e.preventDefault(); go("/"); }}>See all problems</a>.</p></main>
+        <main className="home"><h1>Not found</h1><p>There’s no problem at this address. <a href={href("/")} onClick={(e) => { e.preventDefault(); go("/"); }}>See all problems</a>.</p></main>
       ) : (
         <Home onOpen={(p) => go(`/p/${p.slug}`)} />
       )}

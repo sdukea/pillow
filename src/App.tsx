@@ -1,14 +1,43 @@
-// Development shell. The learning workspace replaces this from milestone M2 onwards
-// (see docs/ASSESSMENT.md §8).
+import { useEffect } from "react";
+import { PROBLEMS } from "./content/problems";
+import { Home, rememberVisit } from "./home/Home";
+import { useRoute } from "./lib/router";
+import { useTheme } from "./lib/theme";
+import { Workspace } from "./workspace/Workspace";
+
+const THEME_LABEL = { system: "Theme: system", dark: "Theme: dark", light: "Theme: light" } as const;
+
 export function App() {
+  const [route, go] = useRoute();
+  const theme = useTheme();
+  const slug = route.path.match(/^\/p\/([\w-]+)/)?.[1];
+  const problem = slug ? PROBLEMS.find((p) => p.slug === slug) : undefined;
+
+  useEffect(() => {
+    if (problem) rememberVisit(problem.slug);
+    else document.title = "LeetSee";
+  }, [problem]);
+
   return (
-    <main className="shell">
-      <h1>LeetSee</h1>
-      <p className="lede">Don’t just see the answer. See how it thinks.</p>
-      <p className="status">
-        In development. The execution engine (milestone M0) is being built first: it runs real
-        solutions and records every step, so every visualization reflects what the code actually did.
-      </p>
-    </main>
+    <>
+      <button type="button" className="theme-toggle" onClick={theme.cycle} aria-label={`${THEME_LABEL[theme.choice]}. Click to change.`} title={THEME_LABEL[theme.choice]}>
+        <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true">
+          <circle cx="10" cy="10" r="6.5" />
+          <path d="M10 3.5a6.5 6.5 0 0 1 0 13z" className="fill" />
+        </svg>
+      </button>
+      {problem ? (
+        <Workspace
+          problem={problem}
+          approachId={route.search.get("approach")}
+          onApproach={(id) => go(`/p/${problem.slug}?approach=${id}`, { replace: true })}
+          onHome={() => go("/")}
+        />
+      ) : slug ? (
+        <main className="home"><h1>Not found</h1><p>There’s no problem at this address. <a href="/" onClick={(e) => { e.preventDefault(); go("/"); }}>See all problems</a>.</p></main>
+      ) : (
+        <Home onOpen={(p) => go(`/p/${p.slug}`)} />
+      )}
+    </>
   );
 }

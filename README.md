@@ -39,14 +39,15 @@ The full reasoning is in [docs/ASSESSMENT.md](docs/ASSESSMENT.md) and
 
 ## Status
 
-**Milestones M0 and M1 are done: the engine runs real solutions and turns
-them into learner-sized steps.** Next is M2, the visual workspace.
+**M0–M2 are done: all six MVP problems can be watched step by step in the
+browser.** Next is M3, the teaching layer (plain-language problem chapters,
+brute force first, line-by-line explanations, the comparison).
 
 | Milestone | Status |
 |---|---|
 | M0 Tracer: real execution, stable object ids, step limits, CPython ↔ Pyodide parity | **Done** |
 | M1 Interpreter: moments and changes, visualization specs, narration from real values, playback, validation | **Done** |
-| M2 Visual views and the workspace | Next |
+| M2 Workspace: views for arrays, pointers, windows, maps, stacks, linked lists, trees and the call stack; synced code pane; playback controls; keyboard; light and dark | **Done** |
 | M3 Teaching layer: Two Sum and Reverse Linked List to full quality | |
 | M4 The other four MVP problems | |
 | M5 Live custom input, polish, deploy | |
@@ -91,9 +92,13 @@ npm run -s trace < request.json
 |---|---|
 | `engine/tracer/` | `tracer.py` (the tracer), `types.ts` (the trace format), `pyodide.ts` (running it in the browser), tests, and reference-solution fixtures |
 | `engine/interpreter/` | Moments and changes, the visualization spec, the expression and narration language, view models, playback, validation, and specs for the six MVP problems |
-| `src/` | The web app (a development shell until M2) |
+| `src/content/` | The problem library: examples, approaches and their specs |
+| `src/views/` | Generic renderers, one per kind of view |
+| `src/workspace/` | The workspace: stage, narration, controls, code pane |
+| `src/home/` | Home: search, recently explored, problems by pattern |
+| `scripts/build-traces.ts` | Precomputes and validates the trace for every example (runs before `dev` and `build`) |
 | `docs/` | The product and technical assessment, plus architecture decision records |
-| `scripts/` | Build helpers (copying the Pyodide runtime into `public/`) |
+| `scripts/copy-pyodide.mjs` | Copies the Pyodide runtime into `public/` |
 
 ## History
 

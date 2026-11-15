@@ -6,7 +6,7 @@ import { evaluate, ExprError, type Scope } from "./expr";
 import { buildMoments, scopeAt, type Change, type Moment } from "./moments";
 import { narrate } from "./narrate";
 import type { LineSpec, ViewSpec, VizSpec } from "./spec";
-import { deref, format, type Heap, isRef, sameValue } from "./values";
+import { deref, format, format as formatValue, type Heap, isRef, sameValue } from "./values";
 
 export type CellState = "same" | "added" | "updated";
 
@@ -218,6 +218,11 @@ function buildView(spec: ViewSpec, ctx: { step: Step; moment: Moment; scope: Sco
 }
 
 function describeChange(c: Change, heap: Heap, names: (ref: number) => string): string | undefined {
+  // In change lines, nodes read as "node 2" rather than "ListNode(2)".
+  const format = (v: Value, h: Heap) => {
+    const obj = isRef(v) ? h[String(v.ref)] : undefined;
+    return obj && "fields" in obj && "val" in obj.fields ? `node ${formatValue(obj.fields.val, h)}` : formatValue(v, h);
+  };
   switch (c.kind) {
     case "assign": return `${c.name} = ${format(c.value, heap)}`;
     case "rebind": return `${c.name}: ${format(c.from, heap)} → ${format(c.to, heap)}`;

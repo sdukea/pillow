@@ -39,13 +39,14 @@ The full reasoning is in [docs/ASSESSMENT.md](docs/ASSESSMENT.md) and
 
 ## Status
 
-**Milestone M0, the execution engine, is in progress.**
+**Milestones M0 and M1 are done: the engine runs real solutions and turns
+them into learner-sized steps.** Next is M2, the visual workspace.
 
 | Milestone | Status |
 |---|---|
-| M0 Tracer: real execution, stable object ids, step limits, CPython ↔ Pyodide parity | **Built and tested** (24 tests) |
-| M1 Interpreter and playback | Next |
-| M2 Visual views and the workspace | |
+| M0 Tracer: real execution, stable object ids, step limits, CPython ↔ Pyodide parity | **Done** |
+| M1 Interpreter: moments and changes, visualization specs, narration from real values, playback, validation | **Done** |
+| M2 Visual views and the workspace | Next |
 | M3 Teaching layer: Two Sum and Reverse Linked List to full quality | |
 | M4 The other four MVP problems | |
 | M5 Live custom input, polish, deploy | |
@@ -89,6 +90,7 @@ npm run -s trace < request.json
 | Path | What's there |
 |---|---|
 | `engine/tracer/` | `tracer.py` (the tracer), `types.ts` (the trace format), `pyodide.ts` (running it in the browser), tests, and reference-solution fixtures |
+| `engine/interpreter/` | Moments and changes, the visualization spec, the expression and narration language, view models, playback, validation, and specs for the six MVP problems |
 | `src/` | The web app (a development shell until M2) |
 | `docs/` | The product and technical assessment, plus architecture decision records |
 | `scripts/` | Build helpers (copying the Pyodide runtime into `public/`) |

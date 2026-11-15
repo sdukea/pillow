@@ -1,6 +1,6 @@
 # ADR 0001: Real execution traces plus declarative visualization specs
 
-**Status:** proposed (awaiting founder agreement), 2026-11-14
+**Status:** accepted, 2026-11-14
 
 ## Context
 

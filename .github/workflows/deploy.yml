@@ -19,6 +19,7 @@ jobs:
   test:
     # Pinned: Playwright's browser dependencies install on 24.04; ubuntu-latest is now 26.04.
     runs-on: ubuntu-24.04
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
@@ -36,8 +37,21 @@ jobs:
       - run: npm run -s traces
       - run: npm run -s typecheck
       - run: npm test
-      - run: npx playwright install --with-deps chromium
+      # The browser download can stall; cache it, bound each try, and retry once.
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+      - name: Install Playwright's Chromium
+        timeout-minutes: 12
+        run: |
+          for try in 1 2; do
+            timeout 300 npx playwright install --with-deps chromium && exit 0
+            echo "Install attempt $try failed or stalled; retrying."
+          done
+          exit 1
       - run: npm run -s e2e
+        timeout-minutes: 10
       - uses: actions/upload-artifact@v5
         if: failure()
         with:

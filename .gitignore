@@ -6,3 +6,4 @@ __pycache__/
 src/generated/
 test-results/
 playwright-report/
+content/drafts/

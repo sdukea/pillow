@@ -7,9 +7,10 @@ import type { Trace, TraceRequest } from "../../engine/tracer/types";
 import type { Problem } from "./problems";
 import type { Measured } from "./validateLesson";
 
-export type RunTracer = (request: TraceRequest) => Trace;
+/** Runs the tracer: CPython for trusted solutions, the sandbox for AI drafts. */
+export type RunTracer = (request: TraceRequest) => Trace | Promise<Trace>;
 
-export function measureLesson(problem: Problem, sourceOf: (solution: string) => string, run: RunTracer): Measured {
+export async function measureLesson(problem: Problem, sourceOf: (solution: string) => string, run: RunTracer): Promise<Measured> {
   const lesson = problem.lesson;
   if (!lesson) throw new Error(`${problem.slug} has no lesson`);
   const measured: Measured = { sizes: lesson.growth.sizes, spaceSizes: lesson.growth.spaceSizes, approaches: {} };
@@ -19,24 +20,26 @@ export function measureLesson(problem: Problem, sourceOf: (solution: string) => 
     const lines = new Set<number>();
     const addLines = (t: Trace) => Object.keys(t.lineHits).forEach((l) => lines.add(Number(l)));
 
-    const steps = lesson.growth.sizes.map((n) => {
-      const t = run({ source, entry: approach.entry, args: lesson.growth.input(n), countOnly: true, maxSteps: 5_000_000 });
+    const steps: number[] = [];
+    for (const n of lesson.growth.sizes) {
+      const t = await run({ source, entry: approach.entry, args: lesson.growth.input(n), countOnly: true, maxSteps: 5_000_000 });
       if (!t.ok) throw new Error(`${approach.name} failed at n = ${n}: ${t.error?.message}`);
       addLines(t);
-      return stepsOf(t);
-    });
-    addLines(run({ source, entry: approach.entry, args: problem.example, countOnly: true }));
+      steps.push(stepsOf(t));
+    }
+    addLines(await run({ source, entry: approach.entry, args: problem.example, countOnly: true }));
 
     // Edge cases must trace, their narration must hold, and their lines need explanations.
     for (const args of lesson.edgeCases) {
-      const t = run({ source, entry: approach.entry, args });
+      const t = await run({ source, entry: approach.entry, args });
       if (!t.ok) throw new Error(`${approach.name} failed on edge case ${JSON.stringify(args)}: ${t.error?.message}`);
       const issues = validateSpec(approach.spec, source, [t], { requireViews: false });
       if (issues.length) throw new Error(`${approach.name} on edge case ${JSON.stringify(args)}:\n${issues.map((p) => `      ${p.where}: ${p.message}`).join("\n")}`);
       addLines(t);
     }
 
-    const space = lesson.growth.spaceSizes.map((n) => extraSpace(run({ source, entry: approach.entry, args: lesson.growth.input(n), maxSteps: 50_000 })));
+    const space: number[] = [];
+    for (const n of lesson.growth.spaceSizes) space.push(extraSpace(await run({ source, entry: approach.entry, args: lesson.growth.input(n), maxSteps: 50_000 })));
     measured.approaches[approach.id] = { steps, space, lines: [...lines].sort((a, b) => a - b) };
   }
   return measured;

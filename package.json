@@ -16,7 +16,9 @@
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "trace": "PYTHONHASHSEED=0 python3 engine/tracer/tracer.py",
-    "e2e": "playwright test"
+    "e2e": "playwright test",
+    "draft": "tsx scripts/draft.ts",
+    "promote": "tsx scripts/promote.ts"
   },
   "dependencies": {
     "pyodide": "314.0.7",
@@ -24,6 +26,7 @@
     "react-dom": "^19.3.1"
   },
   "devDependencies": {
+    "@anthropic-ai/sdk": "^1.9.0",
     "@playwright/test": "^1.57.0",
     "@types/node": "^26.6.6",
     "@types/react": "^19.3.0",
@@ -32,6 +35,7 @@
     "tsx": "^4.23.15",
     "typescript": "^5.9.3",
     "vite": "^8.3.8",
-    "vitest": "^5.1.0"
+    "vitest": "^5.1.0",
+    "zod": "^4.6.7"
   }
 }

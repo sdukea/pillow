@@ -4,11 +4,12 @@
     "lib": ["ES2023", "DOM", "DOM.Iterable", "WebWorker"],
     "module": "ESNext",
     "moduleResolution": "bundler",
+    "resolveJsonModule": true,
     "jsx": "react-jsx",
     "strict": true,
     "skipLibCheck": true,
     "noEmit": true,
     "types": ["node", "vite/client"]
   },
-  "include": ["engine", "src"]
+  "include": ["engine", "src", "pipeline", "scripts", "e2e", "playwright.config.ts"]
 }

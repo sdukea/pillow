@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { PROBLEMS, type Pattern, type Problem } from "../content/problems";
+import { PATTERNS, PROBLEMS, type Pattern, type Problem } from "../content/problems";
 
 const RECENT_KEY = "leetsee.recent";
 
@@ -18,7 +18,7 @@ export function rememberVisit(slug: string) {
   } catch { /* storage unavailable: recents just won't show */ }
 }
 
-const ORDER: Pattern[] = ["Hashing", "Stack", "Binary search", "Sliding window", "Linked list", "Trees and recursion"];
+const ORDER: readonly Pattern[] = PATTERNS;
 
 export function Home({ onOpen }: { onOpen: (p: Problem) => void }) {
   const [query, setQuery] = useState("");

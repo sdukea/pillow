@@ -5,7 +5,7 @@
 import type { VizSpec } from "../../engine/interpreter/spec";
 import * as specs from "../../engine/interpreter/fixtures/specs";
 import type { Arg } from "../../engine/tracer/types";
-import { bracketsOnly, type InputField, sortedUnique } from "./inputs";
+import type { InputField } from "./inputs";
 import type { Lesson } from "./lesson";
 import { binarySearch } from "./lessons/binary-search";
 import { longestSubstring } from "./lessons/longest-substring";
@@ -13,8 +13,11 @@ import { maximumDepth } from "./lessons/maximum-depth";
 import { reverseLinkedList } from "./lessons/reverse-linked-list";
 import { twoSum } from "./lessons/two-sum";
 import { validParentheses } from "./lessons/valid-parentheses";
+import { LIBRARY } from "./library";
 
-export type Pattern = "Hashing" | "Stack" | "Binary search" | "Sliding window" | "Linked list" | "Trees and recursion";
+/** Patterns in the order Home shows them. */
+export const PATTERNS = ["Hashing", "Two pointers", "Stack", "Binary search", "Sliding window", "Linked list", "Trees and recursion", "Arrays"] as const;
+export type Pattern = (typeof PATTERNS)[number];
 
 export interface Approach {
   id: string;
@@ -40,13 +43,17 @@ export interface Problem {
   approaches: Approach[];
   /** What a learner can type to run the approaches on their own input, one field per argument. */
   inputs: InputField[];
+  /** LeetCode's guarantee about valid inputs, as Python defining valid(...). See Brief. */
+  precondition?: string;
   /** The full four-chapter lesson. Problems without one show the visualizer only. */
   lesson?: Lesson;
+  /** Set for lessons drafted with AI: which model drafted it, and who reviewed it. */
+  provenance?: { model: string; attempts: number; reviewer: string; reviewedOn: string };
 }
 
 const v = (value: unknown): Arg => ({ kind: "value", value });
 
-export const PROBLEMS: Problem[] = [
+const HANDWRITTEN: Problem[] = [
   {
     slug: "two-sum",
     title: "Two Sum",
@@ -60,6 +67,8 @@ export const PROBLEMS: Problem[] = [
       { name: "nums", type: "int-list", min: 2, max: 12 },
       { name: "target", type: "int" },
     ],
+    // LeetCode guarantees exactly one answer; with several, correct approaches may pick different pairs.
+    precondition: "def valid(nums, target):\n    pairs = [(i, j) for i in range(len(nums)) for j in range(i + 1, len(nums)) if nums[i] + nums[j] == target]\n    return len(pairs) == 1\n",
     approaches: [
       { id: "brute-force", name: "Brute force", solution: "two_sum_brute", entry: "two_sum", spec: specs.twoSumBrute },
       { id: "hash-map", name: "Hash map", solution: "two_sum_hash", entry: "two_sum", spec: specs.twoSumHash },
@@ -74,7 +83,7 @@ export const PROBLEMS: Problem[] = [
     summary: "Decide whether every bracket in a string is closed by the right kind, in the right order.",
     example: [v("{[()]}()")],
     exampleLabel: "s = \"{[()]}()\"",
-    inputs: [{ name: "s", type: "string", max: 16, hint: "Brackets only: ( ) [ ] { }", rule: bracketsOnly }],
+    inputs: [{ name: "s", type: "string", max: 16, hint: "Brackets only: ( ) [ ] { }", rule: "brackets-only" }],
     approaches: [
       { id: "delete-pairs", name: "Delete pairs", solution: "valid_parentheses_delete", entry: "is_valid", spec: specs.validParenthesesDelete },
       { id: "stack", name: "Stack", solution: "valid_parentheses", entry: "is_valid", spec: specs.validParentheses },
@@ -91,7 +100,7 @@ export const PROBLEMS: Problem[] = [
     example: [v(Array.from({ length: 12 }, (_, i) => 2 * i + 1)), v(19)],
     exampleLabel: "nums = [1, 3, 5, …, 23], target = 19",
     inputs: [
-      { name: "nums", type: "int-list", max: 16, hint: "Sorted, no repeats", rule: sortedUnique },
+      { name: "nums", type: "int-list", max: 16, hint: "Sorted, no repeats", rule: "sorted-unique" },
       { name: "target", type: "int" },
     ],
     approaches: [
@@ -146,6 +155,9 @@ export const PROBLEMS: Problem[] = [
     lesson: maximumDepth,
   },
 ];
+
+/** Hand-written lessons, then lessons drafted with AI and promoted after review (src/content/library). */
+export const PROBLEMS: Problem[] = [...HANDWRITTEN, ...LIBRARY];
 
 export const traceFile = (problem: Problem, approach: Approach) => `${problem.slug}--${approach.id}.json`;
 export const growthFile = (problem: Problem) => `${problem.slug}--growth.json`;

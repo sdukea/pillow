@@ -55,7 +55,7 @@ for (const problem of PROBLEMS) {
   if (!problem.lesson) continue;
   let measured: Measured;
   try {
-    measured = measureLesson(problem, sourceOf, (request) => runTracer(request.source, request.entry, request.args, { countOnly: request.countOnly, maxSteps: request.maxSteps }));
+    measured = await measureLesson(problem, sourceOf, (request) => runTracer(request.source, request.entry, request.args, { countOnly: request.countOnly, maxSteps: request.maxSteps }));
   } catch (e) {
     console.error(`✗ ${problem.slug} growth: ${(e as Error).message}`);
     failures++;

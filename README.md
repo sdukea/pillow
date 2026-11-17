@@ -34,21 +34,25 @@ reference solution ──► tracer (Python sys.settrace) ──► trace: every
   run in a Web Worker on the learner's device, with a step limit and a
   timeout. Only the learner's *input* reaches Python, never code. It's
   parsed strictly and checked against per-problem limits.
-- AI helps draft lessons offline. Every draft is checked by tests,
-  differential testing and measured complexity, then reviewed by a person,
-  before a learner sees it.
+- AI drafts lessons offline, never live. Every draft runs in a sandbox
+  through five deterministic checks: the brief's human-written examples,
+  differential testing on random inputs, narration on every step, and line
+  coverage plus measured complexity. Then a named person reviews it before
+  a learner sees it. See [docs/authoring.md](docs/authoring.md).
 
 The full reasoning is in [docs/ASSESSMENT.md](docs/ASSESSMENT.md) and
 [docs/adr/](docs/adr/).
 
 ## Status
 
-**M0–M5 are done.** All six MVP problems are complete lessons: understand
+**M0–M6 are done.** All six MVP problems are complete lessons: understand
 the problem, a first approach, the better approach and why it works, a note
 for every line, and time and memory measured from real runs. Every
 approach can also run on your own input, or a one-click edge case, traced
 live by real Python in your browser. Each push to `main` is tested
-(unit and end-to-end) and deployed to GitHub Pages.
+(unit and end-to-end) and deployed to GitHub Pages. New problems can be
+drafted with Claude behind the validation pipeline, and published only
+after review.
 
 | Milestone | Status |
 |---|---|
@@ -58,7 +62,8 @@ live by real Python in your browser. Each push to `main` is tested
 | M3 Teaching layer: four-chapter lessons, line notes, measured complexity, lesson validation (Two Sum, Reverse Linked List) | **Done** |
 | M4 Full lessons for Valid Parentheses, Binary Search, Longest Substring and Maximum Depth, each with a first approach; measured memory charts | **Done** |
 | M5 Live custom input (Pyodide in a worker), input validation, end-to-end tests, GitHub Pages deploy | **Done** |
-| M6 AI-assisted content pipeline | Next |
+| M6 AI drafting pipeline: briefs, a sandbox for untrusted Python, five deterministic checks, a repair loop, review and promotion | **Done** |
+| M7 Grow the library: the first AI-drafted lessons, reviewed (needs an API key) | Next |
 
 **MVP problems:** Two Sum, Valid Parentheses, Binary Search, Longest
 Substring Without Repeating Characters, Reverse Linked List, and Maximum
@@ -91,6 +96,13 @@ npx playwright install chromium
 npm run e2e
 ```
 
+Draft a new lesson (needs an Anthropic API key and Node 25+; see
+[docs/authoring.md](docs/authoring.md)):
+
+```bash
+npm run draft -- contains-duplicate
+```
+
 Trace any solution from the command line:
 
 ```bash
@@ -117,6 +129,10 @@ npm run -s trace < request.json
 | `src/lib/live.ts`, `src/lib/python.worker.ts` | Live tracing: the lazily started Pyodide worker, timeouts and restarts |
 | `src/content/inputs.ts` | Custom-input fields, strict parsing, limits and labels |
 | `e2e/` | Playwright end-to-end tests |
+| `pipeline/` | AI drafting: schemas, prompts, the drafting loop, and the five checks |
+| `engine/sandbox/` | Runs untrusted Python (AI drafts) isolated: Node permissions, an empty environment, Pyodide, timeouts |
+| `content/briefs/` | Human-written briefs for new problems |
+| `src/content/library/` | Promoted lessons (drafted with AI, reviewed), loaded alongside the hand-written ones |
 | `.github/workflows/deploy.yml` | Test, then deploy to GitHub Pages |
 | `src/home/` | Home: search, recently explored, problems by pattern |
 | `scripts/build-traces.ts` | Precomputes and validates the trace for every example (runs before `dev` and `build`) |

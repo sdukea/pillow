@@ -16,8 +16,8 @@ export interface InputField {
   min?: number;
   /** A short hint under the field, e.g. "Sorted, no repeats". */
   hint?: string;
-  /** An extra rule. Returns a plain-language problem, or null if the value is fine. */
-  rule?: (value: unknown) => string | null;
+  /** An extra rule, by name (see RULES), so problems can be written as plain JSON. */
+  rule?: RuleName;
 }
 
 export const LIMIT = 9999;
@@ -30,7 +30,7 @@ export function parseInputs(fields: InputField[], texts: string[]): Parsed {
   for (const [i, f] of fields.entries()) {
     const r = parseField(f, texts[i] ?? "");
     if (typeof r === "string") return { ok: false, field: f.name, message: r };
-    const rule = f.rule?.(argValue(r));
+    const rule = f.rule ? RULES[f.rule](argValue(r)) : null;
     if (rule) return { ok: false, field: f.name, message: rule };
     args.push(r);
   }
@@ -151,7 +151,7 @@ export function labelOf(fields: InputField[], args: Arg[]): string {
 
 // ------------------------------------------------------------------ shared rules
 
-export const sortedUnique = (v: unknown) => {
+const sortedUnique = (v: unknown) => {
   const xs = v as number[];
   for (let i = 1; i < xs.length; i++) {
     if (xs[i] <= xs[i - 1]) return xs[i] === xs[i - 1] ? `${xs[i]} appears twice. Binary search here expects no repeats.` : `The list must be sorted: ${xs[i - 1]} comes before ${xs[i]}.`;
@@ -159,7 +159,14 @@ export const sortedUnique = (v: unknown) => {
   return null;
 };
 
-export const bracketsOnly = (v: unknown) => {
+const bracketsOnly = (v: unknown) => {
   const bad = [...String(v)].find((c) => !"()[]{}".includes(c));
   return bad === undefined ? null : `Use only the six bracket characters ( ) [ ] { }. “${bad}” isn’t one.`;
 };
+
+/** Extra input rules. Each returns a plain-language problem, or null if the value is fine. */
+export const RULES = {
+  "sorted-unique": sortedUnique,
+  "brackets-only": bracketsOnly,
+} satisfies Record<string, (value: unknown) => string | null>;
+export type RuleName = keyof typeof RULES;

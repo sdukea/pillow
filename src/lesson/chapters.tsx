@@ -42,6 +42,11 @@ export function Understand({ problem, onNext }: { problem: Problem; onNext: () =
       </section>
       {u.check && <CheckCard check={u.check} />}
       <button type="button" className="next-chapter" onClick={onNext}>Start with {first.name.toLowerCase()} →</button>
+      {problem.provenance && (
+        <p className="provenance">
+          Drafted with AI ({problem.provenance.model}), then checked against real runs of every line and reviewed by {problem.provenance.reviewer} on {problem.provenance.reviewedOn}.
+        </p>
+      )}
     </article>
   );
 }

@@ -4,9 +4,9 @@ import { describe, expect, it } from "vitest";
 import { validateSpec } from "../../engine/interpreter/validate";
 import { prepare } from "../../engine/interpreter/viewmodel";
 import { fixtureSource, traceCPython } from "../../engine/testing/trace";
-import type { Arg } from "../../engine/tracer/types";
+import { generateInput, rng } from "./generate";
 import { labelOf, parseInputs, toText } from "./inputs";
-import { PROBLEMS, type Problem } from "./problems";
+import { PROBLEMS } from "./problems";
 
 const problem = (slug: string) => PROBLEMS.find((p) => p.slug === slug)!;
 const parse = (slug: string, ...texts: string[]) => parseInputs(problem(slug).inputs, texts);
@@ -65,60 +65,12 @@ describe("parsing", () => {
 });
 
 // ------------------------------------------------------------------ generated inputs
-// A seeded generator, so failures reproduce.
-function rng(seed: number) {
-  return () => ((seed = (seed * 1103515245 + 12345) % 2 ** 31) / 2 ** 31);
-}
-
-function generate(p: Problem, r: () => number): Arg[] {
-  const int = (lo: number, hi: number) => lo + Math.floor(r() * (hi - lo + 1));
-  return p.inputs.map((f): Arg => {
-    const max = f.max ?? 1;
-    const n = int(f.min ?? 0, max);
-    switch (f.type) {
-      case "int": return { kind: "value", value: int(-20, 40) };
-      case "int-list": {
-        if (f.rule) { // sorted, unique
-          const s = new Set<number>(); while (s.size < n) s.add(int(-30, 30));
-          return { kind: "value", value: [...s].sort((a, b) => a - b) };
-        }
-        return { kind: "value", value: Array.from({ length: n }, () => int(-10, 20)) };
-      }
-      case "linked-list": return { kind: "linked_list", values: Array.from({ length: n }, () => int(0, 99)) };
-      case "string": {
-        const alphabet = f.rule ? "()[]{}" : "abcab cd";
-        // Bracket strings: half the time, a valid one, so the "everything matched" path runs too.
-        if (f.rule && r() < 0.5) {
-          let s = ""; const open: string[] = [];
-          while (s.length + open.length < n) {
-            if (open.length && r() < 0.5) s += { "(": ")", "[": "]", "{": "}" }[open.pop()!];
-            else { const c = "([{"[int(0, 2)]; open.push(c); s += c; }
-          }
-          return { kind: "value", value: s + open.reverse().map((c) => ({ "(": ")", "[": "]", "{": "}" })[c]).join("") };
-        }
-        return { kind: "value", value: Array.from({ length: n }, () => alphabet[int(0, alphabet.length - 1)]).join("") };
-      }
-      case "tree": {
-        const values: (number | null)[] = [];
-        let slots = 1, nodes = 0;
-        while (slots > 0 && nodes < n) {
-          const isNode = values.length === 0 || r() < 0.7;
-          values.push(isNode ? int(1, 99) : null);
-          slots--; if (isNode) { slots += 2; nodes++; }
-        }
-        while (values.length && values.at(-1) === null) values.pop();
-        return { kind: "tree", values };
-      }
-    }
-  });
-}
-
 describe("every approach works on generated inputs", () => {
   for (const p of PROBLEMS) {
     it(`${p.title}: 8 random valid inputs trace, narrate and draw on every step`, () => {
       const r = rng(p.slug.length * 7919);
       for (let k = 0; k < 8; k++) {
-        const args = generate(p, r);
+        const args = generateInput(p.inputs, r);
         // Generated inputs must themselves pass the input rules.
         expect(parseInputs(p.inputs, p.inputs.map((f, i) => toText(f, args[i]))).ok, JSON.stringify(args)).toBe(true);
         for (const a of p.approaches) {

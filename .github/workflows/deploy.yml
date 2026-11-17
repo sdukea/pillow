@@ -23,7 +23,8 @@ jobs:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
         with:
-          node-version: 22
+          # 26: the AI-draft sandbox needs Node's network permission (25+); its tests run here.
+          node-version: 26
           cache: npm
       # Build-time traces come from CPython; it must match the Python inside Pyodide (3.14),
       # which the parity tests check byte for byte.

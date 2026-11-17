@@ -4,8 +4,8 @@ import { defineConfig, devices } from "@playwright/test";
 // GitHub Pages, so what's tested is what's deployed.
 const BASE = "/pillow/";
 const PORT = 4173;
-// Locally, use the installed Google Chrome; CI installs Playwright's own Chromium.
-const channel = process.env.CI ? undefined : "chrome";
+// Use the installed Google Chrome (GitHub's runners have it), not a separate browser download.
+const channel = "chrome";
 
 export default defineConfig({
   testDir: "e2e",

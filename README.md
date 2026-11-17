@@ -86,11 +86,8 @@ npm test
 npm run dev
 ```
 
-End-to-end tests (production build, served at `/pillow/` as on Pages):
-
-```bash
-npx playwright install chromium
-```
+End-to-end tests (production build, served at `/pillow/` as on Pages; uses
+your installed Google Chrome):
 
 ```bash
 npm run e2e

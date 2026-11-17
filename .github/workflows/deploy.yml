@@ -37,19 +37,9 @@ jobs:
       - run: npm run -s traces
       - run: npm run -s typecheck
       - run: npm test
-      # The browser download can stall; cache it, bound each try, and retry once.
-      - uses: actions/cache@v4
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
-      - name: Install Playwright's Chromium
-        timeout-minutes: 12
-        run: |
-          for try in 1 2; do
-            timeout 300 npx playwright install --with-deps chromium && exit 0
-            echo "Install attempt $try failed or stalled; retrying."
-          done
-          exit 1
+      # End-to-end tests use the Google Chrome preinstalled on GitHub's runners: Playwright's own
+      # browser download stalled repeatedly on CI.
+      - run: google-chrome --version
       - run: npm run -s e2e
         timeout-minutes: 10
       - uses: actions/upload-artifact@v5

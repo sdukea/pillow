@@ -33,6 +33,7 @@ export const longestSubstring: Lesson = {
 
   approaches: {
     "every-substring": {
+      concepts: ["strings", "nested-loops", "hash-set"],
       headline: "Try every starting point",
       intuition: "From every starting position, extend a substring one character at a time, remembering the characters in it. Stop as soon as one repeats. The longest run you managed is the answer.",
       discovery: "It’s how you’d check by hand: start at the first letter and go as far as you can, then start at the second letter and do it again.",
@@ -70,6 +71,7 @@ export const longestSubstring: Lesson = {
     },
 
     "sliding-window": {
+      concepts: ["sliding-window", "two-pointers", "hash-map", "invariant"],
       headline: "Slide a window forward",
       intuition: "Keep a window of characters with no repeats. Grow it on the right one character at a time. When the new character is already inside, move the window’s left edge just past its earlier copy. The window never moves backwards.",
       discovery: "Look at what the first approach throws away when it hits a repeat. Everything between the earlier copy of the character and the new one was fine, and it re-reads all of it.",

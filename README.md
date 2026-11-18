@@ -2,18 +2,22 @@
 
 *Paste any LeetCode problem. Watch how to solve it.*
 
-Type a problem (its name, its number or its link). Then five steps, one
-picture and one sentence each:
+Type a problem (its name, its number or its link). Pillow teaches it in five
+steps, and it asks before it tells:
 
 1. **The problem**, drawn.
-2. **The slow way**, running for real.
+2. **The slow way**, running for real. It pauses for you to predict the next
+   move, then asks how the work grows.
 3. **The trick**, in one sentence.
-4. **The fast way**, on the same input, with the difference made concrete.
+4. **The fast way**, on the same input, with the same two questions.
 5. **Your note**: the trick and how to spot it next time.
 
-Notes wait on Home with the trick hidden, so you recall it instead of
-rereading it. If you want more, you can play with the input and race both
-solutions, or read the full line-by-line lesson.
+Every answer is evidence. **Your map** shows 26 concepts, from arrays to
+recursion on trees, each coloured by what you've actually shown: seen,
+learning, shaky or understood. Tap one to see why. Watching never counts
+as understanding: that needs right answers that last (in a later session)
+or transfer (to another problem). Home always tells you the one thing to
+do next.
 
 **Try it:** [sdukea.github.io/pillow](https://sdukea.github.io/pillow/)
 
@@ -59,7 +63,7 @@ The full reasoning is in [docs/ASSESSMENT.md](docs/ASSESSMENT.md) and
 
 ## Status
 
-**M0–M7 are done.** All six MVP problems are complete lessons: understand
+**M0–M8 are done.** All six MVP problems are complete lessons: understand
 the problem, a first approach, the better approach and why it works, a note
 for every line, and time and memory measured from real runs. Every
 approach can also run on your own input, or a one-click edge case, traced
@@ -80,7 +84,8 @@ after review.
 | M7 Pillow: search-first home with a shelf; Explain for problems not built in (identify → draft → check → run → cache, streamed live) | **Done** |
 | M7.1 The playground: edit the input by touch, race both solutions live, drag time and size ([ADR 0009](docs/adr/0009-playground.md)) | **Done** |
 | M7.2 One idea, then a note: five-step learn screen, a hand-written card per lesson, Notes with recall ([ADR 0010](docs/adr/0010-one-idea.md)) | **Done** |
-| M8 Host the API server and grow the library (needs an Anthropic API key and a host) | Next |
+| M8 Evidence: concept ontology, graded tasks generated from traces, evidence log, explainable student model, knowledge map, recommendations ([ADR 0011](docs/adr/0011-evidence-and-the-student-model.md)) | **Done** |
+| M9 Reasoning: derive solutions through Socratic questions, misconception-tagged answers, hints; then independent solving, interview mode, accounts (see [docs/PROJECT.md](docs/PROJECT.md)) | Next |
 
 **MVP problems:** Two Sum, Valid Parentheses, Binary Search, Longest
 Substring Without Repeating Characters, Reverse Linked List, and Maximum
@@ -150,6 +155,9 @@ npm run -s trace < request.json
 | `src/learn/` | The learn screen: problem, slow way, trick, fast way, note |
 | `src/play/` | The playground (behind "Play with it"): the touchable input editor, live traces, racing lanes, the size slider |
 | `src/lib/notes.ts` | Notes: the trick and how to spot it, per problem, with recall |
+| `src/knowledge/` | Concepts, the evidence log, the student model, generated questions, recommendations |
+| `src/map/` | The knowledge map |
+| `docs/PROJECT.md` | The living project document: vision, architecture, status, next priorities |
 | `src/explain/`, `src/lib/remote.ts` | Explaining a problem that isn't built in, streamed from the API server |
 | `server/` | The API server: identify → draft → check → run → cache (`npm run server`) |
 | `src/workspace/` | The full lesson: stage, narration, controls, code pane, the input bar |

@@ -2,18 +2,28 @@ import { useEffect, useId, useRef, useState } from "react";
 import { PROBLEMS, type Problem } from "../content/problems";
 import { matchProblems } from "../lib/match";
 import { markRecalled, migrateOld, type Note, removeNote, useNotes } from "../lib/notes";
+import { record, useEvidence } from "../knowledge/evidence";
+import { assess, summarize } from "../knowledge/model";
+import { recallFor } from "../knowledge/questions";
+import { recommend } from "../knowledge/recommend";
 
 interface Props {
   onOpen: (slug: string) => void;
   onExplain: (query: string) => void;
+  onMap: () => void;
 }
 
-export function Home({ onOpen, onExplain }: Props) {
+export function Home({ onOpen, onExplain, onMap }: Props) {
   const [query, setQuery] = useState("");
   const [active, setActive] = useState(0);
   const input = useRef<HTMLInputElement>(null);
   const listId = useId();
   const notes = useNotes();
+  const log = useEvidence();
+  const states = assess(log);
+  const counts = summarize(states);
+  const next = recommend(PROBLEMS, states)[0];
+  const started = log.length > 0;
 
   useEffect(() => { document.title = "Pillow"; migrateOld(PROBLEMS); input.current?.focus(); }, []);
 
@@ -85,11 +95,27 @@ export function Home({ onOpen, onExplain }: Props) {
         )}
       </form>
 
+      {next && (
+        <section className="home-next" aria-label="What to do next">
+          <button type="button" className="next-row" onClick={() => onOpen(next.problem.slug)}>
+            <span className="next-kind">{next.kind === "fix" ? "Fix" : next.kind === "review" ? "Review" : started ? "Next" : "Start here"}</span>
+            <span className="next-title">{next.problem.title}</span>
+            <span className="next-why">{next.reason}</span>
+          </button>
+          {started && (
+            <button type="button" className="map-link" onClick={onMap}>
+              <span>Your map</span>
+              <span className="muted">{counts.understood} understood · {counts.learning} learning{counts.shaky ? ` · ${counts.shaky} shaky` : ""}{counts.due ? ` · ${counts.due} to review` : ""}</span>
+            </button>
+          )}
+        </section>
+      )}
+
       {notes.length > 0 ? (
         <section className="notes" aria-labelledby="notes-title">
           <h2 id="notes-title">Notes</h2>
           <ul className="note-list">
-            {notes.map((n) => <NoteRow key={n.slug} note={n} onOpen={() => onOpen(n.slug)} />)}
+            {notes.map((n, i) => <NoteRow key={n.slug} note={n} seed={i + log.length} onOpen={() => onOpen(n.slug)} />)}
           </ul>
         </section>
       ) : (
@@ -107,9 +133,26 @@ export function Home({ onOpen, onExplain }: Props) {
   );
 }
 
-/** A note hides its trick until you try to remember it: recall, not rereading, is what sticks. */
-function NoteRow({ note, onOpen }: { note: Note; onOpen: () => void }) {
-  const [shown, setShown] = useState(false);
+/**
+ * A note hides its trick until you try to remember it: pick the right trick from three. That's
+ * recall, not rereading, and it's evidence: a right pick strengthens the concepts behind the trick,
+ * a wrong one marks them shaky.
+ */
+function NoteRow({ note, seed, onOpen }: { note: Note; seed: number; onOpen: () => void }) {
+  const problem = PROBLEMS.find((p) => p.slug === note.slug);
+  // Frozen when asked: recording the answer changes the log, and the choices must not reshuffle
+  // under the student's finger.
+  const [question, setQuestion] = useState<ReturnType<typeof recallFor>>(null);
+  const [asking, setAsking] = useState(false);
+  const [picked, setPicked] = useState<number | null>(null);
+  const shown = picked !== null || (asking && !question);
+  const pick = (i: number) => {
+    if (!question || !problem) return;
+    setPicked(i);
+    markRecalled(note.slug);
+    const fast = problem.approaches.at(-1)!;
+    record({ task: "recall", problem: problem.slug, approach: fast.id, concepts: problem.lesson!.approaches[fast.id].concepts, correct: question.choices[i].correct, detail: "recalled the trick" });
+  };
   return (
     <li className={`note-row ${shown ? "shown" : ""}`}>
       <div className="note-head">
@@ -118,12 +161,17 @@ function NoteRow({ note, onOpen }: { note: Note; onOpen: () => void }) {
           <svg viewBox="0 0 20 20" width="14" height="14" aria-hidden="true"><path d="M5 5l10 10M15 5 5 15" /></svg>
         </button>
       </div>
-      {shown ? (
-        <p className="note-body"><span className="note-trick">{note.trick}</span><span className="note-spot">{note.recognize}</span></p>
+      {!asking && picked === null ? (
+        <button type="button" className="recall" onClick={() => { setQuestion(problem ? recallFor(problem, PROBLEMS, seed) : null); setAsking(true); }}>What’s the trick? <span>Recall it</span></button>
+      ) : question && picked === null ? (
+        <div className="recall-choices" role="group" aria-label={question.prompt}>
+          {question.choices.map((c, i) => <button key={c.label} type="button" className="choice" onClick={() => pick(i)}>{c.label}</button>)}
+        </div>
       ) : (
-        <button type="button" className="recall" onClick={() => { setShown(true); markRecalled(note.slug); }}>
-          What’s the trick? <span>Think, then tap</span>
-        </button>
+        <p className="note-body">
+          {question && picked !== null && <span className={`ask-verdict ${question.choices[picked].correct ? "right" : "wrong"}`}>{question.choices[picked].correct ? "Right." : "Not quite. It’s:"}</span>}
+          <span className="note-trick">{note.trick}</span><span className="note-spot">{note.recognize}</span>
+        </p>
       )}
     </li>
   );

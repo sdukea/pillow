@@ -7,10 +7,16 @@ import type { Problem } from "../content/problems";
 export const BEAT = 900;
 const OPEN = 4, CLOSE = 2, MIDDLE = 4_000;
 
+/** Playback speed. Always 1 for people; the end-to-end tests raise it so runs don't take minutes. */
+const SPEED = (() => {
+  try { return Math.max(1, Number(localStorage.getItem("pillow.speed")) || 1); } catch { return 1; }
+})();
+
 export function pacing(steps: number): number[] {
-  if (steps <= OPEN + CLOSE + 3) return Array(steps).fill(BEAT);
-  const fast = Math.max(40, Math.min(BEAT, MIDDLE / (steps - OPEN - CLOSE)));
-  return Array.from({ length: steps }, (_, i) => (i < OPEN || i >= steps - CLOSE ? BEAT : fast));
+  const beat = BEAT / SPEED;
+  if (steps <= OPEN + CLOSE + 3) return Array(steps).fill(beat);
+  const fast = Math.max(40 / SPEED, Math.min(beat, MIDDLE / SPEED / (steps - OPEN - CLOSE)));
+  return Array.from({ length: steps }, (_, i) => (i < OPEN || i >= steps - CLOSE ? beat : fast));
 }
 
 /** Which step is on screen after `ms` of playing. */

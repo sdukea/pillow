@@ -19,6 +19,7 @@ export function problemToDraft(problem: Problem, sourceOf: (solution: string) =>
     return {
       id: a.id,
       name: a.name,
+      concepts: al.concepts,
       solution: sourceOf(a.solution).trimEnd() + "\n",
       spec: {
         views: a.spec.views,

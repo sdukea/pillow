@@ -549,3 +549,80 @@ svg .solid { fill: currentColor; stroke: none; }
 .note-body .note-trick { font-size: 17px; font-weight: 600; line-height: 1.35; letter-spacing: 0; }
 .note-body .note-spot { font-size: 14px; }
 .caption-live { display: block; margin-top: 14px; font-size: 15px; color: var(--muted); min-height: 1.4em; padding-right: 32px; }
+/* ------------------------------------------------------------------ questions in the learn flow */
+.stage-card.run.asking { box-shadow: inset 0 0 0 2px var(--accent); cursor: default; }
+.ask-card { display: grid; gap: 14px; animation: rise 0.35s var(--ease) both; }
+.ask-prompt { font-size: clamp(20px, 2.8vw, 24px); font-weight: 600; letter-spacing: -0.01em; }
+.ask-prompt code { font-family: var(--mono); font-size: 0.9em; background: var(--surface-2); padding: 1px 7px; border-radius: 7px; }
+.ask-choices { display: flex; flex-wrap: wrap; gap: 10px; }
+.choice { min-height: 48px; padding: 10px 18px; border: 0; border-radius: 14px; background: var(--surface); color: var(--text); font-size: 16px; font-weight: 500; text-align: left; box-shadow: inset 0 0 0 1.5px var(--hair); transition: box-shadow 0.2s var(--ease), background-color 0.2s var(--ease), opacity 0.2s var(--ease); }
+.choice:hover:not(:disabled) { box-shadow: inset 0 0 0 2px var(--accent); }
+.choice:disabled { cursor: default; }
+.choice.right { background: var(--add-soft); box-shadow: inset 0 0 0 2px var(--add); }
+.choice.wrong { background: rgba(255, 69, 58, 0.14); box-shadow: inset 0 0 0 2px var(--del); }
+.choice.dim { opacity: 0.45; }
+.ask-verdict { font-size: 15px; font-weight: 600; }
+.ask-verdict.right { color: var(--add); }
+.ask-verdict.wrong { color: var(--del); }
+.btn-filled:disabled { background: var(--surface-2); color: var(--muted); cursor: default; transform: none; opacity: 1; }
+/* ------------------------------------------------------------------ next step and the map */
+.home-next { display: grid; gap: 10px; }
+.next-row { display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto auto; column-gap: 14px; row-gap: 2px; align-items: baseline; text-align: left; border: 0; border-radius: 18px; background: var(--surface); padding: 16px 20px; color: var(--text); }
+.next-row:hover { box-shadow: inset 0 0 0 2px var(--accent-soft); }
+.next-kind { grid-row: 1 / 3; align-self: center; font-size: 13px; font-weight: 600; color: var(--accent-ink); background: var(--accent-soft); padding: 5px 11px; border-radius: 999px; }
+.next-title { font-size: 19px; font-weight: 700; letter-spacing: -0.01em; }
+.next-why { font-size: 14px; color: var(--muted); }
+.map-link { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; text-align: left; border: 0; background: none; padding: 6px 4px; font-size: 15px; color: var(--accent-ink); font-weight: 600; }
+.map-link .muted { font-weight: 400; }
+.recall-choices { display: grid; gap: 8px; animation: rise 0.3s var(--ease) both; }
+.recall-choices .choice { font-size: 15px; }
+
+.kmap { max-width: 1180px; margin: 0 auto; padding: max(12px, env(safe-area-inset-top)) 16px 64px; display: flex; flex-direction: column; gap: 18px; }
+.map-top { display: flex; align-items: center; gap: 14px; }
+.map-top h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; }
+.map-sub { font-size: 15px; color: var(--muted); }
+.map-legend { display: flex; flex-wrap: wrap; gap: 16px; font-size: 13px; color: var(--muted); }
+.map-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.dot { width: 10px; height: 10px; border-radius: 999px; display: inline-block; border: 1.5px solid var(--faint); }
+.dot.understood { background: var(--add); border-color: var(--add); }
+.dot.learning { background: var(--chg); border-color: var(--chg); }
+.dot.shaky { background: transparent; border-color: var(--del); border-width: 2.5px; }
+.dot.seen { background: var(--faint); border-color: var(--faint); }
+.map-scroll { overflow-x: auto; background: var(--surface); border-radius: 22px; }
+.map-graph { display: block; }
+.map-edge { fill: none; stroke: var(--hair); stroke-width: 1.5; }
+.map-edge.lit { stroke: var(--accent); }
+.map-node { cursor: pointer; }
+.map-node circle { fill: transparent; stroke: var(--faint); stroke-width: 1.5; transition: fill 0.3s var(--ease), stroke 0.3s var(--ease); }
+.map-node text { font-size: 13.5px; fill: var(--muted); }
+.map-node.seen circle { fill: var(--faint); }
+.map-node.learning circle { fill: var(--chg); stroke: var(--chg); }
+.map-node.shaky circle { stroke: var(--del); stroke-width: 3; }
+.map-node.understood circle { fill: var(--add); stroke: var(--add); }
+.map-node.due circle { stroke: var(--text); stroke-width: 2.5; }
+.map-node:not(.unseen) text { fill: var(--text); }
+.map-node.selected text { font-weight: 700; }
+.map-node.selected circle { stroke: var(--accent); stroke-width: 3; }
+.map-node:focus-visible { outline: none; }
+.map-node:focus-visible circle { stroke: var(--accent); stroke-width: 3; }
+.map-next { display: grid; gap: 10px; }
+.map-hint { font-size: 14px; color: var(--muted); }
+.concept { background: var(--surface); border-radius: 22px; padding: 22px 24px; display: grid; gap: 10px; animation: rise 0.3s var(--ease) both; }
+.concept h2 { font-size: 24px; font-weight: 700; letter-spacing: -0.015em; }
+.concept-state { font-size: 13px; font-weight: 600; }
+.concept-state.understood { color: var(--add); }
+.concept-state.learning { color: var(--chg); }
+.concept-state.shaky { color: var(--del); }
+.concept-state.seen, .concept-state.unseen { color: var(--muted); }
+.concept-means { font-size: 17px; }
+.concept-why { font-size: 15px; color: var(--muted); }
+.evidence { list-style: none; margin: 4px 0; padding: 0; display: grid; gap: 6px; }
+.evidence li { display: grid; grid-template-columns: 20px 1fr auto; gap: 8px; align-items: baseline; font-size: 14px; }
+.ev-mark { font-weight: 700; text-align: center; }
+.ev-mark.right { color: var(--add); }
+.ev-mark.wrong { color: var(--del); }
+.ev-mark.seen { color: var(--faint); }
+.ev-where { color: var(--muted); font-size: 13px; white-space: nowrap; }
+.concept-requires { font-size: 14px; color: var(--muted); }
+.concept-practice { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+.concept-practice .btn-gray { font-size: 15px; min-height: 40px; padding: 8px 16px; }

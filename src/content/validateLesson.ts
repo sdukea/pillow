@@ -3,6 +3,7 @@
 // claims matches what was measured.
 
 import { classify, type GrowthClass } from "../../engine/analysis/growth";
+import { conceptById } from "../knowledge/concepts";
 import type { Problem } from "./problems";
 
 export interface Measured {
@@ -36,6 +37,8 @@ export function validateLesson(problem: Problem, measured: Measured): string[] {
     if (!al) { out.push(`${approach.name}: no lesson content`); continue; }
     const m = measured.approaches[approach.id];
     checkOf(approach.name, al.check);
+    if (!al.concepts?.length) out.push(`${approach.name}: tag at least one concept`);
+    for (const c of al.concepts ?? []) if (!conceptById.has(c)) out.push(`${approach.name}: unknown concept "${c}"`);
 
     // Every line that ran in any measurement needs a note and narration.
     for (const line of m.lines) {

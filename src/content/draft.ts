@@ -13,6 +13,7 @@
 import type { GrowthClass } from "../../engine/analysis/growth";
 import type { LineTag, ViewSpec, VizSpec } from "../../engine/interpreter/spec";
 import type { Arg } from "../../engine/tracer/types";
+import type { ConceptId } from "../knowledge/concepts";
 import type { InputField } from "./inputs";
 import type { Check, Lesson, LineNote } from "./lesson";
 import type { Pattern, Problem, Provenance } from "./problems";
@@ -42,6 +43,8 @@ export interface DraftApproach {
   /** kebab-case, e.g. "brute-force". */
   id: string;
   name: string;
+  /** Concept ids this approach exercises. */
+  concepts: ConceptId[];
   /** Python source defining the brief's entry function. */
   solution: string;
   spec: {
@@ -131,6 +134,7 @@ export function toProblem(brief: Brief, draft: Draft, growthInputs: Record<strin
     card: draft.card,
     understand: draft.understand,
     approaches: Object.fromEntries(draft.approaches.map((a) => [a.id, {
+      concepts: a.concepts,
       headline: a.headline,
       intuition: a.intuition,
       discovery: a.discovery,

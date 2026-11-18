@@ -6,6 +6,7 @@
 import { z } from "zod";
 import type { Brief, Draft } from "../src/content/draft";
 import { PATTERNS } from "../src/content/problems";
+import { CONCEPTS, type ConceptId } from "../src/knowledge/concepts";
 
 const text = z.string();
 const GROWTH = ["1", "log n", "n", "n log n", "n²"] as const;
@@ -41,6 +42,7 @@ const View = z.discriminatedUnion("kind", [
 const Approach = z.object({
   id: text.describe("kebab-case, e.g. \"brute-force\"."),
   name: text.describe("Short switcher label, e.g. \"Brute force\"."),
+  concepts: z.array(z.enum(CONCEPTS.map((c) => c.id) as [ConceptId, ...ConceptId[]])).describe("The concepts this approach exercises."),
   solution: text.describe("Python source defining the brief's entry function. Nothing else at top level."),
   spec: z.object({
     views: z.array(View),

@@ -2,6 +2,11 @@ import { expect, type Page, test } from "@playwright/test";
 import { chaptersOf } from "../src/workspace/chapters";
 import { PROBLEMS } from "../src/content/problems";
 
+// Runs play at reading speed for people; here they play 10× faster so the suite stays quick.
+test.beforeEach(async ({ page }) => {
+  await page.addInitScript(() => { try { localStorage.setItem("pillow.speed", "10"); } catch { /* not every page allows storage */ } });
+});
+
 /** Fail the test on any uncaught error or console error. */
 function watchErrors(page: Page) {
   const errors: string[] = [];
@@ -10,7 +15,25 @@ function watchErrors(page: Page) {
   return errors;
 }
 
-test("search → problem → slow way → trick → fast way → note, one step at a time @phone", async ({ page }) => {
+/** Answer whatever question is on screen with its first choice; returns the question text. */
+async function answerFirst(page: Page) {
+  const card = page.locator(".ask-card");
+  await expect(card).toBeVisible({ timeout: 40_000 });
+  const prompt = await card.locator(".ask-prompt").innerText();
+  await card.locator(".choice").first().click();
+  await expect(card.locator(".ask-verdict")).toBeVisible();
+  return prompt;
+}
+
+/** Play a run beat to the end: its prediction, then its growth question. */
+async function finishRun(page: Page) {
+  await answerFirst(page); // the prediction
+  await expect(page.getByText("If the input were twice as long", { exact: false })).toBeVisible({ timeout: 40_000 });
+  await page.locator(".ask-card .choice").first().click();
+  await expect(page.locator(".learn-next .next")).toBeEnabled();
+}
+
+test("a problem asks before it tells: predict, then say how it grows, then the note @phone", async ({ page }) => {
   const errors = watchErrors(page);
   await page.goto("./");
   const ask = page.getByRole("combobox");
@@ -19,36 +42,89 @@ test("search → problem → slow way → trick → fast way → note, one step 
   await expect(page.getByRole("option", { name: /Valid Parentheses/ })).toBeVisible();
   await ask.press("Enter");
   await expect(page).toHaveURL(/\/pillow\/p\/valid-parentheses$/);
-  // One picture, one sentence, one button per step.
   await expect(page.getByText("Decide whether every bracket", { exact: false })).toBeVisible();
   await page.getByRole("button", { name: "Show Me the Slow Way" }).click();
-  await expect(page.getByText("Delete matching pairs until nothing’s left.")).toBeVisible();
-  await expect(page.getByText("Every deletion restarts the scan from the beginning.")).toBeVisible({ timeout: 30_000 });
+  // The run stops to ask; moving on is locked until you answer.
+  await expect(page.locator(".ask-card")).toBeVisible({ timeout: 40_000 });
+  await expect(page.locator(".learn-next .next")).toBeDisabled();
+  await expect(page.locator(".learn-next .next")).toHaveText("Answer to Continue");
+  await finishRun(page);
+  await expect(page.getByText("Every deletion restarts the scan from the beginning.")).toBeVisible();
   await page.getByRole("button", { name: "What’s the Trick?" }).click();
   await expect(page.getByText("The last bracket opened must be the first one closed. That’s a stack.")).toBeVisible();
   await page.getByRole("button", { name: "Watch It Work" }).click();
-  await expect(page.getByText(/steps → \d+ here\. At 128 items/)).toBeVisible({ timeout: 30_000 });
+  await finishRun(page);
+  await expect(page.getByText(/steps → \d+ here\. At 128 items/)).toBeVisible();
   await page.getByRole("button", { name: "Keep the Note" }).click();
   await expect(page.getByRole("article", { name: "Your note" })).toContainText("Things that open and close in order? Use a stack.");
   await page.getByRole("button", { name: "Done" }).click();
-  // The note waits on Home, with the trick hidden until you try to recall it.
-  await expect(page.getByRole("heading", { name: "Notes" })).toBeVisible();
-  await expect(page.getByText("That’s a stack.", { exact: false })).toHaveCount(0);
-  await page.getByRole("button", { name: /What’s the trick\?/ }).click();
-  await expect(page.getByText("The last bracket opened must be the first one closed.", { exact: false })).toBeVisible();
-  await page.getByRole("button", { name: "Remove the note for Valid Parentheses" }).click();
-  await expect(page.getByText("Every problem you learn leaves a note here.")).toBeVisible();
+  // Every answer was recorded as evidence.
+  const tasks: string[] = await page.evaluate(() => JSON.parse(localStorage.getItem("pillow.evidence") ?? "[]").map((e: { task: string }) => e.task));
+  expect(tasks.filter((t) => t === "predict")).toHaveLength(2);
+  expect(tasks.filter((t) => t === "complexity")).toHaveLength(2);
+  expect(tasks.filter((t) => t === "exposure")).toHaveLength(2);
   expect(errors).toEqual([]);
 });
 
 test("every problem walks through all five steps without errors", async ({ page }) => {
+  test.setTimeout(300_000);
   const errors = watchErrors(page);
   for (const p of PROBLEMS) {
     await page.goto(`p/${p.slug}`);
-    for (let i = 0; i < 4; i++) await page.keyboard.press("ArrowRight");
+    await page.locator(".learn-next .next").click();
+    await finishRun(page);
+    await page.locator(".learn-next .next").click();
+    await page.locator(".learn-next .next").click();
+    await finishRun(page);
+    await page.locator(".learn-next .next").click();
     await expect(page.getByRole("article", { name: "Your note" })).toContainText(p.lesson!.card.trick);
   }
   expect(errors).toEqual([]);
+});
+
+test("the map changes because of what you answered, never because you watched", async ({ page }) => {
+  await page.goto("p/binary-search");
+  await page.locator(".learn-next .next").click();
+  await finishRun(page);
+  await page.goto("map");
+  await expect(page.locator(".map-node.unseen")).not.toHaveCount(26);
+  await page.getByRole("button", { name: /^Arrays: / }).click();
+  const panel = page.locator(".concept");
+  await expect(panel).toContainText("Arrays");
+  await expect(panel.locator(".evidence li").first()).toBeVisible();
+  await expect(panel).toContainText("Binary Search");
+  await expect(panel.getByRole("button", { name: /Practise with/ }).first()).toBeVisible();
+  // Nothing becomes understood in one sitting.
+  await expect(page.locator(".map-node.understood")).toHaveCount(0);
+});
+
+test("a note asks you to recall the trick, and the answer becomes evidence", async ({ page }) => {
+  await page.goto("p/two-sum");
+  await page.getByRole("button", { name: "Show Me the Slow Way" }).click();
+  await finishRun(page);
+  await page.getByRole("button", { name: "What’s the Trick?" }).click();
+  await page.getByRole("button", { name: "Watch It Work" }).click();
+  await finishRun(page);
+  await page.getByRole("button", { name: "Keep the Note" }).click();
+  await page.getByRole("button", { name: "Done" }).click();
+  await page.getByRole("button", { name: /What’s the trick\? Recall it/ }).click();
+  await page.getByRole("button", { name: "Remember each number you pass. Then ask: is my partner already here?" }).click();
+  await expect(page.locator(".note-body")).toContainText("Right.");
+  const recall: { correct: boolean }[] = await page.evaluate(() => JSON.parse(localStorage.getItem("pillow.evidence") ?? "[]").filter((e: { task: string }) => e.task === "recall"));
+  expect(recall).toHaveLength(1);
+  expect(recall[0].correct).toBe(true);
+});
+
+test("a new student is told where to start, and the next step moves on as they learn", async ({ page }) => {
+  await page.goto("./");
+  const next = page.locator(".home-next .next-row");
+  await expect(next).toContainText("Start here");
+  await next.click();
+  await page.locator(".learn-next .next").click();
+  await finishRun(page);
+  await page.goto("./");
+  await expect(page.locator(".home-next .next-row")).not.toContainText("Start here");
+  await expect(page.locator(".map-link")).toContainText("learning");
 });
 
 test("changing the input re-runs both approaches in real Python @phone", async ({ page }) => {

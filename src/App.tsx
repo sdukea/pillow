@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { PROBLEMS, type Problem } from "./content/problems";
 import { Explain } from "./explain/Explain";
 import { Learn } from "./learn/Learn";
+import { KnowledgeMap } from "./map/KnowledgeMap";
 import { Playground } from "./play/Playground";
 import { Home } from "./home/Home";
 import { loadRemote } from "./lib/remote";
@@ -14,6 +15,7 @@ import { Workspace } from "./workspace/Workspace";
 //   /p/<slug>/play         play with it: edit the input, race both solutions
 //   /p/<slug>/lesson       the full lesson, chapter by chapter (?chapter=)
 //   /explain?q=…           a problem that isn't in the library yet
+//   /map                   your knowledge map, from the evidence of what you've answered
 export function App() {
   const [route, go] = useRoute();
   const m = route.path.match(/^\/p\/([\w-]+)(\/lesson|\/play)?\/?$/);
@@ -39,8 +41,9 @@ export function App() {
     const builtIn = PROBLEMS.find((p) => p.slug === m[1]);
     return builtIn ? show(builtIn) : <Remote key={m[1]} slug={m[1]} onHome={home} render={show} />;
   }
+  if (route.path === "/map") return <KnowledgeMap onOpen={(slug) => go(`/p/${slug}`)} onHome={home} />;
   if (route.path !== "/") return <NotFound onHome={home} message="There’s nothing at this address." />;
-  return <Home onOpen={(slug) => go(`/p/${slug}`)} onExplain={(q) => go(`/explain?q=${encodeURIComponent(q)}`)} />;
+  return <Home onOpen={(slug) => go(`/p/${slug}`)} onExplain={(q) => go(`/explain?q=${encodeURIComponent(q)}`)} onMap={() => go("/map")} />;
 }
 
 /** A problem explained live, loaded from Pillow's server, then shown like any other. */

@@ -3,6 +3,7 @@
 
 import type { GrowthClass } from "../../engine/analysis/growth";
 import type { Arg } from "../../engine/tracer/types";
+import type { ConceptId } from "../knowledge/concepts";
 
 /** An optional, ungraded question that asks the learner to commit to an idea. */
 export interface Check {
@@ -40,6 +41,8 @@ export interface Complexity {
 }
 
 export interface ApproachLesson {
+  /** The concepts this approach exercises (ids from src/knowledge/concepts.ts). */
+  concepts: ConceptId[];
   /** Chapter heading, e.g. "Check every pair". */
   headline: string;
   intuition: string;

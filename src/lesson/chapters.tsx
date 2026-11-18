@@ -192,7 +192,7 @@ export function Compare({ problem, onBack }: { problem: Problem; onBack: () => v
         <p><strong>Reach for it when: </strong><Rich text={lesson.compare.pattern.recognize} /></p>
         <p className="muted-p">Also used in {lesson.compare.pattern.alsoUsedIn.join(", ")}.</p>
       </section>
-      <button type="button" className="next-chapter secondary" onClick={onBack}>← Back to the film</button>
+      <button type="button" className="next-chapter secondary" onClick={onBack}>← Back to the playground</button>
     </article>
   );
 }

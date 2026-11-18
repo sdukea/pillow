@@ -10,7 +10,7 @@ function watchErrors(page: Page) {
   return errors;
 }
 
-test("search finds a problem and its film starts on its own @phone", async ({ page }) => {
+test("search finds a problem and its playground starts racing on its own @phone", async ({ page }) => {
   const errors = watchErrors(page);
   await page.goto("./");
   await expect(page.getByRole("heading", { name: "Pillow" })).toBeVisible();
@@ -21,43 +21,76 @@ test("search finds a problem and its film starts on its own @phone", async ({ pa
   await expect(page.getByRole("option", { name: /Explain “valid par”/ })).toBeVisible();
   await ask.press("Enter");
   await expect(page).toHaveURL(/\/pillow\/p\/valid-parentheses$/);
-  await expect(page.getByText("You get a string of brackets", { exact: false })).toBeVisible();
-  // It plays without being asked: the first scene's progress moves, then the next scene arrives.
+  // Both approaches race on the same input, without being asked.
+  await expect(page.getByRole("article", { name: "Delete pairs" })).toBeVisible();
+  await expect(page.getByRole("article", { name: "Stack" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Pause" })).toBeVisible();
-  await expect(page.getByRole("button", { name: /Scene 2/ })).toHaveAttribute("aria-current", "step", { timeout: 20_000 });
+  await expect(page.locator(".lane-count strong").first()).not.toHaveText("1", { timeout: 5_000 });
   expect(errors).toEqual([]);
 });
 
-test("a film plays every scene, ends on the shelf, and the shelf shows it @phone", async ({ page }) => {
+test("changing the input re-runs both approaches in real Python @phone", async ({ page }) => {
+  const errors = watchErrors(page);
+  await page.goto("p/two-sum");
+  const totals = page.locator(".lane-count span");
+  const before = await totals.allTextContents();
+  // Raise the 2 (index 4) to 3 with the keyboard: same as dragging it up a notch.
+  await page.getByRole("button", { name: /^Item 5: 2\./ }).press("ArrowUp");
+  await expect(page.getByRole("button", { name: /^Item 5: 3\./ })).toBeVisible();
+  await expect.poll(async () => (await totals.allTextContents()).join(), { timeout: 45_000 }).not.toBe(before.join());
+  // Undo puts it back, and the example's traces return instantly.
+  await page.getByRole("button", { name: "Undo" }).click();
+  await expect(page.getByRole("button", { name: /^Item 5: 2\./ })).toBeVisible();
+  await expect.poll(async () => (await totals.allTextContents()).join()).toBe(before.join());
+  expect(errors).toEqual([]);
+});
+
+test("a sorted input stays sorted while you play with it", async ({ page }) => {
+  await page.goto("p/binary-search");
+  const first = page.getByRole("button", { name: /^Item 1: 1\./ });
+  for (let i = 0; i < 4; i++) await page.getByRole("button", { name: /^Item 1: / }).press("ArrowUp");
+  await page.getByRole("button", { name: /^Item 2: / }).focus();
+  const values = await page.locator(".ed-cell:not(.ed-add)").allTextContents();
+  const nums = values.map(Number);
+  expect(nums).toEqual([...nums].sort((a, b) => a - b));
+  expect(new Set(nums).size).toBe(nums.length);
+  await expect(first).toHaveCount(0);
+});
+
+test("a tree grows where you tap, and both approaches re-run on it", async ({ page }) => {
+  await page.goto("p/maximum-depth-of-binary-tree");
+  const totals = page.locator(".lane-count span");
+  const before = (await totals.allTextContents()).join();
+  await page.getByRole("button", { name: "Add a node here" }).nth(2).click();
+  await expect(page.locator(".tree-ed .tnode:not(.ghost)")).toHaveCount(6);
+  await expect.poll(async () => (await totals.allTextContents()).join(), { timeout: 45_000 }).not.toBe(before);
+  // Tapping a node prunes it.
+  await page.getByRole("button", { name: /^Node 9: remove it/ }).click();
+  await expect(page.locator(".tree-ed .tnode:not(.ghost)")).toHaveCount(5);
+});
+
+test("drag time to the end: the race finishes and lands on the shelf @phone", async ({ page }) => {
   const errors = watchErrors(page);
   await page.goto("p/binary-search");
-  const scenes = page.getByRole("button", { name: /^Scene \d+/ });
-  const count = await scenes.count();
-  expect(count).toBe(8);
-  // Step through every scene with the keyboard; each one must render without errors.
-  for (let i = 1; i < count; i++) {
-    await page.keyboard.press("ArrowRight");
-    await expect(scenes.nth(i)).toHaveAttribute("aria-current", "step");
-  }
-  await expect(page.getByRole("heading", { name: "Binary search: halve the possibilities" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Explain Another" })).toBeVisible({ timeout: 20_000 });
+  const time = page.getByRole("slider", { name: /^Time/ });
+  await time.fill(await time.getAttribute("max") ?? "0");
+  await expect(page.locator(".lane.done")).toHaveCount(2);
+  await expect(page.locator(".lane.winner")).toHaveCount(1);
   await expect(page.getByRole("button", { name: "Saved to Shelf" })).toBeVisible();
-  await page.getByRole("button", { name: "Explain Another" }).click();
-  await expect(page.getByRole("heading", { name: "Shelf" })).toBeVisible();
+  await page.getByRole("button", { name: "Back to search" }).click();
   await expect(page.locator(".shelf-row")).toContainText("Binary Search");
   await page.getByRole("button", { name: "Remove Binary Search from Shelf" }).click();
-  await expect(page.getByText("Films you watch are saved here.")).toBeVisible();
+  await expect(page.getByText("Problems you play with are saved here.")).toBeVisible();
   expect(errors).toEqual([]);
 });
 
-test("a run scene shows the real trace, and the code on request", async ({ page }) => {
+test("the size slider shows the gap grow, with real numbers", async ({ page }) => {
   await page.goto("p/two-sum");
-  await page.getByRole("button", { name: /Scene 6: Watch: Hash map/ }).click();
-  await expect(page.locator(".step-count")).toHaveText(/^Step \d+ of \d+/);
-  await page.getByRole("button", { name: "Show code (C)" }).click();
-  await expect(page.locator(".sc-code")).toContainText("def two_sum(nums, target):");
-  await page.getByRole("button", { name: "Pause" }).click();
-  await expect(page.getByRole("button", { name: "Play" })).toBeVisible();
+  const n = page.getByRole("slider", { name: "Input size" });
+  await n.fill("4");
+  await expect(page.locator(".grow-n strong")).toHaveText("128");
+  await expect(page.locator(".grow-num").first()).toHaveText("16,510");
+  await expect(page.locator(".grow-ratio")).toHaveText("×32");
 });
 
 test("a problem that isn't ready yet says honestly that new problems need the server", async ({ page }) => {
@@ -66,7 +99,7 @@ test("a problem that isn't ready yet says honestly that new problems need the se
   await page.getByRole("combobox").press("Enter");
   await expect(page).toHaveURL(/\/explain\?q=Merge%20Intervals/);
   await expect(page.getByText("Explaining new problems needs Pillow’s server", { exact: false })).toBeVisible();
-  await page.getByRole("button", { name: "Choose a Ready Film" }).click();
+  await page.getByRole("button", { name: "Choose a Ready Problem" }).click();
   await expect(page.getByRole("combobox")).toBeVisible();
 });
 
@@ -136,10 +169,10 @@ test("an edge case can be picked in one click", async ({ page }) => {
   await expect(page.locator(".story")).toContainText("Returned 0");
 });
 
-test("films and lesson pages never scroll sideways on a phone @phone", async ({ page }) => {
+test("playgrounds and lesson pages never scroll sideways on a phone @phone", async ({ page }) => {
   for (const p of PROBLEMS) {
     await page.goto(`p/${p.slug}`);
-    expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth), `${p.slug} film`).toBeLessThanOrEqual(0);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth), `${p.slug} playground`).toBeLessThanOrEqual(0);
     for (const c of chaptersOf(p)) {
       await page.goto(`p/${p.slug}/lesson?chapter=${c.id}`);
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - innerWidth);

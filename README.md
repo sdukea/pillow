@@ -2,19 +2,19 @@
 
 *Paste any LeetCode problem. Watch how to solve it.*
 
-You type a problem (its name, its number or its link) and a short film
-starts right away:
+You type a problem (its name, its number or its link) and you're in a
+playground, not a page of text:
 
-1. The question, drawn.
-2. The obvious idea, running for real.
-3. Where it wastes time.
-4. The insight.
-5. The better idea, running on the same input.
-6. The two side by side.
-7. The pattern to remember.
+- **The input is objects.** Drag a number to change it, drag it sideways
+  to reorder it, drop it in the bin to delete it, or tap + to add one.
+  Trees grow where you tap.
+- **Both solutions race side by side** on that input, re-running real
+  Python every time you change it. You drag time yourself.
+- **Grow it.** Drag the size up and watch the gap open, with real
+  measured numbers (×32 for Two Sum at 128).
 
-Every film you watch lands on your shelf. The full chapter-by-chapter
-lesson is one tap away, with line-by-line notes and your own inputs.
+Finishing a race saves the problem to your shelf. The full lesson, with
+line-by-line explanations, is one tap away.
 
 **Try it:** [sdukea.github.io/pillow](https://sdukea.github.io/pillow/)
 
@@ -38,12 +38,12 @@ reference solution ──► tracer (Python sys.settrace) ──► trace: every
 - Learners' own inputs run in a Web Worker on their device, with a step
   limit and a timeout. Only data reaches Python, never code, and it's
   parsed strictly and checked against per-problem limits.
-- **Built-in films** (hand-written, or drafted with AI and reviewed by a
+- **Built-in problems** (hand-written, or drafted with AI and reviewed by a
   named person) are a static site.
 - **Explain** handles problems that aren't built in. Pillow's API server
   makes two separate calls to Claude: one identifies the problem and writes
   examples with answers, and one drafts the lesson. The draft must pass five
-  deterministic checks in a sandbox before it's filmed:
+  deterministic checks in a sandbox before anyone sees it:
   - the examples' answers;
   - agreement between the two solutions on random inputs;
   - narration on every step;
@@ -78,7 +78,8 @@ after review.
 | M4 Full lessons for Valid Parentheses, Binary Search, Longest Substring and Maximum Depth, each with a first approach; measured memory charts | **Done** |
 | M5 Live custom input (Pyodide in a worker), input validation, end-to-end tests, GitHub Pages deploy | **Done** |
 | M6 AI drafting pipeline: briefs, a sandbox for untrusted Python, five deterministic checks, a repair loop, review and promotion | **Done** |
-| M7 Pillow: search-first home with a shelf; every lesson as an auto-playing film; Explain for problems not built in (identify → draft → check → film → cache, streamed live) | **Done** |
+| M7 Pillow: search-first home with a shelf; Explain for problems not built in (identify → draft → check → run → cache, streamed live) | **Done** |
+| M7.1 The playground: edit the input by touch, race both solutions live, drag time and size; text cut to labels ([ADR 0009](docs/adr/0009-playground.md)) | **Done** |
 | M8 Host the API server and grow the library (needs an Anthropic API key and a host) | Next |
 
 **MVP problems:** Two Sum, Valid Parentheses, Binary Search, Longest
@@ -146,9 +147,9 @@ npm run -s trace < request.json
 | `engine/analysis/` | Measuring how steps and memory grow, and classifying the growth |
 | `src/views/` | Generic renderers, one per kind of view |
 | `src/home/` | Home: one search field (suggestions, Explain) and the shelf |
-| `src/film/` | The film: scenes built from a lesson, pacing, the player |
+| `src/play/` | The playground: the touchable input editor, live traces, racing lanes, the size slider |
 | `src/explain/`, `src/lib/remote.ts` | Explaining a problem that isn't built in, streamed from the API server |
-| `server/` | The API server: identify → draft → check → film → cache (`npm run server`) |
+| `server/` | The API server: identify → draft → check → run → cache (`npm run server`) |
 | `src/workspace/` | The full lesson: stage, narration, controls, code pane, the input bar |
 | `src/lib/live.ts`, `src/lib/python.worker.ts` | Live tracing: the lazily started Pyodide worker, timeouts and restarts |
 | `src/content/inputs.ts` | Custom-input fields, strict parsing, limits and labels |

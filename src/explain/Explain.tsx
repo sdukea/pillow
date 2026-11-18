@@ -4,9 +4,9 @@ import { explain, type ExplainEvent, loadRemote, serverStatus } from "../lib/rem
 
 const STAGES = [
   { id: "identify", label: "Reading the problem" },
-  { id: "draft", label: "Writing the film" },
+  { id: "draft", label: "Writing both solutions" },
   { id: "check", label: "Checking it runs" },
-  { id: "film", label: "Filming both solutions" },
+  { id: "film", label: "Running them" },
 ] as const;
 
 type State =
@@ -80,7 +80,7 @@ export function Explain({ query, onOpen, onHome }: { query: string; onOpen: (slu
               ))}
             </ol>
             <p className="sc-body muted">
-              {state.kind === "working" ? state.message : "Connecting…"} {seconds > 4 && <span className="elapsed">{seconds}s. A new film usually takes a minute or two; after that it’s instant for everyone.</span>}
+              {state.kind === "working" ? state.message : "Connecting…"} {seconds > 4 && <span className="elapsed">{seconds}s. The first time takes a minute or two; after that it’s instant for everyone.</span>}
             </p>
           </>
         )}
@@ -88,7 +88,7 @@ export function Explain({ query, onOpen, onHome }: { query: string; onOpen: (slu
         {state.kind === "unavailable" && (
           <div className="explain-end">
             <p className="sc-body">Explaining new problems needs Pillow’s server, and it isn’t running here yet.</p>
-            <button type="button" className="btn-filled" onClick={onHome}>Choose a Ready Film</button>
+            <button type="button" className="btn-filled" onClick={onHome}>Choose a Ready Problem</button>
           </div>
         )}
         {state.kind === "error" && (

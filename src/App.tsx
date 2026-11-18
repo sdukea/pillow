@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { PROBLEMS, type Problem } from "./content/problems";
 import { Explain } from "./explain/Explain";
-import { FilmPlayer } from "./film/FilmPlayer";
+import { Playground } from "./play/Playground";
 import { Home } from "./home/Home";
 import { loadRemote } from "./lib/remote";
 import { href, useRoute } from "./lib/router";
@@ -9,7 +9,7 @@ import { Workspace } from "./workspace/Workspace";
 
 // Routes:
 //   /                      search, and the shelf
-//   /p/<slug>              the film
+//   /p/<slug>              the playground
 //   /p/<slug>/lesson       the full lesson, chapter by chapter (?chapter=)
 //   /explain?q=…           a problem that isn't in the library yet
 export function App() {
@@ -30,7 +30,7 @@ export function App() {
         onHome={() => go(`/p/${problem.slug}`)}
       />
     ) : (
-      <FilmPlayer key={problem.slug} problem={problem} onHome={home} onAnother={home} onLesson={() => go(`/p/${problem.slug}/lesson`)} />
+      <Playground key={problem.slug} problem={problem} onHome={home} onLesson={() => go(`/p/${problem.slug}/lesson`)} />
     );
     const builtIn = PROBLEMS.find((p) => p.slug === m[1]);
     return builtIn ? show(builtIn) : <Remote key={m[1]} slug={m[1]} onHome={home} render={show} />;

@@ -108,7 +108,7 @@ export function Home({ onOpen, onExplain }: Props) {
         </section>
       ) : (
         <section className="shelf-empty">
-          <p>Films you watch are saved here.</p>
+          <p>Problems you play with are saved here.</p>
           <p className="try">
             Try{" "}
             {PROBLEMS.slice(0, 3).map((p, i) => (

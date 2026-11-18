@@ -1,6 +1,12 @@
 import type { Lesson } from "../lesson";
 
 export const reverseLinkedList: Lesson = {
+  card: {
+    slow: "Copy the values, then build a new list backwards.",
+    waste: "It builds a whole second list just to throw the first away.",
+    trick: "Walk the list once, turning each arrow around as you go.",
+    recognize: "Rewiring a linked list? Track prev, cur and next.",
+  },
   understand: {
     statement: "You get the first node of a linked list. Reverse the list, so the last node comes first, and return the new first node.",
     inputs: [

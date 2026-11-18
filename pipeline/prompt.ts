@@ -29,6 +29,9 @@ If anything fails you'll get the failures and must return the complete corrected
 - Notes explain one line each: what it does, why it's needed, what it changes (affects, only if it changes something), and what goes wrong without it or with a tempting variation (ifRemoved).
 - Narration is shown after a line runs. Keep each narration to one short sentence, filled in from real values.
 
+## The card
+The card is the whole lesson in four short lines, and it's what the learner keeps as their note: the slow way as an instruction (at most 60 characters), what it wastes (70), the trick (90), and how to spot the pattern next time (70). Make every word count; a beginner should be able to repeat the trick from memory.
+
 ## Solutions
 - Python. Define exactly the brief's entry function, with one parameter per input field, at top level. No imports are needed: \`ListNode\` (val, next), \`TreeNode\` (val, left, right) and \`deque\` are available. Lists of tree or linked-list values are converted to nodes before your function is called.
 - Line numbers in specs and notes count from 1 at the \`def\` line, so the body starts at line 2.

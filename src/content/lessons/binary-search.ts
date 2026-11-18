@@ -1,6 +1,12 @@
 import type { Lesson } from "../lesson";
 
 export const binarySearch: Lesson = {
+  card: {
+    slow: "Check every number, left to right.",
+    waste: "It never uses the fact that the list is sorted.",
+    trick: "Look at the middle. Throw away the half that can’t hold the target.",
+    recognize: "Sorted data? Halve what’s left at every step.",
+  },
   understand: {
     statement: "You get a list of numbers in increasing order and a target. Return the target’s index, or `-1` if it isn’t there.",
     inputs: [

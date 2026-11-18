@@ -62,6 +62,8 @@ export interface DraftApproach {
 export interface Draft {
   /** One line, shown on Home. */
   summary: string;
+  /** The whole idea in four short lines: the slow way, its waste, the trick, how to spot it. */
+  card: Lesson["card"];
   /** The example every approach plays: a JSON array with one value per input field. */
   example: { values: string; label: string };
   understand: Lesson["understand"];
@@ -126,6 +128,7 @@ export function toProblem(brief: Brief, draft: Draft, growthInputs: Record<strin
     } satisfies VizSpec,
   }));
   const lesson: Lesson = {
+    card: draft.card,
     understand: draft.understand,
     approaches: Object.fromEntries(draft.approaches.map((a) => [a.id, {
       headline: a.headline,

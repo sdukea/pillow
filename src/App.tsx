@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { PROBLEMS, type Problem } from "./content/problems";
 import { Explain } from "./explain/Explain";
+import { Learn } from "./learn/Learn";
 import { Playground } from "./play/Playground";
 import { Home } from "./home/Home";
 import { loadRemote } from "./lib/remote";
@@ -8,20 +9,23 @@ import { href, useRoute } from "./lib/router";
 import { Workspace } from "./workspace/Workspace";
 
 // Routes:
-//   /                      search, and the shelf
-//   /p/<slug>              the playground
+//   /                      search, and your notes
+//   /p/<slug>              learn it: problem, slow way, trick, fast way, note
+//   /p/<slug>/play         play with it: edit the input, race both solutions
 //   /p/<slug>/lesson       the full lesson, chapter by chapter (?chapter=)
 //   /explain?q=…           a problem that isn't in the library yet
 export function App() {
   const [route, go] = useRoute();
-  const m = route.path.match(/^\/p\/([\w-]+)(\/lesson)?\/?$/);
+  const m = route.path.match(/^\/p\/([\w-]+)(\/lesson|\/play)?\/?$/);
   const home = () => go("/");
 
   if (route.path === "/explain") {
     return <Explain query={route.search.get("q") ?? ""} onOpen={(slug) => go(`/p/${slug}`, { replace: true })} onHome={home} />;
   }
   if (m) {
-    const show = (problem: Problem) => m[2] ? (
+    const show = (problem: Problem) => m[2] === "/play" ? (
+      <Playground key={problem.slug} problem={problem} onHome={() => go(`/p/${problem.slug}`)} onLesson={() => go(`/p/${problem.slug}/lesson`)} />
+    ) : m[2] ? (
       <Workspace
         key={problem.slug}
         problem={problem}
@@ -30,7 +34,7 @@ export function App() {
         onHome={() => go(`/p/${problem.slug}`)}
       />
     ) : (
-      <Playground key={problem.slug} problem={problem} onHome={home} onLesson={() => go(`/p/${problem.slug}/lesson`)} />
+      <Learn key={problem.slug} problem={problem} onHome={home} onPlay={() => go(`/p/${problem.slug}/play`)} onLesson={() => go(`/p/${problem.slug}/lesson`)} />
     );
     const builtIn = PROBLEMS.find((p) => p.slug === m[1]);
     return builtIn ? show(builtIn) : <Remote key={m[1]} slug={m[1]} onHome={home} render={show} />;

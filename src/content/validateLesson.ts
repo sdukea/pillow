@@ -20,6 +20,14 @@ export function validateLesson(problem: Problem, measured: Measured): string[] {
   };
   checkOf("understand", lesson.understand.check);
 
+  // The card is what learners keep, so it has to stay short and sharp.
+  const LIMITS = { slow: 60, waste: 70, trick: 90, recognize: 70 } as const;
+  for (const [k, max] of Object.entries(LIMITS) as [keyof typeof LIMITS, number][]) {
+    const v = lesson.card[k]?.trim() ?? "";
+    if (!v) out.push(`card.${k} is empty`);
+    else if (v.length > max) out.push(`card.${k} is ${v.length} characters; keep it to ${max}`);
+  }
+
   const ids = problem.approaches.map((a) => a.id);
   for (const id of Object.keys(lesson.approaches)) if (!ids.includes(id)) out.push(`lesson has an approach "${id}" the problem doesn't`);
 

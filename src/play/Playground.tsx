@@ -4,7 +4,7 @@ import type { Arg } from "../../engine/tracer/types";
 import { parseInputs, toText } from "../content/inputs";
 import type { Problem } from "../content/problems";
 import { growthOf } from "../lib/data";
-import { saveToShelf, useShelf } from "../lib/shelf";
+import { saveNote, useNotes } from "../lib/notes";
 import { Canvas } from "../views/Canvas";
 import { InputEditor } from "./InputEditor";
 import { useTraces } from "./useTraces";
@@ -39,8 +39,8 @@ export function Playground({ problem, onHome, onLesson }: Props) {
   const longest = Math.max(...lanes.map((l) => l.moments.length));
   const [t, setT] = useState(0);
   const [playing, setPlaying] = useState(true);
-  const shelf = useShelf();
-  const saved = shelf.some((x) => x.slug === problem.slug);
+  const notes = useNotes();
+  const saved = notes.some((x) => x.slug === problem.slug);
 
   useEffect(() => { document.title = `${problem.title} · Pillow`; }, [problem]);
   // New traces: start the race again from the top.
@@ -54,8 +54,8 @@ export function Playground({ problem, onHome, onLesson }: Props) {
     }), TICK);
     return () => clearInterval(id);
   }, [playing, longest]);
-  // Finishing a race puts the problem on the shelf.
-  useEffect(() => { if (t >= longest - 1 && longest > 1) saveToShelf(problem.slug, problem.title); }, [t, longest, problem]);
+  // Finishing a race keeps the note.
+  useEffect(() => { if (t >= longest - 1 && longest > 1) saveNote(problem); }, [t, longest, problem]);
 
   const change = (next: Arg[]) => { setHistory((h) => [...h.slice(-30), args]); setArgs(next); };
   const undo = () => { const prev = history.at(-1); if (prev) { setHistory((h) => h.slice(0, -1)); setArgs(prev); } };
@@ -77,14 +77,14 @@ export function Playground({ problem, onHome, onLesson }: Props) {
   return (
     <div className="playground">
       <header className="play-top">
-        <button type="button" className="glass-circle" onClick={onHome} aria-label="Back to search">
+        <button type="button" className="glass-circle" onClick={onHome} aria-label="Back">
           <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M12.5 4.5 7 10l5.5 5.5" /></svg>
         </button>
         <div className="play-title">
           <h1>{problem.title}</h1>
           <p>{problem.summary}</p>
         </div>
-        <button type="button" className="glass-circle" onClick={() => saveToShelf(problem.slug, problem.title)} aria-pressed={saved} aria-label={saved ? "Saved to Shelf" : "Save to Shelf"}>
+        <button type="button" className="glass-circle" onClick={() => saveNote(problem)} aria-pressed={saved} aria-label={saved ? "Saved to Notes" : "Save to Notes"}>
           <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path className={saved ? "solid" : ""} d="M6 3.5h8v13l-4-3-4 3z" /></svg>
         </button>
       </header>

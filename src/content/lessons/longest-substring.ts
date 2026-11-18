@@ -1,6 +1,12 @@
 import type { Lesson } from "../lesson";
 
 export const longestSubstring: Lesson = {
+  card: {
+    slow: "Try every substring.",
+    waste: "After a repeat, it starts over and re-reads the same letters.",
+    trick: "Keep a window with no repeats. On a repeat, slide its left edge past it.",
+    recognize: "Longest run that follows a rule? Slide a window.",
+  },
   understand: {
     statement: "You get a string. Find the length of the longest **substring** (a run of neighbouring characters) in which no character appears twice.",
     inputs: [{ name: "s", meaning: "Any string: letters, digits, symbols or spaces." }],

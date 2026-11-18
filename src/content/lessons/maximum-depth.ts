@@ -1,6 +1,12 @@
 import type { Lesson } from "../lesson";
 
 export const maximumDepth: Lesson = {
+  card: {
+    slow: "Count the levels one at a time, with a queue.",
+    waste: "The queue holds a whole level of nodes at once.",
+    trick: "A tree’s depth is 1 + the deeper of its two subtrees.",
+    recognize: "A node’s answer built from its children’s answers? Recurse.",
+  },
   understand: {
     statement: "You get the root of a binary tree. Return its **depth**: the number of nodes on the longest path from the root down to a leaf.",
     inputs: [{ name: "root", meaning: "The top node of the tree, or `None` for an empty tree. Each node has a value (`val`) and up to two children (`left` and `right`)." }],

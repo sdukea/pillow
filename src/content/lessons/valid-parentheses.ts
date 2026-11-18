@@ -1,6 +1,12 @@
 import type { Lesson } from "../lesson";
 
 export const validParentheses: Lesson = {
+  card: {
+    slow: "Delete matching pairs until nothing’s left.",
+    waste: "Every deletion restarts the scan from the beginning.",
+    trick: "The last bracket opened must be the first one closed. That’s a stack.",
+    recognize: "Things that open and close in order? Use a stack.",
+  },
   understand: {
     statement: "You get a string of brackets: `()`, `[]` and `{}`. Decide whether it’s **valid**: every opening bracket is closed by the same kind of bracket, in the right order.",
     inputs: [{ name: "s", meaning: "A string made only of the six characters `( ) [ ] { }`." }],

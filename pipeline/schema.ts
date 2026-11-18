@@ -68,6 +68,12 @@ const Approach = z.object({
 
 export const DraftSchema = z.object({
   summary: text,
+  card: z.object({
+    slow: text.describe("The slow way as an instruction, at most 60 characters: \"Try every pair of numbers.\""),
+    waste: text.describe("What the slow way wastes, at most 70 characters."),
+    trick: text.describe("The trick, at most 90 characters, in plain words a beginner remembers."),
+    recognize: text.describe("How to spot the pattern next time, at most 70 characters: \"Looking for a pair that adds up? Store what you've seen.\""),
+  }),
   example: z.object({ values: text.describe("JSON array, one value per input field."), label: text.describe("How it reads, e.g. nums = [2, 7], target = 9.") }),
   understand: z.object({
     statement: text,

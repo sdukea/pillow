@@ -1,6 +1,12 @@
 import type { Lesson } from "../lesson";
 
 export const twoSum: Lesson = {
+  card: {
+    slow: "Try every pair of numbers.",
+    waste: "Each number gets paired with every other one.",
+    trick: "Remember each number you pass. Then ask: is my partner already here?",
+    recognize: "Looking for a pair that adds up? Store what you’ve seen.",
+  },
   understand: {
     statement: "You get a list of numbers and a target. Exactly two of the numbers add up to the target. Return **where** those two numbers are in the list.",
     inputs: [

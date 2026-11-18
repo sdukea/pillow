@@ -10,28 +10,50 @@ function watchErrors(page: Page) {
   return errors;
 }
 
-test("search finds a problem and its playground starts racing on its own @phone", async ({ page }) => {
+test("search → problem → slow way → trick → fast way → note, one step at a time @phone", async ({ page }) => {
   const errors = watchErrors(page);
   await page.goto("./");
-  await expect(page.getByRole("heading", { name: "Pillow" })).toBeVisible();
   const ask = page.getByRole("combobox");
   await expect(ask).toBeFocused();
   await ask.fill("valid par");
   await expect(page.getByRole("option", { name: /Valid Parentheses/ })).toBeVisible();
-  await expect(page.getByRole("option", { name: /Explain “valid par”/ })).toBeVisible();
   await ask.press("Enter");
   await expect(page).toHaveURL(/\/pillow\/p\/valid-parentheses$/);
-  // Both approaches race on the same input, without being asked.
-  await expect(page.getByRole("article", { name: "Delete pairs" })).toBeVisible();
-  await expect(page.getByRole("article", { name: "Stack" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Pause" })).toBeVisible();
-  await expect(page.locator(".lane-count strong").first()).not.toHaveText("1", { timeout: 5_000 });
+  // One picture, one sentence, one button per step.
+  await expect(page.getByText("Decide whether every bracket", { exact: false })).toBeVisible();
+  await page.getByRole("button", { name: "Show Me the Slow Way" }).click();
+  await expect(page.getByText("Delete matching pairs until nothing’s left.")).toBeVisible();
+  await expect(page.getByText("Every deletion restarts the scan from the beginning.")).toBeVisible({ timeout: 30_000 });
+  await page.getByRole("button", { name: "What’s the Trick?" }).click();
+  await expect(page.getByText("The last bracket opened must be the first one closed. That’s a stack.")).toBeVisible();
+  await page.getByRole("button", { name: "Watch It Work" }).click();
+  await expect(page.getByText(/steps → \d+ here\. At 128 items/)).toBeVisible({ timeout: 30_000 });
+  await page.getByRole("button", { name: "Keep the Note" }).click();
+  await expect(page.getByRole("article", { name: "Your note" })).toContainText("Things that open and close in order? Use a stack.");
+  await page.getByRole("button", { name: "Done" }).click();
+  // The note waits on Home, with the trick hidden until you try to recall it.
+  await expect(page.getByRole("heading", { name: "Notes" })).toBeVisible();
+  await expect(page.getByText("That’s a stack.", { exact: false })).toHaveCount(0);
+  await page.getByRole("button", { name: /What’s the trick\?/ }).click();
+  await expect(page.getByText("The last bracket opened must be the first one closed.", { exact: false })).toBeVisible();
+  await page.getByRole("button", { name: "Remove the note for Valid Parentheses" }).click();
+  await expect(page.getByText("Every problem you learn leaves a note here.")).toBeVisible();
+  expect(errors).toEqual([]);
+});
+
+test("every problem walks through all five steps without errors", async ({ page }) => {
+  const errors = watchErrors(page);
+  for (const p of PROBLEMS) {
+    await page.goto(`p/${p.slug}`);
+    for (let i = 0; i < 4; i++) await page.keyboard.press("ArrowRight");
+    await expect(page.getByRole("article", { name: "Your note" })).toContainText(p.lesson!.card.trick);
+  }
   expect(errors).toEqual([]);
 });
 
 test("changing the input re-runs both approaches in real Python @phone", async ({ page }) => {
   const errors = watchErrors(page);
-  await page.goto("p/two-sum");
+  await page.goto("p/two-sum/play");
   const totals = page.locator(".lane-count span");
   const before = await totals.allTextContents();
   // Raise the 2 (index 4) to 3 with the keyboard: same as dragging it up a notch.
@@ -46,7 +68,7 @@ test("changing the input re-runs both approaches in real Python @phone", async (
 });
 
 test("a sorted input stays sorted while you play with it", async ({ page }) => {
-  await page.goto("p/binary-search");
+  await page.goto("p/binary-search/play");
   const first = page.getByRole("button", { name: /^Item 1: 1\./ });
   for (let i = 0; i < 4; i++) await page.getByRole("button", { name: /^Item 1: / }).press("ArrowUp");
   await page.getByRole("button", { name: /^Item 2: / }).focus();
@@ -58,7 +80,7 @@ test("a sorted input stays sorted while you play with it", async ({ page }) => {
 });
 
 test("a tree grows where you tap, and both approaches re-run on it", async ({ page }) => {
-  await page.goto("p/maximum-depth-of-binary-tree");
+  await page.goto("p/maximum-depth-of-binary-tree/play");
   const totals = page.locator(".lane-count span");
   const before = (await totals.allTextContents()).join();
   await page.getByRole("button", { name: "Add a node here" }).nth(2).click();
@@ -69,23 +91,21 @@ test("a tree grows where you tap, and both approaches re-run on it", async ({ pa
   await expect(page.locator(".tree-ed .tnode:not(.ghost)")).toHaveCount(5);
 });
 
-test("drag time to the end: the race finishes and lands on the shelf @phone", async ({ page }) => {
+test("drag time to the end: the race finishes and keeps the note @phone", async ({ page }) => {
   const errors = watchErrors(page);
-  await page.goto("p/binary-search");
+  await page.goto("p/binary-search/play");
   const time = page.getByRole("slider", { name: /^Time/ });
   await time.fill(await time.getAttribute("max") ?? "0");
   await expect(page.locator(".lane.done")).toHaveCount(2);
   await expect(page.locator(".lane.winner")).toHaveCount(1);
-  await expect(page.getByRole("button", { name: "Saved to Shelf" })).toBeVisible();
-  await page.getByRole("button", { name: "Back to search" }).click();
-  await expect(page.locator(".shelf-row")).toContainText("Binary Search");
-  await page.getByRole("button", { name: "Remove Binary Search from Shelf" }).click();
-  await expect(page.getByText("Problems you play with are saved here.")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Saved to Notes" })).toBeVisible();
+  await page.goto("./");
+  await expect(page.locator(".note-title")).toContainText("Binary Search");
   expect(errors).toEqual([]);
 });
 
 test("the size slider shows the gap grow, with real numbers", async ({ page }) => {
-  await page.goto("p/two-sum");
+  await page.goto("p/two-sum/play");
   const n = page.getByRole("slider", { name: "Input size" });
   await n.fill("4");
   await expect(page.locator(".grow-n strong")).toHaveText("128");
@@ -171,8 +191,10 @@ test("an edge case can be picked in one click", async ({ page }) => {
 
 test("playgrounds and lesson pages never scroll sideways on a phone @phone", async ({ page }) => {
   for (const p of PROBLEMS) {
-    await page.goto(`p/${p.slug}`);
-    expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth), `${p.slug} playground`).toBeLessThanOrEqual(0);
+    for (const path of [`p/${p.slug}`, `p/${p.slug}/play`]) {
+      await page.goto(path);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth), path).toBeLessThanOrEqual(0);
+    }
     for (const c of chaptersOf(p)) {
       await page.goto(`p/${p.slug}/lesson?chapter=${c.id}`);
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - innerWidth);

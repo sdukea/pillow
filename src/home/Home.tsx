@@ -1,7 +1,7 @@
-import { useEffect, useId, useMemo, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { PROBLEMS, type Problem } from "../content/problems";
 import { matchProblems } from "../lib/match";
-import { migrateRecents, removeFromShelf, useShelf } from "../lib/shelf";
+import { markRecalled, migrateOld, type Note, removeNote, useNotes } from "../lib/notes";
 
 interface Props {
   onOpen: (slug: string) => void;
@@ -13,10 +13,9 @@ export function Home({ onOpen, onExplain }: Props) {
   const [active, setActive] = useState(0);
   const input = useRef<HTMLInputElement>(null);
   const listId = useId();
-  const shelf = useShelf();
-  const titles = useMemo(() => Object.fromEntries(PROBLEMS.map((p) => [p.slug, p.title])), []);
+  const notes = useNotes();
 
-  useEffect(() => { document.title = "Pillow"; migrateRecents(titles); input.current?.focus(); }, [titles]);
+  useEffect(() => { document.title = "Pillow"; migrateOld(PROBLEMS); input.current?.focus(); }, []);
 
   const matches = matchProblems(query);
   const typed = query.trim();
@@ -86,29 +85,16 @@ export function Home({ onOpen, onExplain }: Props) {
         )}
       </form>
 
-      {shelf.length > 0 ? (
-        <section className="shelf" aria-labelledby="shelf-title">
-          <h2 id="shelf-title">Shelf</h2>
-          <ul className="shelf-list">
-            {shelf.map((item) => {
-              const p = PROBLEMS.find((x) => x.slug === item.slug);
-              return (
-                <li key={item.slug}>
-                  <button type="button" className="shelf-row" onClick={() => onOpen(item.slug)}>
-                    <span className="shelf-title">{item.title}</span>
-                    {p && <span className="shelf-meta">{p.pattern} · {p.approaches.map((a) => a.name).join(" → ")}</span>}
-                  </button>
-                  <button type="button" className="shelf-remove" onClick={() => removeFromShelf(item.slug)} aria-label={`Remove ${item.title} from Shelf`}>
-                    <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><path d="M5 5l10 10M15 5 5 15" /></svg>
-                  </button>
-                </li>
-              );
-            })}
+      {notes.length > 0 ? (
+        <section className="notes" aria-labelledby="notes-title">
+          <h2 id="notes-title">Notes</h2>
+          <ul className="note-list">
+            {notes.map((n) => <NoteRow key={n.slug} note={n} onOpen={() => onOpen(n.slug)} />)}
           </ul>
         </section>
       ) : (
         <section className="shelf-empty">
-          <p>Problems you play with are saved here.</p>
+          <p>Every problem you learn leaves a note here.</p>
           <p className="try">
             Try{" "}
             {PROBLEMS.slice(0, 3).map((p, i) => (
@@ -118,5 +104,27 @@ export function Home({ onOpen, onExplain }: Props) {
         </section>
       )}
     </main>
+  );
+}
+
+/** A note hides its trick until you try to remember it: recall, not rereading, is what sticks. */
+function NoteRow({ note, onOpen }: { note: Note; onOpen: () => void }) {
+  const [shown, setShown] = useState(false);
+  return (
+    <li className={`note-row ${shown ? "shown" : ""}`}>
+      <div className="note-head">
+        <button type="button" className="note-title" onClick={onOpen}>{note.title}</button>
+        <button type="button" className="note-remove" onClick={() => removeNote(note.slug)} aria-label={`Remove the note for ${note.title}`}>
+          <svg viewBox="0 0 20 20" width="14" height="14" aria-hidden="true"><path d="M5 5l10 10M15 5 5 15" /></svg>
+        </button>
+      </div>
+      {shown ? (
+        <p className="note-body"><span className="note-trick">{note.trick}</span><span className="note-spot">{note.recognize}</span></p>
+      ) : (
+        <button type="button" className="recall" onClick={() => { setShown(true); markRecalled(note.slug); }}>
+          What’s the trick? <span>Think, then tap</span>
+        </button>
+      )}
+    </li>
   );
 }

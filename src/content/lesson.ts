@@ -63,7 +63,24 @@ export interface ApproachLesson {
   check?: Check;
 }
 
+/**
+ * The whole idea, sharp enough to keep: what the slow way does, what it wastes, the trick, and how
+ * to spot the pattern next time. Each line is short (the build enforces it). This is what the
+ * learn screen shows and what goes into the learner's note.
+ */
+export interface Card {
+  /** The slow way, as an instruction: "Try every pair of numbers." */
+  slow: string;
+  /** What it wastes: "Each number gets paired with every other one." */
+  waste: string;
+  /** The trick, in one or two short sentences. */
+  trick: string;
+  /** How to recognise the pattern: "Looking for a pair that adds up? Store what you've seen." */
+  recognize: string;
+}
+
 export interface Lesson {
+  card: Card;
   understand: {
     statement: string;
     inputs: { name: string; meaning: string }[];

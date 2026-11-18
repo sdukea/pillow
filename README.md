@@ -2,19 +2,18 @@
 
 *Paste any LeetCode problem. Watch how to solve it.*
 
-You type a problem (its name, its number or its link) and you're in a
-playground, not a page of text:
+Type a problem (its name, its number or its link). Then five steps, one
+picture and one sentence each:
 
-- **The input is objects.** Drag a number to change it, drag it sideways
-  to reorder it, drop it in the bin to delete it, or tap + to add one.
-  Trees grow where you tap.
-- **Both solutions race side by side** on that input, re-running real
-  Python every time you change it. You drag time yourself.
-- **Grow it.** Drag the size up and watch the gap open, with real
-  measured numbers (×32 for Two Sum at 128).
+1. **The problem**, drawn.
+2. **The slow way**, running for real.
+3. **The trick**, in one sentence.
+4. **The fast way**, on the same input, with the difference made concrete.
+5. **Your note**: the trick and how to spot it next time.
 
-Finishing a race saves the problem to your shelf. The full lesson, with
-line-by-line explanations, is one tap away.
+Notes wait on Home with the trick hidden, so you recall it instead of
+rereading it. If you want more, you can play with the input and race both
+solutions, or read the full line-by-line lesson.
 
 **Try it:** [sdukea.github.io/pillow](https://sdukea.github.io/pillow/)
 
@@ -79,7 +78,8 @@ after review.
 | M5 Live custom input (Pyodide in a worker), input validation, end-to-end tests, GitHub Pages deploy | **Done** |
 | M6 AI drafting pipeline: briefs, a sandbox for untrusted Python, five deterministic checks, a repair loop, review and promotion | **Done** |
 | M7 Pillow: search-first home with a shelf; Explain for problems not built in (identify → draft → check → run → cache, streamed live) | **Done** |
-| M7.1 The playground: edit the input by touch, race both solutions live, drag time and size; text cut to labels ([ADR 0009](docs/adr/0009-playground.md)) | **Done** |
+| M7.1 The playground: edit the input by touch, race both solutions live, drag time and size ([ADR 0009](docs/adr/0009-playground.md)) | **Done** |
+| M7.2 One idea, then a note: five-step learn screen, a hand-written card per lesson, Notes with recall ([ADR 0010](docs/adr/0010-one-idea.md)) | **Done** |
 | M8 Host the API server and grow the library (needs an Anthropic API key and a host) | Next |
 
 **MVP problems:** Two Sum, Valid Parentheses, Binary Search, Longest
@@ -146,8 +146,10 @@ npm run -s trace < request.json
 | `src/lesson/` | Chapter pages: Understand, approach intro and wrap-up, Compare, checks, the growth chart |
 | `engine/analysis/` | Measuring how steps and memory grow, and classifying the growth |
 | `src/views/` | Generic renderers, one per kind of view |
-| `src/home/` | Home: one search field (suggestions, Explain) and the shelf |
-| `src/play/` | The playground: the touchable input editor, live traces, racing lanes, the size slider |
+| `src/home/` | Home: one search field (suggestions, Explain) and your notes |
+| `src/learn/` | The learn screen: problem, slow way, trick, fast way, note |
+| `src/play/` | The playground (behind "Play with it"): the touchable input editor, live traces, racing lanes, the size slider |
+| `src/lib/notes.ts` | Notes: the trick and how to spot it, per problem, with recall |
 | `src/explain/`, `src/lib/remote.ts` | Explaining a problem that isn't built in, streamed from the API server |
 | `server/` | The API server: identify → draft → check → run → cache (`npm run server`) |
 | `src/workspace/` | The full lesson: stage, narration, controls, code pane, the input bar |

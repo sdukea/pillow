@@ -1,4 +1,4 @@
-"""LeetSee tracer: runs a reference solution and records every step of its execution.
+"""Pillow tracer: runs a reference solution and records every step of its execution.
 
 The same file runs in two places, and must produce identical output in both:
   - CPython at build time, to precompute the traces shipped with the app;

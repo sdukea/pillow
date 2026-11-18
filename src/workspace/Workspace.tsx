@@ -25,7 +25,7 @@ export function Workspace({ problem, chapter, onChapter, onHome }: Props) {
   const [input, setInput] = useState<LiveInput | null>(null);
 
   useEffect(() => {
-    document.title = `${problem.title} · LeetSee`;
+    document.title = `${problem.title} · Pillow`;
   }, [problem]);
   useEffect(() => {
     scrollTo(0, 0);
@@ -39,7 +39,7 @@ export function Workspace({ problem, chapter, onChapter, onHome }: Props) {
   return (
     <div className="workspace">
       <header className="ws-head">
-        <button type="button" className="back" onClick={onHome} aria-label="All problems">
+        <button type="button" className="back" onClick={onHome} aria-label="Back to the film">
           <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><path d="M12.5 4.5 7 10l5.5 5.5" /></svg>
         </button>
         <div className="ws-title">

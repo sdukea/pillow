@@ -48,7 +48,7 @@ describe.skipIf(!sandboxSupported())("the AI content pipeline", () => {
       expect(await call("def f():\n    import os\n    return [k for k in os.environ if 'KEY' in k or 'TOKEN' in k]\n")).toEqual({ ok: true, v: [] });
     });
     it("can't start processes, and recovers afterwards", async () => {
-      expect((await call("def f():\n    import os\n    return os.system('touch /tmp/leetsee-pwned')\n")).ok).toBe(false);
+      expect((await call("def f():\n    import os\n    return os.system('touch /tmp/pillow-pwned')\n")).ok).toBe(false);
       expect((await call("def f():\n    import subprocess\n    return subprocess.run(['ls']).returncode\n")).ok).toBe(false);
       expect(await call("def f():\n    return 2 + 2\n")).toEqual({ ok: true, v: 4 });
     });

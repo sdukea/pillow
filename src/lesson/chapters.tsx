@@ -44,7 +44,8 @@ export function Understand({ problem, onNext }: { problem: Problem; onNext: () =
       <button type="button" className="next-chapter" onClick={onNext}>Start with {first.name.toLowerCase()} →</button>
       {problem.provenance && (
         <p className="provenance">
-          Drafted with AI ({problem.provenance.model}), then checked against real runs of every line and reviewed by {problem.provenance.reviewer} on {problem.provenance.reviewedOn}.
+          Drafted with AI ({problem.provenance.model}), then checked against real runs of every line
+          {problem.provenance.reviewer ? <> and reviewed by {problem.provenance.reviewer} on {problem.provenance.reviewedOn}.</> : <>. Not yet reviewed by a person.</>}
         </p>
       )}
     </article>
@@ -191,7 +192,7 @@ export function Compare({ problem, onBack }: { problem: Problem; onBack: () => v
         <p><strong>Reach for it when: </strong><Rich text={lesson.compare.pattern.recognize} /></p>
         <p className="muted-p">Also used in {lesson.compare.pattern.alsoUsedIn.join(", ")}.</p>
       </section>
-      <button type="button" className="next-chapter secondary" onClick={onBack}>← Back to all problems</button>
+      <button type="button" className="next-chapter secondary" onClick={onBack}>← Back to the film</button>
     </article>
   );
 }

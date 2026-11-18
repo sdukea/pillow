@@ -1,5 +1,5 @@
 // The drafter's prompts. The system prompt is stable (it's cached across attempts and problems):
-// LeetSee's teaching standard, the formats, the rules the validator enforces, and one complete
+// Pillow's teaching standard, the formats, the rules the validator enforces, and one complete
 // worked example that passes every check. The brief and any repair feedback go in user turns.
 
 import { readFileSync } from "node:fs";
@@ -11,7 +11,7 @@ const ROOT = join(import.meta.dirname, "..");
 const SPEC_TS = readFileSync(join(ROOT, "engine", "interpreter", "spec.ts"), "utf8");
 
 export function systemPrompt(example: { brief: Brief; draft: Draft }): string {
-  return `You draft lessons for LeetSee, which teaches LeetCode problems as visual, step-by-step lessons built from real execution traces. You write the reference solutions, the visualization specs and the lesson text for one problem at a time, as a single JSON object matching the response schema.
+  return `You draft lessons for Pillow, which teaches LeetCode problems as visual, step-by-step lessons built from real execution traces. You write the reference solutions, the visualization specs and the lesson text for one problem at a time, as a single JSON object matching the response schema.
 
 Your draft is not trusted. A deterministic pipeline runs every solution and generator in a sandbox and rejects the draft unless all of these pass:
 1. shape: exactly two approaches (a first approach, then a better one); the example and edge cases are valid inputs for the brief's fields and rules; the generator defines make_input(n).

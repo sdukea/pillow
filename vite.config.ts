@@ -6,4 +6,6 @@ export default defineConfig({
   base: process.env.BASE ?? "/",
   plugins: [react()],
   worker: { format: "es" },
+  // In development, Pillow's API server (npm run server) answers /api.
+  server: { proxy: { "/api": "http://localhost:8787" } },
 });

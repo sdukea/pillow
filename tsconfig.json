@@ -11,5 +11,5 @@
     "noEmit": true,
     "types": ["node", "vite/client"]
   },
-  "include": ["engine", "src", "pipeline", "scripts", "e2e", "playwright.config.ts"]
+  "include": ["engine", "src", "pipeline", "scripts", "server", "e2e", "playwright.config.ts"]
 }

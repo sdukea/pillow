@@ -1,44 +1,59 @@
-import { useEffect } from "react";
-import { PROBLEMS } from "./content/problems";
-import { Home, rememberVisit } from "./home/Home";
+import { useEffect, useState } from "react";
+import { PROBLEMS, type Problem } from "./content/problems";
+import { Explain } from "./explain/Explain";
+import { FilmPlayer } from "./film/FilmPlayer";
+import { Home } from "./home/Home";
+import { loadRemote } from "./lib/remote";
 import { href, useRoute } from "./lib/router";
-import { useTheme } from "./lib/theme";
 import { Workspace } from "./workspace/Workspace";
 
-const THEME_LABEL = { system: "Theme: system", dark: "Theme: dark", light: "Theme: light" } as const;
-
+// Routes:
+//   /                      search, and the shelf
+//   /p/<slug>              the film
+//   /p/<slug>/lesson       the full lesson, chapter by chapter (?chapter=)
+//   /explain?q=…           a problem that isn't in the library yet
 export function App() {
   const [route, go] = useRoute();
-  const theme = useTheme();
-  const slug = route.path.match(/^\/p\/([\w-]+)/)?.[1];
-  const problem = slug ? PROBLEMS.find((p) => p.slug === slug) : undefined;
+  const m = route.path.match(/^\/p\/([\w-]+)(\/lesson)?\/?$/);
+  const home = () => go("/");
 
+  if (route.path === "/explain") {
+    return <Explain query={route.search.get("q") ?? ""} onOpen={(slug) => go(`/p/${slug}`, { replace: true })} onHome={home} />;
+  }
+  if (m) {
+    const show = (problem: Problem) => m[2] ? (
+      <Workspace
+        key={problem.slug}
+        problem={problem}
+        chapter={route.search.get("chapter")}
+        onChapter={(id) => go(`/p/${problem.slug}/lesson?chapter=${id}`)}
+        onHome={() => go(`/p/${problem.slug}`)}
+      />
+    ) : (
+      <FilmPlayer key={problem.slug} problem={problem} onHome={home} onAnother={home} onLesson={() => go(`/p/${problem.slug}/lesson`)} />
+    );
+    const builtIn = PROBLEMS.find((p) => p.slug === m[1]);
+    return builtIn ? show(builtIn) : <Remote key={m[1]} slug={m[1]} onHome={home} render={show} />;
+  }
+  if (route.path !== "/") return <NotFound onHome={home} message="There’s nothing at this address." />;
+  return <Home onOpen={(slug) => go(`/p/${slug}`)} onExplain={(q) => go(`/explain?q=${encodeURIComponent(q)}`)} />;
+}
+
+/** A problem explained live, loaded from Pillow's server, then shown like any other. */
+function Remote({ slug, onHome, render }: { slug: string; onHome: () => void; render: (p: Problem) => React.ReactNode }) {
+  const [state, setState] = useState<{ problem?: Problem; error?: string }>({});
   useEffect(() => {
-    if (problem) rememberVisit(problem.slug);
-    else document.title = "LeetSee";
-  }, [problem]);
+    loadRemote(slug).then((problem) => setState({ problem }), (e: Error) => setState({ error: e.message }));
+  }, [slug]);
+  if (state.problem) return <>{render(state.problem)}</>;
+  return state.error ? <NotFound onHome={onHome} message={state.error} /> : <main className="home" aria-busy="true" />;
+}
 
+function NotFound({ onHome, message }: { onHome: () => void; message: string }) {
   return (
-    <>
-      <button type="button" className="theme-toggle" onClick={theme.cycle} aria-label={`${THEME_LABEL[theme.choice]}. Click to change.`} title={THEME_LABEL[theme.choice]}>
-        <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true">
-          <circle cx="10" cy="10" r="6.5" />
-          <path d="M10 3.5a6.5 6.5 0 0 1 0 13z" className="fill" />
-        </svg>
-      </button>
-      {problem ? (
-        <Workspace
-          key={problem.slug}
-          problem={problem}
-          chapter={route.search.get("chapter")}
-          onChapter={(id) => go(`/p/${problem.slug}?chapter=${id}`)}
-          onHome={() => go("/")}
-        />
-      ) : slug ? (
-        <main className="home"><h1>Not found</h1><p>There’s no problem at this address. <a href={href("/")} onClick={(e) => { e.preventDefault(); go("/"); }}>See all problems</a>.</p></main>
-      ) : (
-        <Home onOpen={(p) => go(`/p/${p.slug}`)} />
-      )}
-    </>
+    <main className="home">
+      <h1 className="wordmark">Not Found</h1>
+      <p className="home-sub">{message} <a href={href("/")} onClick={(e) => { e.preventDefault(); onHome(); }}>Search for a problem</a>.</p>
+    </main>
   );
 }

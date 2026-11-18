@@ -1,15 +1,20 @@
-# LeetSee
+# Pillow
 
-*Don’t just see the answer. See how it thinks.*
+*Paste any LeetCode problem. Watch how to solve it.*
 
-LeetSee turns LeetCode problems into visual, step-by-step lessons. You start
-with the brute-force approach and see why it's slow. Then you discover the
-better approach, watch it run line by line, and see every variable,
-pointer and data structure change. You leave with the pattern, not just
-the answer.
+You type a problem (its name, its number or its link) and a short film
+starts right away:
 
-LeetSee complements LeetCode: LeetCode gives you problems to solve, and
-LeetSee shows how they're solved.
+1. The question, drawn.
+2. The obvious idea, running for real.
+3. Where it wastes time.
+4. The insight.
+5. The better idea, running on the same input.
+6. The two side by side.
+7. The pattern to remember.
+
+Every film you watch lands on your shelf. The full chapter-by-chapter
+lesson is one tap away, with line-by-line notes and your own inputs.
 
 **Try it:** [sdukea.github.io/pillow](https://sdukea.github.io/pillow/)
 
@@ -30,22 +35,32 @@ reference solution ──► tracer (Python sys.settrace) ──► trace: every
 - The **same tracer** runs at build time (CPython, for precomputed traces
   that load instantly) and in the learner's browser (Pyodide in a Web
   Worker, for custom inputs). A test keeps the two identical.
-- There are no servers to run code on: LeetSee is a static site. Live traces
-  run in a Web Worker on the learner's device, with a step limit and a
-  timeout. Only the learner's *input* reaches Python, never code. It's
+- Learners' own inputs run in a Web Worker on their device, with a step
+  limit and a timeout. Only data reaches Python, never code, and it's
   parsed strictly and checked against per-problem limits.
-- AI drafts lessons offline, never live. Every draft runs in a sandbox
-  through five deterministic checks: the brief's human-written examples,
-  differential testing on random inputs, narration on every step, and line
-  coverage plus measured complexity. Then a named person reviews it before
-  a learner sees it. See [docs/authoring.md](docs/authoring.md).
+- **Built-in films** (hand-written, or drafted with AI and reviewed by a
+  named person) are a static site.
+- **Explain** handles problems that aren't built in. Pillow's API server
+  makes two separate calls to Claude: one identifies the problem and writes
+  examples with answers, and one drafts the lesson. The draft must pass five
+  deterministic checks in a sandbox before it's filmed:
+  - the examples' answers;
+  - agreement between the two solutions on random inputs;
+  - narration on every step;
+  - line coverage;
+  - measured complexity.
+
+  Failures go back to the model for repair. The result is cached for
+  everyone and labelled as checked automatically, not reviewed by a person.
+  See [docs/authoring.md](docs/authoring.md) and
+  [ADR 0008](docs/adr/0008-pillow-films.md).
 
 The full reasoning is in [docs/ASSESSMENT.md](docs/ASSESSMENT.md) and
 [docs/adr/](docs/adr/).
 
 ## Status
 
-**M0–M6 are done.** All six MVP problems are complete lessons: understand
+**M0–M7 are done.** All six MVP problems are complete lessons: understand
 the problem, a first approach, the better approach and why it works, a note
 for every line, and time and memory measured from real runs. Every
 approach can also run on your own input, or a one-click edge case, traced
@@ -63,7 +78,8 @@ after review.
 | M4 Full lessons for Valid Parentheses, Binary Search, Longest Substring and Maximum Depth, each with a first approach; measured memory charts | **Done** |
 | M5 Live custom input (Pyodide in a worker), input validation, end-to-end tests, GitHub Pages deploy | **Done** |
 | M6 AI drafting pipeline: briefs, a sandbox for untrusted Python, five deterministic checks, a repair loop, review and promotion | **Done** |
-| M7 Grow the library: the first AI-drafted lessons, reviewed (needs an API key) | Next |
+| M7 Pillow: search-first home with a shelf; every lesson as an auto-playing film; Explain for problems not built in (identify → draft → check → film → cache, streamed live) | **Done** |
+| M8 Host the API server and grow the library (needs an Anthropic API key and a host) | Next |
 
 **MVP problems:** Two Sum, Valid Parentheses, Binary Search, Longest
 Substring Without Repeating Characters, Reverse Linked List, and Maximum
@@ -93,7 +109,14 @@ your installed Google Chrome):
 npm run e2e
 ```
 
-Draft a new lesson (needs an Anthropic API key and Node 25+; see
+Run the API server, which explains problems that aren't built in. It needs
+`ANTHROPIC_API_KEY` and Node 25+, and Vite proxies `/api` to it in development:
+
+```bash
+npm run server
+```
+
+Draft a new lesson for the built-in library (needs an Anthropic API key and Node 25+; see
 [docs/authoring.md](docs/authoring.md)):
 
 ```bash
@@ -122,7 +145,11 @@ npm run -s trace < request.json
 | `src/lesson/` | Chapter pages: Understand, approach intro and wrap-up, Compare, checks, the growth chart |
 | `engine/analysis/` | Measuring how steps and memory grow, and classifying the growth |
 | `src/views/` | Generic renderers, one per kind of view |
-| `src/workspace/` | The workspace: stage, narration, controls, code pane, the input bar |
+| `src/home/` | Home: one search field (suggestions, Explain) and the shelf |
+| `src/film/` | The film: scenes built from a lesson, pacing, the player |
+| `src/explain/`, `src/lib/remote.ts` | Explaining a problem that isn't built in, streamed from the API server |
+| `server/` | The API server: identify → draft → check → film → cache (`npm run server`) |
+| `src/workspace/` | The full lesson: stage, narration, controls, code pane, the input bar |
 | `src/lib/live.ts`, `src/lib/python.worker.ts` | Live tracing: the lazily started Pyodide worker, timeouts and restarts |
 | `src/content/inputs.ts` | Custom-input fields, strict parsing, limits and labels |
 | `e2e/` | Playwright end-to-end tests |
@@ -138,6 +165,7 @@ npm run -s trace < request.json
 
 ## History
 
-This repository was previously Pillow (an interview-readiness app) and
+The product was called LeetSee from M0 to M6, and Pillow from M7 on. Before
+LeetSee, this repository held an earlier product also named Pillow (an interview-readiness app) and
 before that Nue. Both are preserved at the tags `archive/pillow-v1` and
 `archive/nue-v1`. The repository keeps the name `pillow`.

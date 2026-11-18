@@ -19,6 +19,14 @@ import { LIBRARY } from "./library";
 export const PATTERNS = ["Hashing", "Two pointers", "Stack", "Binary search", "Sliding window", "Linked list", "Trees and recursion", "Arrays"] as const;
 export type Pattern = (typeof PATTERNS)[number];
 
+export interface Provenance {
+  model: string;
+  attempts: number;
+  /** Absent for lessons generated live: checked automatically, not yet by a person. */
+  reviewer?: string;
+  reviewedOn?: string;
+}
+
 export interface Approach {
   id: string;
   /** Short label for the approach switcher, e.g. "Brute force" or "Hash map". */
@@ -47,8 +55,8 @@ export interface Problem {
   precondition?: string;
   /** The full four-chapter lesson. Problems without one show the visualizer only. */
   lesson?: Lesson;
-  /** Set for lessons drafted with AI: which model drafted it, and who reviewed it. */
-  provenance?: { model: string; attempts: number; reviewer: string; reviewedOn: string };
+  /** Set for lessons drafted with AI: which model drafted it, and who reviewed it (if anyone yet). */
+  provenance?: Provenance;
 }
 
 const v = (value: unknown): Arg => ({ kind: "value", value });

@@ -15,14 +15,14 @@ import type { LineTag, ViewSpec, VizSpec } from "../../engine/interpreter/spec";
 import type { Arg } from "../../engine/tracer/types";
 import type { InputField } from "./inputs";
 import type { Check, Lesson, LineNote } from "./lesson";
-import type { Pattern, Problem } from "./problems";
+import type { Pattern, Problem, Provenance } from "./problems";
 
 export interface Brief {
   slug: string;
   title: string;
   leetcode: { number: number; slug: string };
   pattern: Pattern;
-  /** The problem in the author's own words. The draft rewrites it in LeetSee's plain style. */
+  /** The problem in the author's own words. The draft rewrites it in Pillow's plain style. */
   statement: string;
   /** The function name every solution must define. */
   entry: string;
@@ -83,7 +83,7 @@ export interface LibraryEntry {
   draft: Draft;
   /** The generator's output, computed in the sandbox at promotion: size → one value per field. */
   growthInputs: Record<string, unknown[]>;
-  provenance: { model: string; attempts: number; reviewer: string; reviewedOn: string };
+  provenance: Provenance;
 }
 
 // ------------------------------------------------------------------ conversion

@@ -1,5 +1,5 @@
 {
-  "name": "leetsee",
+  "name": "pillow",
   "private": true,
   "type": "module",
   "engines": {
@@ -18,7 +18,8 @@
     "trace": "PYTHONHASHSEED=0 python3 engine/tracer/tracer.py",
     "e2e": "playwright test",
     "draft": "tsx scripts/draft.ts",
-    "promote": "tsx scripts/promote.ts"
+    "promote": "tsx scripts/promote.ts",
+    "server": "tsx server/index.ts"
   },
   "dependencies": {
     "pyodide": "314.0.7",

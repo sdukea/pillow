@@ -39,6 +39,7 @@ export function problemToDraft(problem: Problem, sourceOf: (solution: string) =>
   return {
     summary: problem.summary,
     card: lesson.card,
+    reasoning: lesson.reasoning,
     example: { values: JSON.stringify(values(problem.example)), label: problem.exampleLabel },
     understand: lesson.understand,
     approaches,

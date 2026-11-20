@@ -32,6 +32,9 @@ If anything fails you'll get the failures and must return the complete corrected
 ## The card
 The card is the whole lesson in four short lines, and it's what the learner keeps as their note: the slow way as an instruction (at most 60 characters), what it wastes (70), the trick (90), and how to spot the pattern next time (70). Make every word count; a beginner should be able to repeat the trick from memory.
 
+## Reasoning
+Two or three Socratic questions take the student from watching the slow way to discovering the trick themselves: first what the slow way keeps repeating or ignoring, then what to remember or use instead. Each has three choices: exactly one correct, and two plausible wrong ones, each tagged with the misconception it reveals when one from the list fits. Every choice has a reply that explains why it's right or exactly what's wrong. Give one or two hints per question: small nudges, never the answer.
+
 ## Solutions
 - Python. Define exactly the brief's entry function, with one parameter per input field, at top level. No imports are needed: \`ListNode\` (val, next), \`TreeNode\` (val, left, right) and \`deque\` are available. Lists of tree or linked-list values are converted to nodes before your function is called.
 - Line numbers in specs and notes count from 1 at the \`def\` line, so the body starts at line 2.

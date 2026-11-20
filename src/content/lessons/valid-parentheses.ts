@@ -7,6 +7,62 @@ export const validParentheses: Lesson = {
     trick: "The last bracket opened must be the first one closed. That’s a stack.",
     recognize: "Things that open and close in order? Use a stack.",
   },
+  reasoning: [
+    {
+      "ask": "When a closing bracket arrives, which opening bracket must it match?",
+      "concepts": [
+        "matching"
+      ],
+      "choices": [
+        {
+          "text": "The most recent one that’s still open.",
+          "correct": true,
+          "reply": "Right. In {[()]}, the first ) closes the (, the newest bracket still open."
+        },
+        {
+          "text": "The first one that was opened.",
+          "misconception": "stack-is-a-queue",
+          "reply": "In {[()]}, the first opened is {, but ) has to close (, the most recent."
+        },
+        {
+          "text": "Any open bracket of the same kind, in any order.",
+          "misconception": "counting-is-enough",
+          "reply": "([)] has matching kinds and matching counts, and it’s still invalid. The order matters."
+        }
+      ],
+      "hints": [
+        "Try {[()]}: which bracket does the first ) close?",
+        "Picture the open brackets as a pile. Which one is on top?"
+      ]
+    },
+    {
+      "ask": "You only ever need the most recently opened bracket. What should you keep as you read?",
+      "concepts": [
+        "stack"
+      ],
+      "choices": [
+        {
+          "text": "A stack of open brackets: push when one opens, pop when it closes.",
+          "correct": true,
+          "reply": "Yes. The top of the stack is always the bracket the next closer must match, and each bracket is read once."
+        },
+        {
+          "text": "Delete each matched pair, then rescan from the start.",
+          "misconception": "rescan-is-needed",
+          "reply": "That’s the slow way. Rescanning re-reads brackets you already know are still open."
+        },
+        {
+          "text": "A count of each kind of bracket.",
+          "misconception": "counting-is-enough",
+          "reply": "Counts lose the order: ([)] has perfect counts and is still invalid."
+        }
+      ],
+      "hints": [
+        "You add opening brackets, and only ever remove the newest one.",
+        "Last in, first out: which structure works like that?"
+      ]
+    }
+  ],
   understand: {
     statement: "You get a string of brackets: `()`, `[]` and `{}`. Decide whether it’s **valid**: every opening bracket is closed by the same kind of bracket, in the right order.",
     inputs: [{ name: "s", meaning: "A string made only of the six characters `( ) [ ] { }`." }],

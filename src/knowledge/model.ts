@@ -15,6 +15,7 @@
 
 import { CONCEPTS, type ConceptId } from "./concepts";
 import type { Evidence } from "./evidence";
+import { type Misconception, misconceptionById } from "./misconceptions";
 
 export type State = "unseen" | "seen" | "learning" | "shaky" | "understood";
 
@@ -26,6 +27,8 @@ export interface ConceptState {
   due: boolean;
   /** The evidence behind the state, newest first. */
   evidence: Evidence[];
+  /** Misconceptions shown since the last right answer without hints: what still seems off. */
+  misconceptions: Misconception[];
   /** One sentence explaining the state, from the evidence. */
   why: string;
 }
@@ -42,12 +45,19 @@ export function assess(log: Evidence[], now = Date.now()): Map<ConceptId, Concep
 function judge(id: ConceptId, events: Evidence[], now: number): ConceptState {
   const evidence = [...events].sort((a, b) => b.at - a.at);
   const graded = evidence.filter((e) => e.correct !== undefined);
-  if (!evidence.length) return { id, state: "unseen", due: false, evidence, why: "Not met yet." };
-  if (!graded.length) return { id, state: "seen", due: false, evidence, why: "Watched, but not tested yet. Seeing isn’t understanding." };
+  // Misconceptions shown since the last clean right answer still stand.
+  const lastClean = graded.findIndex((e) => e.correct && !e.hinted);
+  const recent = lastClean === -1 ? graded : graded.slice(0, lastClean);
+  const misconceptions = [...new Set(recent.flatMap((e) => (e.misconception ? [e.misconception] : [])))]
+    .map((m) => misconceptionById.get(m)).filter((m): m is Misconception => !!m);
+  const base = { id, evidence, misconceptions };
+  if (!evidence.length) return { ...base, state: "unseen", due: false, why: "Not met yet." };
+  if (!graded.length) return { ...base, state: "seen", due: false, why: "Watched, but not tested yet. Seeing isn’t understanding." };
 
   const latest = graded[0];
   if (!latest.correct) {
-    return { id, state: "shaky", due: true, evidence, why: `Missed most recently: ${latest.detail}.` };
+    const m = latest.misconception && misconceptionById.get(latest.misconception);
+    return { ...base, state: "shaky", due: true, why: m ? `You seemed to think ${m.belief}.` : `Missed most recently: ${latest.detail}.` };
   }
   const clean = graded.filter((e) => e.correct && !e.hinted);
   const sources = new Set(clean.map((e) => `${e.task}|${e.problem}`));
@@ -61,13 +71,13 @@ function judge(id: ConceptId, events: Evidence[], now: number): ConceptState {
     const reviewAt = latest.at + DAY * 2 ** Math.min(streak - 2, 6);
     const due = now >= reviewAt;
     return {
-      id, state: "understood", reviewAt, due, evidence,
+      ...base, state: "understood", reviewAt, due,
       why: due ? "Understood before. Time to check it’s still there." : `Answered right ${clean.length} times without hints.`,
     };
   }
   const need = Math.max(0, 2 - clean.length);
   return {
-    id, state: "learning", due: false, evidence,
+    ...base, state: "learning", due: false,
     why: need
       ? `Right so far. ${need} more right answer${need > 1 ? "s" : ""} without hints to show it’s understood.`
       : sources.size < 2 ? "Right so far. Show it in another kind of question too."

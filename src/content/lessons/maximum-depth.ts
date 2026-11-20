@@ -7,6 +7,62 @@ export const maximumDepth: Lesson = {
     trick: "A tree’s depth is 1 + the deeper of its two subtrees.",
     recognize: "A node’s answer built from its children’s answers? Recurse.",
   },
+  reasoning: [
+    {
+      "ask": "The left subtree is 2 deep and the right subtree is 1 deep. How deep is the whole tree?",
+      "concepts": [
+        "tree-recursion",
+        "trees"
+      ],
+      "choices": [
+        {
+          "text": "3: one for the root, plus the deeper side.",
+          "correct": true,
+          "reply": "Right. The longest path goes through the root and down the deeper side."
+        },
+        {
+          "text": "4: the root plus both sides.",
+          "misconception": "depth-is-node-count",
+          "reply": "Depth follows one path down, not both sides. Adding them counts nodes on two different paths."
+        },
+        {
+          "text": "2: just the deeper side.",
+          "reply": "Don’t forget the root itself: it’s on every path."
+        }
+      ],
+      "hints": [
+        "Depth is the number of nodes on the longest path from the root down.",
+        "A path goes down one side only."
+      ]
+    },
+    {
+      "ask": "A tree’s depth comes from its subtrees’ depths. Where does that stop?",
+      "concepts": [
+        "recursion"
+      ],
+      "choices": [
+        {
+          "text": "At an empty tree, whose depth is 0.",
+          "correct": true,
+          "reply": "Yes. That’s the base case: the one answer you know without asking anyone."
+        },
+        {
+          "text": "It doesn’t need to stop: just keep going down.",
+          "misconception": "no-base-case",
+          "reply": "Then the calls would never end. Every recursion needs a case it can answer directly."
+        },
+        {
+          "text": "When you’ve visited a whole level.",
+          "misconception": "recursion-needs-levels",
+          "reply": "Recursion doesn’t need levels: each call only asks its own two children."
+        }
+      ],
+      "hints": [
+        "What’s the depth of a tree with no nodes at all?",
+        "Every recursion needs one case it can answer without recursing."
+      ]
+    }
+  ],
   understand: {
     statement: "You get the root of a binary tree. Return its **depth**: the number of nodes on the longest path from the root down to a leaf.",
     inputs: [{ name: "root", meaning: "The top node of the tree, or `None` for an empty tree. Each node has a value (`val`) and up to two children (`left` and `right`)." }],

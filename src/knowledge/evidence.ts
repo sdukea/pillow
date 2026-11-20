@@ -9,7 +9,8 @@ export type Task =
   | "exposure"    // watched an approach run to the end: seen, not understood
   | "predict"     // predicted the next state of a real run
   | "complexity"  // said how the work grows, graded against measured growth
-  | "recall";     // picked the right trick for a problem from memory
+  | "recall"      // picked the right trick for a problem from memory
+  | "reason";     // answered a Socratic question on the way to the trick
 
 export interface Evidence {
   at: number;
@@ -21,6 +22,8 @@ export interface Evidence {
   correct?: boolean;
   /** Whether a hint was used. A hinted answer is weaker evidence. */
   hinted?: boolean;
+  /** For a wrong answer: the misconception it revealed. */
+  misconception?: string;
   /** What was asked and answered, in a few words, for the map's explanation. */
   detail: string;
 }

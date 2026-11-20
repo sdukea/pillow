@@ -7,6 +7,61 @@ export const longestSubstring: Lesson = {
     trick: "Keep a window with no repeats. On a repeat, slide its left edge past it.",
     recognize: "Longest run that follows a rule? Slide a window.",
   },
+  reasoning: [
+    {
+      "ask": "Your window is “abc” and the next letter is another “a”. What part of the window is still fine to keep?",
+      "concepts": [
+        "sliding-window"
+      ],
+      "choices": [
+        {
+          "text": "“bc”: only the first “a” has to go.",
+          "correct": true,
+          "reply": "Yes. Everything after the earlier “a” still has no repeats."
+        },
+        {
+          "text": "Nothing: start over from the next letter.",
+          "misconception": "restart-on-repeat",
+          "reply": "Starting over re-reads “b” and “c”, which you already know are fine. That’s exactly the slow way’s waste."
+        },
+        {
+          "text": "All of it: just skip the new “a”.",
+          "reply": "A substring has to be contiguous, so you can’t skip a letter in the middle."
+        }
+      ],
+      "hints": [
+        "Which letter repeats? Where was its first copy?",
+        "Drop letters from the left until the repeat is gone."
+      ]
+    },
+    {
+      "ask": "To move the window’s left edge past the earlier “a” in one jump, what do you need?",
+      "concepts": [
+        "hash-map",
+        "two-pointers"
+      ],
+      "choices": [
+        {
+          "text": "Where each letter was last seen: a map from letter to index.",
+          "correct": true,
+          "reply": "Right. Then the left edge jumps straight past the repeat, and neither edge ever moves back."
+        },
+        {
+          "text": "Just the window’s length.",
+          "reply": "The length doesn’t say where the earlier copy is."
+        },
+        {
+          "text": "Move the left edge back to the earlier copy, wherever it is.",
+          "misconception": "left-moves-back",
+          "reply": "A copy from before the window doesn’t matter. Jumping to it would move the left edge backwards, as in “abba”."
+        }
+      ],
+      "hints": [
+        "You need to find the earlier copy of a letter without searching for it.",
+        "Which structure maps a letter to a position in one step?"
+      ]
+    }
+  ],
   understand: {
     statement: "You get a string. Find the length of the longest **substring** (a run of neighbouring characters) in which no character appears twice.",
     inputs: [{ name: "s", meaning: "Any string: letters, digits, symbols or spaces." }],

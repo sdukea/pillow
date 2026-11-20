@@ -8,11 +8,16 @@ steps, and it asks before it tells:
 1. **The problem**, drawn.
 2. **The slow way**, running for real. It pauses for you to predict the next
    move, then asks how the work grows.
-3. **The trick**, in one sentence.
-4. **The fast way**, on the same input, with the same two questions.
-5. **Your note**: the trick and how to spot it next time.
+3. **Your turn:** two questions that lead you to the trick yourself. Wrong
+   answers explain what's off, and hints are there if you're stuck.
+4. **The trick**, in one sentence, confirming what you found.
+5. **The fast way**, on the same input, with the same two questions as the
+   slow way.
+6. **Your note**: the trick and how to spot it next time.
 
-Every answer is evidence. **Your map** shows 26 concepts, from arrays to
+Every answer is evidence, and wrong answers name the misconception they
+reveal ("You seemed to think a hash map lookup scans every key"). **Your
+map** shows 26 concepts, from arrays to
 recursion on trees, each coloured by what you've actually shown: seen,
 learning, shaky or understood. Tap one to see why. Watching never counts
 as understanding: that needs right answers that last (in a later session)
@@ -63,7 +68,7 @@ The full reasoning is in [docs/ASSESSMENT.md](docs/ASSESSMENT.md) and
 
 ## Status
 
-**M0–M8 are done.** All six MVP problems are complete lessons: understand
+**M0–M9 are done.** All six MVP problems are complete lessons: understand
 the problem, a first approach, the better approach and why it works, a note
 for every line, and time and memory measured from real runs. Every
 approach can also run on your own input, or a one-click edge case, traced
@@ -85,7 +90,8 @@ after review.
 | M7.1 The playground: edit the input by touch, race both solutions live, drag time and size ([ADR 0009](docs/adr/0009-playground.md)) | **Done** |
 | M7.2 One idea, then a note: five-step learn screen, a hand-written card per lesson, Notes with recall ([ADR 0010](docs/adr/0010-one-idea.md)) | **Done** |
 | M8 Evidence: concept ontology, graded tasks generated from traces, evidence log, explainable student model, knowledge map, recommendations ([ADR 0011](docs/adr/0011-evidence-and-the-student-model.md)) | **Done** |
-| M9 Reasoning: derive solutions through Socratic questions, misconception-tagged answers, hints; then independent solving, interview mode, accounts (see [docs/PROJECT.md](docs/PROJECT.md)) | Next |
+| M9 Reasoning: a "Your turn" step with Socratic questions, misconception-tagged answers, a hint ladder; misconceptions on the map and in recommendations ([ADR 0012](docs/adr/0012-reasoning.md)) | **Done** |
+| M10 Independent solving: write the solution yourself; tests run in the browser; then interview mode and accounts (see [docs/PROJECT.md](docs/PROJECT.md)) | Next |
 
 **MVP problems:** Two Sum, Valid Parentheses, Binary Search, Longest
 Substring Without Repeating Characters, Reverse Linked List, and Maximum

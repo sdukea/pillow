@@ -4,6 +4,7 @@
 import type { GrowthClass } from "../../engine/analysis/growth";
 import type { Arg } from "../../engine/tracer/types";
 import type { ConceptId } from "../knowledge/concepts";
+import type { MisconceptionId } from "../knowledge/misconceptions";
 
 /** An optional, ungraded question that asks the learner to commit to an idea. */
 export interface Check {
@@ -82,8 +83,31 @@ export interface Card {
   recognize: string;
 }
 
+/** One answer in a reasoning step. Wrong answers say which misconception they reveal. */
+export interface ReasoningChoice {
+  text: string;
+  correct?: boolean;
+  /** For a wrong answer: the misconception it reveals (src/knowledge/misconceptions.ts). */
+  misconception?: MisconceptionId;
+  /** What the student sees after picking it: why it's right, or what's wrong with it. */
+  reply: string;
+}
+
+/**
+ * One Socratic question on the way to the trick: the student derives the idea instead of being
+ * told it. Exactly one right answer; up to two hints, each of which weakens the evidence.
+ */
+export interface ReasoningStep {
+  ask: string;
+  concepts: ConceptId[];
+  choices: ReasoningChoice[];
+  hints: string[];
+}
+
 export interface Lesson {
   card: Card;
+  /** Two or three questions that lead from the slow way to the trick. */
+  reasoning: ReasoningStep[];
   understand: {
     statement: string;
     inputs: { name: string; meaning: string }[];

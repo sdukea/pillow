@@ -33,6 +33,20 @@ async function finishRun(page: Page) {
   await expect(page.locator(".learn-next .next")).toBeEnabled();
 }
 
+/** Work through "Your turn": try choices in order until each question is answered right. */
+async function solveThink(page: Page) {
+  const think = page.locator(".think");
+  await expect(think).toBeVisible();
+  for (;;) {
+    const choices = think.locator(".choice:not([disabled])");
+    while (!(await think.locator(".think-reply.right").isVisible())) await choices.first().click();
+    const more = page.getByRole("button", { name: "Next Question" });
+    if (await more.isVisible()) await more.click();
+    else break;
+  }
+  await expect(page.locator(".learn-next .next")).toBeEnabled();
+}
+
 test("a problem asks before it tells: predict, then say how it grows, then the note @phone", async ({ page }) => {
   const errors = watchErrors(page);
   await page.goto("./");
@@ -50,7 +64,10 @@ test("a problem asks before it tells: predict, then say how it grows, then the n
   await expect(page.locator(".learn-next .next")).toHaveText("Answer to Continue");
   await finishRun(page);
   await expect(page.getByText("Every deletion restarts the scan from the beginning.")).toBeVisible();
-  await page.getByRole("button", { name: "What’s the Trick?" }).click();
+  await page.getByRole("button", { name: "Your Turn" }).click();
+  await expect(page.locator(".learn-next .next")).toBeDisabled();
+  await solveThink(page);
+  await page.getByRole("button", { name: "Put It Together" }).click();
   await expect(page.getByText("The last bracket opened must be the first one closed. That’s a stack.")).toBeVisible();
   await page.getByRole("button", { name: "Watch It Work" }).click();
   await finishRun(page);
@@ -63,6 +80,7 @@ test("a problem asks before it tells: predict, then say how it grows, then the n
   expect(tasks.filter((t) => t === "predict")).toHaveLength(2);
   expect(tasks.filter((t) => t === "complexity")).toHaveLength(2);
   expect(tasks.filter((t) => t === "exposure")).toHaveLength(2);
+  expect(tasks.filter((t) => t === "reason")).toHaveLength(2); // only the first answer to each question counts
   expect(errors).toEqual([]);
 });
 
@@ -73,6 +91,8 @@ test("every problem walks through all five steps without errors", async ({ page 
     await page.goto(`p/${p.slug}`);
     await page.locator(".learn-next .next").click();
     await finishRun(page);
+    await page.locator(".learn-next .next").click();
+    await solveThink(page);
     await page.locator(".learn-next .next").click();
     await page.locator(".learn-next .next").click();
     await finishRun(page);
@@ -102,7 +122,9 @@ test("a note asks you to recall the trick, and the answer becomes evidence", asy
   await page.goto("p/two-sum");
   await page.getByRole("button", { name: "Show Me the Slow Way" }).click();
   await finishRun(page);
-  await page.getByRole("button", { name: "What’s the Trick?" }).click();
+  await page.getByRole("button", { name: "Your Turn" }).click();
+  await solveThink(page);
+  await page.getByRole("button", { name: "Put It Together" }).click();
   await page.getByRole("button", { name: "Watch It Work" }).click();
   await finishRun(page);
   await page.getByRole("button", { name: "Keep the Note" }).click();
@@ -113,6 +135,37 @@ test("a note asks you to recall the trick, and the answer becomes evidence", asy
   const recall: { correct: boolean }[] = await page.evaluate(() => JSON.parse(localStorage.getItem("pillow.evidence") ?? "[]").filter((e: { task: string }) => e.task === "recall"));
   expect(recall).toHaveLength(1);
   expect(recall[0].correct).toBe(true);
+});
+
+test("your turn: hints weaken the evidence, a wrong answer explains itself, and the misconception reaches the map", async ({ page }) => {
+  await page.goto("p/two-sum");
+  await page.getByRole("button", { name: "Show Me the Slow Way" }).click();
+  await finishRun(page);
+  await page.getByRole("button", { name: "Your Turn" }).click();
+  // Question 1: take a hint first, then answer right. The answer is recorded as hinted.
+  await page.getByRole("button", { name: /^Hint/ }).click();
+  await expect(page.locator(".hints li")).toHaveText("Take 2 and a target of 9. Which numbers would complete the sum?");
+  await page.getByRole("button", { name: "One exact partner: the target minus itself." }).click();
+  await expect(page.locator(".think-reply.right")).toBeVisible();
+  await page.getByRole("button", { name: "Next Question" }).click();
+  // Question 2: answer wrong first. The reply addresses the misconception; then find the right one.
+  await page.getByRole("button", { name: "A hash map wouldn’t help: it has to check all its keys too." }).click();
+  await expect(page.locator(".think-reply.wrong")).toContainText("A hash map jumps straight to where a key would be");
+  await expect(page.locator(".learn-next .next")).toBeDisabled();
+  await page.getByRole("button", { name: "Remember every number you pass in a hash map, and look the partner up." }).click();
+  await expect(page.locator(".learn-next .next")).toBeEnabled();
+  const reasons: { correct: boolean; hinted: boolean; misconception?: string }[] = await page.evaluate(() =>
+    JSON.parse(localStorage.getItem("pillow.evidence") ?? "[]").filter((e: { task: string }) => e.task === "reason"));
+  expect(reasons).toEqual([
+    expect.objectContaining({ correct: true, hinted: true }),
+    expect.objectContaining({ correct: false, misconception: "lookup-scans" }),
+  ]);
+  await page.goto("map");
+  await page.getByRole("button", { name: /^Instant lookup: Shaky/ }).click();
+  await expect(page.locator(".concept")).toContainText("You seemed to think looking something up in a hash map means scanning every key.");
+  await page.goto("./");
+  await expect(page.locator(".home-next .next-row")).toContainText("Fix");
+  await expect(page.locator(".home-next .next-row")).toContainText("You seemed to think");
 });
 
 test("a new student is told where to start, and the next step moves on as they learn", async ({ page }) => {

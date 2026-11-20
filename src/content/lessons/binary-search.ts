@@ -7,6 +7,62 @@ export const binarySearch: Lesson = {
     trick: "Look at the middle. Throw away the half that can’t hold the target.",
     recognize: "Sorted data? Halve what’s left at every step.",
   },
+  reasoning: [
+    {
+      "ask": "You check the middle number and it’s smaller than the target. What does that tell you?",
+      "concepts": [
+        "sorted-order"
+      ],
+      "choices": [
+        {
+          "text": "Everything to its left is smaller too, so the target can only be on the right.",
+          "correct": true,
+          "reply": "Exactly. Because the list is sorted, one comparison rules out half of it."
+        },
+        {
+          "text": "Only that this one number isn’t the target.",
+          "misconception": "sorted-doesnt-help",
+          "reply": "In a sorted list it tells you much more: every number before it is smaller still."
+        },
+        {
+          "text": "The target must be right next to it.",
+          "reply": "Not necessarily. It could be anywhere on the right side."
+        }
+      ],
+      "hints": [
+        "The list is sorted. What do you know about the numbers before a small one?",
+        "If 11 is too small, can anything left of 11 be 19?"
+      ]
+    },
+    {
+      "ask": "The target is to the right of the middle. Where should the search range start now?",
+      "concepts": [
+        "binary-search",
+        "invariant"
+      ],
+      "choices": [
+        {
+          "text": "Just after the middle: lo = mid + 1.",
+          "correct": true,
+          "reply": "Right. The middle is already ruled out, and dropping it guarantees the range shrinks every time."
+        },
+        {
+          "text": "At the middle: lo = mid.",
+          "misconception": "halving-off-by-one",
+          "reply": "The middle was already checked. Keeping it can leave the range stuck at two numbers forever."
+        },
+        {
+          "text": "Back at the start, skipping the numbers already checked.",
+          "misconception": "binary-search-is-linear",
+          "reply": "Keep only the half that can still hold the target. Throwing the other half away is what makes it fast."
+        }
+      ],
+      "hints": [
+        "Has the number at mid already been checked?",
+        "The range should never include anything already ruled out."
+      ]
+    }
+  ],
   understand: {
     statement: "You get a list of numbers in increasing order and a target. Return the target’s index, or `-1` if it isn’t there.",
     inputs: [

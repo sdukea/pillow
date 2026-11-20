@@ -7,6 +7,61 @@ export const twoSum: Lesson = {
     trick: "Remember each number you pass. Then ask: is my partner already here?",
     recognize: "Looking for a pair that adds up? Store what you’ve seen.",
   },
+  reasoning: [
+    {
+      "ask": "The slow way tries every pair. For each number, what is it really looking for?",
+      "concepts": [
+        "complement"
+      ],
+      "choices": [
+        {
+          "text": "One exact partner: the target minus itself.",
+          "correct": true,
+          "reply": "Exactly. With a target of 9, the number 2 needs a 7 and nothing else. It’s searching for one known value."
+        },
+        {
+          "text": "Any number smaller than the target.",
+          "reply": "Smaller isn’t enough: 2 needs exactly 7. Any other number makes the wrong sum."
+        },
+        {
+          "text": "Every other number, one at a time, to be thorough.",
+          "misconception": "more-loops-is-thorough",
+          "reply": "Trying everything is what the slow way does. But only one value can ever work for each number."
+        }
+      ],
+      "hints": [
+        "Take 2 and a target of 9. Which numbers would complete the sum?",
+        "Only one value works: 9 − 2."
+      ]
+    },
+    {
+      "ask": "Each number needs one exact partner. What’s the fastest way to check whether you’ve already passed it?",
+      "concepts": [
+        "hash-map",
+        "hash-lookup"
+      ],
+      "choices": [
+        {
+          "text": "Remember every number you pass in a hash map, and look the partner up.",
+          "correct": true,
+          "reply": "Yes. A lookup takes about one step, however many numbers are stored. One pass, no inner loop."
+        },
+        {
+          "text": "Scan back through the numbers you’ve passed.",
+          "reply": "That scan is the slow way’s inner loop again: it grows with the list."
+        },
+        {
+          "text": "A hash map wouldn’t help: it has to check all its keys too.",
+          "misconception": "lookup-scans",
+          "reply": "A hash map jumps straight to where a key would be. That’s about one step, whether it holds 10 keys or a million."
+        }
+      ],
+      "hints": [
+        "The slow way’s inner loop is a search through numbers you’ve already seen.",
+        "Which structure answers “have I seen 7?” in one step?"
+      ]
+    }
+  ],
   understand: {
     statement: "You get a list of numbers and a target. Exactly two of the numbers add up to the target. Return **where** those two numbers are in the list.",
     inputs: [

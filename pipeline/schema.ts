@@ -7,6 +7,7 @@ import { z } from "zod";
 import type { Brief, Draft } from "../src/content/draft";
 import { PATTERNS } from "../src/content/problems";
 import { CONCEPTS, type ConceptId } from "../src/knowledge/concepts";
+import { MISCONCEPTIONS, type MisconceptionId } from "../src/knowledge/misconceptions";
 
 const text = z.string();
 const GROWTH = ["1", "log n", "n", "n log n", "n²"] as const;
@@ -68,8 +69,21 @@ const Approach = z.object({
   check: Check.optional(),
 });
 
+const Reasoning = z.array(z.object({
+  ask: text.describe("A short Socratic question that moves the student one step from the slow way towards the trick."),
+  concepts: z.array(z.enum(CONCEPTS.map((c) => c.id) as [ConceptId, ...ConceptId[]])),
+  choices: z.array(z.object({
+    text: text,
+    correct: z.boolean().optional().describe("Exactly one choice per step is correct."),
+    misconception: z.enum(MISCONCEPTIONS.map((m) => m.id) as [MisconceptionId, ...MisconceptionId[]]).optional().describe("For a wrong choice: the misconception it reveals, if one fits."),
+    reply: text.describe("Shown after picking it: why it's right, or exactly what's wrong with it."),
+  })).describe("Three choices: one correct, two plausible wrong ones."),
+  hints: z.array(text).describe("One or two hints, each a small nudge, never the answer itself."),
+})).describe("Two or three steps that lead from the slow way to the trick.");
+
 export const DraftSchema = z.object({
   summary: text,
+  reasoning: Reasoning,
   card: z.object({
     slow: text.describe("The slow way as an instruction, at most 60 characters: \"Try every pair of numbers.\""),
     waste: text.describe("What the slow way wastes, at most 70 characters."),

@@ -7,6 +7,62 @@ export const reverseLinkedList: Lesson = {
     trick: "Walk the list once, turning each arrow around as you go.",
     recognize: "Rewiring a linked list? Track prev, cur and next.",
   },
+  reasoning: [
+    {
+      "ask": "To turn 1 → 2 → 3 around, what has to change about each node?",
+      "concepts": [
+        "pointer-rewiring"
+      ],
+      "choices": [
+        {
+          "text": "Where its arrow points: from the next node to the one before.",
+          "correct": true,
+          "reply": "Yes. The nodes stay where they are; only the arrows flip."
+        },
+        {
+          "text": "Its value: write the values back in reverse order.",
+          "reply": "That rewrites values instead of turning the list around, and values can be big objects you shouldn’t copy around."
+        },
+        {
+          "text": "Nothing: you have to build a new list.",
+          "misconception": "need-a-copy",
+          "reply": "You can reuse the same nodes. Just make each arrow point backwards."
+        }
+      ],
+      "hints": [
+        "In 3 → 2 → 1, where does node 2’s arrow point?",
+        "Each node’s next should become the node before it."
+      ]
+    },
+    {
+      "ask": "You’re at node 2, about to point it back at node 1. What must you do first?",
+      "concepts": [
+        "two-pointers",
+        "pointer-rewiring"
+      ],
+      "choices": [
+        {
+          "text": "Save where node 2 points now, so you can still reach node 3.",
+          "correct": true,
+          "reply": "Exactly. Flip first and the rest of the list is lost. That’s why there are three pointers: prev, cur and next."
+        },
+        {
+          "text": "Nothing: just flip the arrow.",
+          "misconception": "lose-the-rest",
+          "reply": "Then node 3 is unreachable: its only link was node 2’s arrow."
+        },
+        {
+          "text": "Copy the rest of the list somewhere safe.",
+          "misconception": "need-a-copy",
+          "reply": "Saving one pointer is enough. There’s no need to copy anything."
+        }
+      ],
+      "hints": [
+        "After the flip, node 2 points at node 1. How would you reach node 3?",
+        "Note the next node before you change anything."
+      ]
+    }
+  ],
   understand: {
     statement: "You get the first node of a linked list. Reverse the list, so the last node comes first, and return the new first node.",
     inputs: [

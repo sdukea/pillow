@@ -4,6 +4,7 @@ import { fixtureSource, traceCPython } from "../../engine/testing/trace";
 import { PROBLEMS } from "../content/problems";
 import { simplified } from "../learn/pace";
 import { CONCEPTS, conceptById, depthOf } from "./concepts";
+import { MISCONCEPTIONS, misconceptionById } from "./misconceptions";
 import type { Evidence } from "./evidence";
 import { assess } from "./model";
 import { complexityFor, predictionFor, recallFor } from "./questions";
@@ -64,6 +65,36 @@ describe("the student model", () => {
     const longer = [...log, ev({ task: "recall", correct: true, at: 2 * DAY })];
     expect(state(longer, 2 * DAY + DAY + 1).due).toBe(false); // the next interval is 2 days
     expect(state(longer, 2 * DAY + 2 * DAY + 1).due).toBe(true);
+  });
+});
+
+describe("misconceptions", () => {
+  it("are all tied to real concepts, and every lesson's wrong answers name real ones", () => {
+    for (const m of MISCONCEPTIONS) expect(conceptById.has(m.concept), m.id).toBe(true);
+    for (const p of PROBLEMS.filter((x) => x.lesson)) {
+      for (const step of p.lesson!.reasoning) {
+        expect(step.choices.filter((c) => c.correct)).toHaveLength(1);
+        for (const c of step.choices) if (c.misconception) expect(misconceptionById.has(c.misconception)).toBe(true);
+      }
+    }
+  });
+  it("a wrong answer that reveals one makes the concept shaky, in the student's own terms", () => {
+    const s = assess([ev({ task: "reason", concepts: ["hash-lookup"], correct: false, misconception: "lookup-scans", at: 5 })]).get("hash-lookup")!;
+    expect(s.state).toBe("shaky");
+    expect(s.why).toBe("You seemed to think looking something up in a hash map means scanning every key.");
+    expect(s.misconceptions.map((m) => m.id)).toEqual(["lookup-scans"]);
+  });
+  it("stands until a clean right answer clears it", () => {
+    const wrong = ev({ task: "reason", concepts: ["hash-lookup"], correct: false, misconception: "lookup-scans", at: 5 });
+    const hinted = ev({ task: "predict", concepts: ["hash-lookup"], correct: true, hinted: true, at: 6 });
+    expect(assess([wrong, hinted]).get("hash-lookup")!.misconceptions).toHaveLength(1);
+    const clean = ev({ task: "predict", concepts: ["hash-lookup"], correct: true, at: 7 });
+    expect(assess([wrong, hinted, clean]).get("hash-lookup")!.misconceptions).toHaveLength(0);
+  });
+  it("recommendations name the misconception as the reason to fix it", () => {
+    const recs = recommend(PROBLEMS, assess([ev({ task: "reason", problem: "two-sum", concepts: ["hash-lookup"], correct: false, misconception: "lookup-scans" })]));
+    expect(recs[0]).toMatchObject({ kind: "fix", concept: "hash-lookup" });
+    expect(recs[0].reason).toMatch(/You seemed to think looking something up/);
   });
 });
 

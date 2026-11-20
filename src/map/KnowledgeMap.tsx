@@ -88,6 +88,11 @@ function ConceptDetail({ state, states, onOpen, onPick }: { state: ConceptState;
       <h2>{c.name}</h2>
       <p className="concept-means">{c.means}</p>
       <p className="concept-why">{state.why}</p>
+      {state.misconceptions.some((m) => !state.why.includes(m.belief)) && (
+        <ul className="misconceptions" aria-label="Still seems off">
+          {state.misconceptions.filter((m) => !state.why.includes(m.belief)).map((m) => <li key={m.id}>You seemed to think {m.belief}.</li>)}
+        </ul>
+      )}
       {state.evidence.length > 0 && (
         <ul className="evidence">
           {state.evidence.slice(0, 6).map((e, i) => (

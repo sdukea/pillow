@@ -1,5 +1,5 @@
 // What to do next, decided from the student model: deterministic, and always with a reason.
-//   1. A concept you missed most recently (shaky): revisit the problem that tests it.
+//   1. A concept you missed (shaky), named misconceptions first: revisit the problem that tests it.
 //   2. An understood concept due for review: recall it.
 //   3. The frontier: a problem that teaches something new, whose prerequisites you understand
 //      (or have no prerequisites), preferring the fewest unmet prerequisites.
@@ -22,11 +22,13 @@ export function recommend(problems: Problem[], states: Map<ConceptId, ConceptSta
   const taught = problems.filter((p) => p.lesson);
   const name = (c: ConceptId) => conceptById.get(c)?.name ?? c;
 
-  for (const s of states.values()) {
-    if (s.state !== "shaky") continue;
+  // Fix first what's most specific (a named misconception), then what was missed most recently.
+  const shaky = [...states.values()].filter((s) => s.state === "shaky")
+    .sort((a, b) => b.misconceptions.length - a.misconceptions.length || (b.evidence[0]?.at ?? 0) - (a.evidence[0]?.at ?? 0));
+  for (const s of shaky) {
     const p = s.evidence.find((e) => e.correct === false && taught.some((x) => x.slug === e.problem));
     const problem = p && taught.find((x) => x.slug === p.problem);
-    if (problem) out.push({ kind: "fix", problem, concept: s.id, reason: `You missed ${name(s.id).toLowerCase()} last time.` });
+    if (problem) out.push({ kind: "fix", problem, concept: s.id, reason: s.misconceptions.length ? s.why : `You missed ${name(s.id).toLowerCase()} last time.` });
   }
   for (const s of states.values()) {
     if (s.state !== "understood" || !s.due) continue;

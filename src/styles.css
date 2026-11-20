@@ -626,3 +626,16 @@ svg .solid { fill: currentColor; stroke: none; }
 .concept-requires { font-size: 14px; color: var(--muted); }
 .concept-practice { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
 .concept-practice .btn-gray { font-size: 15px; min-height: 40px; padding: 8px 16px; }
+/* ------------------------------------------------------------------ your turn: reasoning */
+.think { display: grid; gap: 16px; animation: rise 0.35s var(--ease) both; }
+.think-ask { font-size: clamp(24px, 3.4vw, 32px); font-weight: 700; line-height: 1.2; letter-spacing: -0.015em; text-wrap: balance; }
+.think-choices { display: grid; gap: 10px; }
+.think-choices .choice { font-size: 17px; padding: 14px 18px; }
+.think-reply { font-size: 17px; line-height: 1.45; padding: 14px 18px; border-radius: 14px; animation: rise 0.25s var(--ease) both; }
+.think-reply.right { background: var(--add-soft); }
+.think-reply.wrong { background: rgba(255, 69, 58, 0.12); }
+.think-again { font-weight: 600; }
+.think-hint { justify-self: start; font-size: 15px; }
+.hints { margin: 0; padding: 0 0 0 18px; display: grid; gap: 6px; font-size: 15px; color: var(--muted); }
+.think-next { justify-self: start; }
+.misconceptions { margin: 0; padding: 12px 16px 12px 32px; border-radius: 14px; background: rgba(255, 69, 58, 0.1); display: grid; gap: 6px; font-size: 15px; }

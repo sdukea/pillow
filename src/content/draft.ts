@@ -67,6 +67,8 @@ export interface Draft {
   summary: string;
   /** The whole idea in four short lines: the slow way, its waste, the trick, how to spot it. */
   card: Lesson["card"];
+  /** Socratic questions from the slow way to the trick. */
+  reasoning: Lesson["reasoning"];
   /** The example every approach plays: a JSON array with one value per input field. */
   example: { values: string; label: string };
   understand: Lesson["understand"];
@@ -132,6 +134,7 @@ export function toProblem(brief: Brief, draft: Draft, growthInputs: Record<strin
   }));
   const lesson: Lesson = {
     card: draft.card,
+    reasoning: draft.reasoning,
     understand: draft.understand,
     approaches: Object.fromEntries(draft.approaches.map((a) => [a.id, {
       concepts: a.concepts,

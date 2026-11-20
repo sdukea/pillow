@@ -4,6 +4,8 @@ import type { Problem } from "../content/problems";
 import { growthOf, preparedFor } from "../lib/data";
 import { saveNote } from "../lib/notes";
 import { record } from "../knowledge/evidence";
+import { misconceptionById } from "../knowledge/misconceptions";
+import type { ReasoningStep } from "../content/lesson";
 import { type Choice, complexityFor, type ComplexityQuestion, type Prediction, predictionFor } from "../knowledge/questions";
 import { Canvas } from "../views/Canvas";
 import { inputPicture, pacing, simplified, stepAt } from "./pace";
@@ -14,9 +16,9 @@ import { inputPicture, pacing, simplified, stepAt } from "./pace";
 // next, and ends by asking how the work grows. Your answers are evidence for your knowledge map:
 // watching alone never counts as understanding.
 
-type Beat = "problem" | "slow" | "trick" | "fast" | "note";
-const BEATS: Beat[] = ["problem", "slow", "trick", "fast", "note"];
-const NEXT: Record<Beat, string> = { problem: "Show Me the Slow Way", slow: "What’s the Trick?", trick: "Watch It Work", fast: "Keep the Note", note: "Done" };
+type Beat = "problem" | "slow" | "think" | "trick" | "fast" | "note";
+const BEATS: Beat[] = ["problem", "slow", "think", "trick", "fast", "note"];
+const NEXT: Record<Beat, string> = { problem: "Show Me the Slow Way", slow: "Your Turn", think: "Put It Together", trick: "Watch It Work", fast: "Keep the Note", note: "Done" };
 
 interface Props { problem: Problem; onHome: () => void; onPlay: () => void; onLesson: () => void }
 
@@ -37,7 +39,7 @@ export function Learn({ problem, onHome, onPlay, onLesson }: Props) {
   }), [runs, problem, slow, fast]);
   // A run's beat is finished once it has played and its questions are answered.
   const [finished, setFinished] = useState<Record<string, boolean>>({});
-  const locked = (at === "slow" || at === "fast") && !finished[at];
+  const locked = (at === "slow" || at === "fast" || at === "think") && !finished[at];
   const evidence = (approach: typeof slow) => (task: "predict" | "complexity" | "exposure", correct: boolean | undefined, detail: string) => {
     const concepts = problem.lesson!.approaches[approach.id].concepts;
     record({ task, problem: problem.slug, approach: approach.id, concepts: task === "complexity" ? [...new Set(["complexity" as const, ...concepts])] : concepts, correct, detail });
@@ -81,6 +83,21 @@ export function Learn({ problem, onHome, onPlay, onLesson }: Props) {
           </>
         )}
         {at === "slow" && <Run prepared={runs.slow} tone="slow" during={card.slow} after={card.waste} {...asks.slow} onEvidence={evidence(slow)} onFinished={() => setFinished((f) => ({ ...f, slow: true }))} />}
+        {at === "think" && (
+          <Think
+            seed={problem.slug}
+            steps={problem.lesson!.reasoning}
+            onAnswer={(step, choice, hinted) => {
+              const c = step.choices[choice];
+              const extra = c.misconception ? misconceptionById.get(c.misconception)?.concept : undefined;
+              record({
+                task: "reason", problem: problem.slug, concepts: [...new Set([...step.concepts, ...(extra ? [extra] : [])])],
+                correct: !!c.correct, hinted, misconception: c.misconception, detail: step.ask.replace(/[.?]$/, ""),
+              });
+            }}
+            onFinished={() => setFinished((f) => ({ ...f, think: true }))}
+          />
+        )}
         {at === "trick" && (
           <div className="trick">
             <p className="trick-label">The trick</p>
@@ -194,6 +211,66 @@ function Run({ prepared, tone, during, after, prediction, growth, onEvidence, on
   );
 }
 
+/**
+ * Your turn: work the trick out, one question at a time. Hints are there (each one weakens the
+ * evidence a right answer gives). The first answer to each question is what counts; after a wrong
+ * one, its reply explains what's off and you try again until you reach it.
+ */
+function Think({ seed, steps, onAnswer, onFinished }: { seed: string; steps: ReasoningStep[]; onAnswer: (step: ReasoningStep, choice: number, hinted: boolean) => void; onFinished: () => void }) {
+  const [at, setAt] = useState(0);
+  // Lessons are written with the right answer first; show the choices in an order fixed per
+  // problem and step, so the position never gives the answer away.
+  const order = useMemo(() => steps.map((st, k) => shuffledIndices(st.choices.length, `${seed}:${k}`)), [steps, seed]);
+  const [hints, setHints] = useState(0);
+  const [tried, setTried] = useState<number[]>([]);
+  const step = steps[at];
+  const solved = tried.some((i) => step.choices[i].correct);
+  const last = tried.at(-1);
+  const reported = useRef(false);
+
+  const pick = (i: number) => {
+    if (solved || tried.includes(i)) return;
+    if (tried.length === 0) onAnswer(step, i, hints > 0);
+    setTried((t) => [...t, i]);
+    if (step.choices[i].correct && at === steps.length - 1 && !reported.current) { reported.current = true; onFinished(); }
+  };
+  const advance = () => { setAt((a) => a + 1); setHints(0); setTried([]); };
+
+  return (
+    <section className="think" aria-label="Your turn">
+      <p className="trick-label">Your turn · {at + 1} of {steps.length}</p>
+      <p className="ask-prompt think-ask">{step.ask}</p>
+      <div className="think-choices" role="group">
+        {order[at].map((i) => {
+          const c = step.choices[i];
+          const picked = tried.includes(i);
+          return (
+            <button key={c.text} type="button" disabled={solved || picked}
+              className={`choice ${picked ? (c.correct ? "right" : "wrong") : solved ? "dim" : ""}`}
+              onClick={() => pick(i)}>
+              {c.text}
+            </button>
+          );
+        })}
+      </div>
+      {last !== undefined && (
+        <p className={`think-reply ${step.choices[last].correct ? "right" : "wrong"}`} role="status">
+          {step.choices[last].reply}{!step.choices[last].correct && <span className="think-again"> Try another.</span>}
+        </p>
+      )}
+      {!solved && hints < step.hints.length && (
+        <button type="button" className="link think-hint" onClick={() => setHints((h) => h + 1)}>
+          {hints === 0 ? "Hint" : "Another hint"} <span className="muted">({hints + 1} of {step.hints.length})</span>
+        </button>
+      )}
+      {!solved && hints > 0 && (
+        <ul className="hints">{step.hints.slice(0, hints).map((h) => <li key={h}>{h}</li>)}</ul>
+      )}
+      {solved && at < steps.length - 1 && <button type="button" className="btn-gray think-next" onClick={advance}>Next Question</button>}
+    </section>
+  );
+}
+
 /** A question with a few choices: pick one, see whether it was right, and the right one. */
 function Ask({ prompt, choices, picked, onPick }: { prompt: string; choices: Choice[]; picked: number | null; onPick: (i: number) => void }) {
   const answered = picked !== null;
@@ -237,4 +314,17 @@ function comparison(problem: Problem, slowSteps: number, fastSteps: number): str
   const n = growth.sizes.at(-1)!;
   const sa = growth.approaches[a.id].steps.at(-1)!, sb = growth.approaches[b.id].steps.at(-1)!;
   return `${slowSteps} steps → ${fastSteps} here. At ${n} items: ${sa.toLocaleString()} → ${sb.toLocaleString()}.`;
+}
+
+/** A fixed shuffle of 0..n-1 from a string seed. */
+export function shuffledIndices(n: number, seed: string): number[] {
+  let h = 2166136261;
+  for (const ch of seed) h = Math.imul(h ^ ch.charCodeAt(0), 16777619) >>> 0;
+  const out = Array.from({ length: n }, (_, i) => i);
+  for (let i = n - 1; i > 0; i--) {
+    h = Math.imul(h ^ (h >>> 15), 2246822507) >>> 0;
+    const j = h % (i + 1);
+    [out[i], out[j]] = [out[j], out[i]];
+  }
+  return out;
 }

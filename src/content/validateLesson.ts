@@ -4,6 +4,7 @@
 
 import { classify, type GrowthClass } from "../../engine/analysis/growth";
 import { conceptById } from "../knowledge/concepts";
+import { misconceptionById } from "../knowledge/misconceptions";
 import type { Problem } from "./problems";
 
 export interface Measured {
@@ -20,6 +21,21 @@ export function validateLesson(problem: Problem, measured: Measured): string[] {
     if (c && !(c.answer >= 0 && c.answer < c.options.length)) out.push(`${where}: the check's answer isn't one of its options`);
   };
   checkOf("understand", lesson.understand.check);
+
+  // Reasoning: a few well-formed questions, each with one right answer and real misconceptions.
+  if (lesson.reasoning.length < 2 || lesson.reasoning.length > 3) out.push(`reasoning has ${lesson.reasoning.length} steps; use 2 or 3`);
+  for (const [i, step] of lesson.reasoning.entries()) {
+    const where = `reasoning step ${i + 1}`;
+    if (step.choices.length < 3) out.push(`${where}: give at least 3 choices`);
+    if (step.choices.filter((c) => c.correct).length !== 1) out.push(`${where}: exactly one choice must be correct`);
+    if (step.hints.length < 1 || step.hints.length > 2) out.push(`${where}: give 1 or 2 hints`);
+    for (const c of step.concepts) if (!conceptById.has(c)) out.push(`${where}: unknown concept "${c}"`);
+    for (const c of step.choices) {
+      if (!c.reply.trim()) out.push(`${where}: every choice needs a reply`);
+      if (c.misconception && !misconceptionById.has(c.misconception)) out.push(`${where}: unknown misconception "${c.misconception}"`);
+      if (c.correct && c.misconception) out.push(`${where}: the correct choice can't reveal a misconception`);
+    }
+  }
 
   // The card is what learners keep, so it has to stay short and sharp.
   const LIMITS = { slow: 60, waste: 70, trick: 90, recognize: 70 } as const;

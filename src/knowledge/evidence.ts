@@ -10,7 +10,8 @@ export type Task =
   | "predict"     // predicted the next state of a real run
   | "complexity"  // said how the work grows, graded against measured growth
   | "recall"      // picked the right trick for a problem from memory
-  | "reason";     // answered a Socratic question on the way to the trick
+  | "reason"      // answered a Socratic question on the way to the trick
+  | "implement";  // wrote a solution that passes every case (correct = as fast as the trick)
 
 export interface Evidence {
   at: number;

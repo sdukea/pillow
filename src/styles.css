@@ -639,3 +639,35 @@ svg .solid { fill: currentColor; stroke: none; }
 .hints { margin: 0; padding: 0 0 0 18px; display: grid; gap: 6px; font-size: 15px; color: var(--muted); }
 .think-next { justify-self: start; }
 .misconceptions { margin: 0; padding: 12px 16px 12px 32px; border-radius: 14px; background: rgba(255, 69, 58, 0.1); display: grid; gap: 6px; font-size: 15px; }
+/* ------------------------------------------------------------------ write it yourself */
+.solve { display: grid; gap: 14px; animation: rise 0.35s var(--ease) both; }
+.editor-box { display: grid; grid-template-columns: auto 1fr; background: var(--surface); border-radius: 18px; overflow: hidden; box-shadow: inset 0 0 0 1.5px var(--hair); }
+.editor-box:focus-within { box-shadow: inset 0 0 0 2px var(--accent); }
+.gutter { list-style: none; margin: 0; padding: 14px 10px 14px 14px; font-family: var(--mono); font-size: 14px; line-height: 1.6; color: var(--faint); text-align: right; user-select: none; }
+.code-input { font-family: var(--mono); font-size: 14px; line-height: 1.6; padding: 14px 16px 14px 6px; border: 0; outline: none; resize: vertical; background: transparent; color: var(--text); tab-size: 4; white-space: pre; overflow-x: auto; min-width: 0; }
+.solve-actions { display: flex; align-items: center; gap: 12px; }
+.solve-keys { font-size: 13px; color: var(--faint); }
+.solve-spacer { flex: 1; }
+.solve-reference { margin: 0; padding: 14px 16px; border-radius: 14px; background: var(--surface-2); font-family: var(--mono); font-size: 13.5px; line-height: 1.55; overflow-x: auto; }
+.solve-status { font-size: 15px; color: var(--muted); }
+.solve-status.bad { color: var(--del); }
+.solve-results { display: grid; gap: 10px; }
+.solve-summary { font-size: 18px; line-height: 1.4; }
+.solve-summary.good strong { color: var(--add); }
+.solve-summary.warn strong { color: var(--chg); }
+.solve-n { display: block; font-size: 14px; color: var(--muted); margin-top: 2px; }
+.case { background: var(--surface); border-radius: 14px; padding: 12px 16px; display: grid; gap: 6px; box-shadow: inset 3px 0 0 var(--del); }
+.case-input code, .case-diff code, .debugger-head code { font-family: var(--mono); font-size: 13.5px; }
+.case-kind { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+.case-error { font-size: 15px; color: var(--del); }
+.case-diff { margin: 0; display: grid; gap: 4px; }
+.case-diff div { display: grid; grid-template-columns: 76px 1fr; gap: 8px; }
+.case-diff dt { font-size: 13px; color: var(--muted); }
+.case-diff dd { margin: 0; overflow-x: auto; }
+.case .link { justify-self: start; font-size: 14px; }
+.debugger { background: var(--surface); border-radius: 18px; padding: 12px; display: grid; gap: 10px; }
+.debugger-head { display: flex; justify-content: space-between; align-items: center; padding: 0 4px; }
+.debugger-pane { max-height: 420px; display: flex; border-radius: 12px; overflow: hidden; }
+.debugger-pane .code-pane { flex: 1; min-height: 0; }
+.debugger-controls { display: flex; align-items: center; gap: 8px; }
+.debugger-controls input { flex: 1; accent-color: var(--accent); }

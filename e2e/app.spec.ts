@@ -72,7 +72,8 @@ test("a problem asks before it tells: predict, then say how it grows, then the n
   await page.getByRole("button", { name: "Watch It Work" }).click();
   await finishRun(page);
   await expect(page.getByText(/steps → \d+ here\. At 128 items/)).toBeVisible();
-  await page.getByRole("button", { name: "Keep the Note" }).click();
+  await page.getByRole("button", { name: "Write It Yourself" }).click();
+  await page.getByRole("button", { name: "Skip for Now" }).click();
   await expect(page.getByRole("article", { name: "Your note" })).toContainText("Things that open and close in order? Use a stack.");
   await page.getByRole("button", { name: "Done" }).click();
   // Every answer was recorded as evidence.
@@ -96,7 +97,8 @@ test("every problem walks through all five steps without errors", async ({ page 
     await page.locator(".learn-next .next").click();
     await page.locator(".learn-next .next").click();
     await finishRun(page);
-    await page.locator(".learn-next .next").click();
+    await page.locator(".learn-next .next").click(); // to "Write it yourself"
+    await page.locator(".learn-next .next").click(); // skip for now
     await expect(page.getByRole("article", { name: "Your note" })).toContainText(p.lesson!.card.trick);
   }
   expect(errors).toEqual([]);
@@ -127,7 +129,8 @@ test("a note asks you to recall the trick, and the answer becomes evidence", asy
   await page.getByRole("button", { name: "Put It Together" }).click();
   await page.getByRole("button", { name: "Watch It Work" }).click();
   await finishRun(page);
-  await page.getByRole("button", { name: "Keep the Note" }).click();
+  await page.getByRole("button", { name: "Write It Yourself" }).click();
+  await page.getByRole("button", { name: "Skip for Now" }).click();
   await page.getByRole("button", { name: "Done" }).click();
   await page.getByRole("button", { name: /What’s the trick\? Recall it/ }).click();
   await page.getByRole("button", { name: "Remember each number you pass. Then ask: is my partner already here?" }).click();
@@ -166,6 +169,65 @@ test("your turn: hints weaken the evidence, a wrong answer explains itself, and 
   await page.goto("./");
   await expect(page.locator(".home-next .next-row")).toContainText("Fix");
   await expect(page.locator(".home-next .next-row")).toContainText("You seemed to think");
+});
+
+/** Walk a problem up to "Write it yourself". */
+async function toSolve(page: Page, slug: string) {
+  await page.goto(`p/${slug}`);
+  await page.locator(".learn-next .next").click();
+  await finishRun(page);
+  await page.locator(".learn-next .next").click();
+  await solveThink(page);
+  await page.locator(".learn-next .next").click();
+  await page.locator(".learn-next .next").click();
+  await finishRun(page);
+  await page.getByRole("button", { name: "Write It Yourself" }).click();
+  await expect(page.getByRole("textbox", { name: "Your solution, in Python" })).toBeVisible();
+}
+
+const implementEvidence = (page: Page) => page.evaluate(() => JSON.parse(localStorage.getItem("pillow.evidence") ?? "[]").filter((e: { task: string }) => e.task === "implement"));
+
+test("write it yourself: a wrong solution shows the difference and can be stepped through; a right one is checked for speed @phone", async ({ page }) => {
+  const errors = watchErrors(page);
+  await toSolve(page, "two-sum");
+  const editor = page.getByRole("textbox", { name: "Your solution, in Python" });
+  await expect(editor).toHaveValue("def two_sum(nums, target):\n    ");
+  await expect(page.locator(".learn-next .next")).toHaveText("Skip for Now");
+  // A bug: returns the numbers instead of their indices.
+  await editor.fill("def two_sum(nums, target):\n    seen = {}\n    for i, x in enumerate(nums):\n        if target - x in seen:\n            return [target - x, x]\n        seen[x] = i\n    return []\n");
+  await page.getByRole("button", { name: "Run", exact: true }).click();
+  await expect(page.locator(".solve-summary")).toContainText("cases pass", { timeout: 45_000 });
+  const fail = page.locator(".case.fail").first();
+  await expect(fail.locator(".case-diff")).toContainText("Expected");
+  await fail.getByRole("button", { name: "Step through it" }).click();
+  await expect(page.locator(".debugger")).toBeVisible();
+  await expect(page.locator(".debugger .code-pane")).toContainText("def two_sum");
+  // Fixed.
+  await editor.fill("def two_sum(nums, target):\n    seen = {}\n    for i, x in enumerate(nums):\n        if target - x in seen:\n            return [seen[target - x], i]\n        seen[x] = i\n    return []\n");
+  await page.getByRole("button", { name: "Run", exact: true }).click();
+  await expect(page.locator(".solve-summary.good")).toContainText("as fast as the trick", { timeout: 45_000 });
+  await expect(page.locator(".learn-next .next")).toHaveText("Keep the Note");
+  expect(await implementEvidence(page)).toEqual([expect.objectContaining({ correct: true, hinted: false, problem: "two-sum" })]);
+  expect(errors).toEqual([]);
+});
+
+test("write it yourself: brute force passes but is told it isn't the trick; peeking makes it practice", async ({ page }) => {
+  await toSolve(page, "two-sum");
+  const editor = page.getByRole("textbox", { name: "Your solution, in Python" });
+  await page.getByRole("button", { name: "Show a solution" }).click();
+  await expect(page.getByLabel("A solution")).toContainText("seen = {}");
+  await editor.fill("def two_sum(nums, target):\n    for i in range(len(nums)):\n        for j in range(i + 1, len(nums)):\n            if nums[i] + nums[j] == target:\n                return [i, j]\n    return []\n");
+  await page.getByRole("button", { name: "Run", exact: true }).click();
+  await expect(page.locator(".solve-summary.warn")).toContainText("grows like O(n²). The trick makes it O(n).", { timeout: 45_000 });
+  await expect(page.locator(".solve-summary")).toContainText("counts as practice");
+  expect(await implementEvidence(page)).toEqual([expect.objectContaining({ correct: false, hinted: true })]);
+});
+
+test("write it yourself: syntax errors point at the line", async ({ page }) => {
+  await toSolve(page, "valid-parentheses");
+  await page.getByRole("textbox", { name: "Your solution, in Python" }).fill("def is_valid(s):\n    return s ==\n");
+  await page.getByRole("button", { name: "Run", exact: true }).click();
+  await expect(page.locator(".case-error").first()).toContainText("Line 2: SyntaxError", { timeout: 45_000 });
 });
 
 test("a new student is told where to start, and the next step moves on as they learn", async ({ page }) => {

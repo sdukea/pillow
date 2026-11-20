@@ -13,7 +13,10 @@ steps, and it asks before it tells:
 4. **The trick**, in one sentence, confirming what you found.
 5. **The fast way**, on the same input, with the same two questions as the
    slow way.
-6. **Your note**: the trick and how to spot it next time.
+6. **Write it yourself:** your code runs against the example, the edge
+   cases and random inputs, then gets checked for speed. Failing cases show
+   what was expected and open in a step-through debugger.
+7. **Your note**: the trick and how to spot it next time.
 
 Every answer is evidence, and wrong answers name the misconception they
 reveal ("You seemed to think a hash map lookup scans every key"). **Your
@@ -68,7 +71,7 @@ The full reasoning is in [docs/ASSESSMENT.md](docs/ASSESSMENT.md) and
 
 ## Status
 
-**M0–M9 are done.** All six MVP problems are complete lessons: understand
+**M0–M10 are done.** All six MVP problems are complete lessons: understand
 the problem, a first approach, the better approach and why it works, a note
 for every line, and time and memory measured from real runs. Every
 approach can also run on your own input, or a one-click edge case, traced
@@ -91,7 +94,8 @@ after review.
 | M7.2 One idea, then a note: five-step learn screen, a hand-written card per lesson, Notes with recall ([ADR 0010](docs/adr/0010-one-idea.md)) | **Done** |
 | M8 Evidence: concept ontology, graded tasks generated from traces, evidence log, explainable student model, knowledge map, recommendations ([ADR 0011](docs/adr/0011-evidence-and-the-student-model.md)) | **Done** |
 | M9 Reasoning: a "Your turn" step with Socratic questions, misconception-tagged answers, a hint ladder; misconceptions on the map and in recommendations ([ADR 0012](docs/adr/0012-reasoning.md)) | **Done** |
-| M10 Independent solving: write the solution yourself; tests run in the browser; then interview mode and accounts (see [docs/PROJECT.md](docs/PROJECT.md)) | Next |
+| M10 Independent solving: write it yourself; checked against the reference on edge cases and random inputs; growth check; step-through debugging; "implement" evidence ([ADR 0013](docs/adr/0013-independent-solving.md)) | **Done** |
+| M11 Interview mode: an unseen problem, timed, no hints; explain and defend; readiness built from evidence (see [docs/PROJECT.md](docs/PROJECT.md)) | Next |
 
 **MVP problems:** Two Sum, Valid Parentheses, Binary Search, Longest
 Substring Without Repeating Characters, Reverse Linked List, and Maximum
@@ -161,7 +165,8 @@ npm run -s trace < request.json
 | `src/learn/` | The learn screen: problem, slow way, trick, fast way, note |
 | `src/play/` | The playground (behind "Play with it"): the touchable input editor, live traces, racing lanes, the size slider |
 | `src/lib/notes.ts` | Notes: the trick and how to spot it, per problem, with recall |
-| `src/knowledge/` | Concepts, the evidence log, the student model, generated questions, recommendations |
+| `src/knowledge/` | Concepts, misconceptions, the evidence log, the student model, generated questions, recommendations |
+| `src/solve/` | Write it yourself: checking against the reference, growth, the editor, the debugger |
 | `src/map/` | The knowledge map |
 | `docs/PROJECT.md` | The living project document: vision, architecture, status, next priorities |
 | `src/explain/`, `src/lib/remote.ts` | Explaining a problem that isn't built in, streamed from the API server |

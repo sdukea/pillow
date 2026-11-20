@@ -53,6 +53,8 @@ export interface Problem {
   inputs: InputField[];
   /** LeetCode's guarantee about valid inputs, as Python defining valid(...). See Brief. */
   precondition?: string;
+  /** The answer is a list whose order doesn't matter (Two Sum's indices can come either way). */
+  unordered?: boolean;
   /** The full four-chapter lesson. Problems without one show the visualizer only. */
   lesson?: Lesson;
   /** Set for lessons drafted with AI: which model drafted it, and who reviewed it (if anyone yet). */
@@ -75,6 +77,7 @@ const HANDWRITTEN: Problem[] = [
       { name: "nums", type: "int-list", min: 2, max: 12 },
       { name: "target", type: "int" },
     ],
+    unordered: true,
     // LeetCode guarantees exactly one answer; with several, correct approaches may pick different pairs.
     precondition: "def valid(nums, target):\n    pairs = [(i, j) for i in range(len(nums)) for j in range(i + 1, len(nums)) if nums[i] + nums[j] == target]\n    return len(pairs) == 1\n",
     approaches: [

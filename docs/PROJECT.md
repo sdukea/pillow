@@ -2,7 +2,7 @@
 
 Read this first in every session. Update it whenever something below changes.
 
-_Last updated: 2026-11-20 (M9 done)._
+_Last updated: 2026-11-20 (M10 done)._
 
 ## Vision
 
@@ -163,8 +163,8 @@ model never depends on an AI judgement alone.
 | M0–M7.2 | Engine, lessons, live input, AI pipeline, Explain server, learn flow | Done |
 | M8 | **Evidence:** concept ontology and tagging; trace-grounded prediction, complexity and recall tasks in the learn flow; evidence log; explainable student model; knowledge map; recommendations on Home | Done |
 | M9 | **Reasoning:** authored Socratic derivation with misconception-tagged answers; a ladder of hints that lowers the evidence a correct answer gives; misconceptions on the map | Done |
-| **M10** | **Independent solving:** write the solution in the browser; tests run in the Pyodide worker (examples, edge cases, random inputs checked against the reference); "solved independently" evidence | |
-| M11 | **Interview mode:** an unseen problem, timed, no hints, explain your approach and complexity, a follow-up variation; a readiness view built from that evidence | |
+| M10 | **Independent solving:** write the solution in the browser; tests run in the Pyodide worker (examples, edge cases, random inputs checked against the reference); "solved independently" evidence | Done |
+| **M11** | **Interview mode:** an unseen problem, timed, no hints, explain your approach and complexity, a follow-up variation; a readiness view built from that evidence | |
 | M12 | **Accounts and sync:** a university pilot across devices; the evidence log syncs to the server | |
 | M13 | **Scale content:** the AI pipeline drafts concept-tagged problems with tasks; reviewed before publishing | |
 
@@ -175,43 +175,48 @@ model never depends on an AI judgement alone.
   evidence. Prediction tasks are generated from real traces rather than
   written by hand, so they scale to every problem the pipeline produces.
 
-## Current state (2026-11-20)
-**M9 is done** (ADR 0012). Each problem is now taught in six steps:
+## Current state (2026-11-20, M10 done)
+Each problem now runs through seven steps:
 
 1. the problem, drawn;
 2. the slow way, with a prediction and a growth question;
-3. **Your turn**: two Socratic questions, with misconception-tagged wrong
-   answers and a two-step hint ladder;
+3. **Your turn**: Socratic questions, misconceptions and hints;
 4. the trick;
 5. the fast way, with a prediction and a growth question;
-6. the note.
+6. **Write it yourself**;
+7. the note.
 
-The evidence rules:
-- The first answer to each question counts; a hinted answer counts as
-  weaker evidence.
-- A misconception stands until a clean right answer clears it.
-- The map and the "Fix" recommendation say "You seemed to think…".
-- Choice order is shuffled per problem and step, so position never gives
-  the answer away.
+**Write it yourself (ADR 0013):**
+- **Cases:** the example, the edge cases and 8 seeded random inputs that
+  satisfy the precondition, compared with the reference solution. Answers
+  are order-free where order doesn't matter.
+- **Runs** in the Pyodide worker, with a step limit.
+- **Errors:** syntax and runtime errors come back with line numbers.
+- **Debugging:** failing cases open in a step-through debugger.
+- **Speed:** a solution that passes is classified by measured growth
+  against the trick's.
+- **Evidence:** `implement` is correct only when the solution is as fast
+  as the trick, and `hinted` if a solution was shown.
 
-Tests: 152 unit and 29 end-to-end (about 1 minute).
+Tests: 158 unit and 33 end-to-end (about 1 minute).
 
-M8 recap (ADR 0011): concepts, graded tasks generated from traces, the
-evidence log, the explainable model (where understood needs retention or
-transfer), recommendations, and the map.
+Earlier milestones: M8 was evidence, the model and the map (ADR 0011);
+M9 was reasoning and misconceptions (ADR 0012).
 
-**Next: M10, independent solving.**
-- The student writes the optimal solution in the browser, as Python in an
-  editor.
-- Their code runs in the Pyodide worker against the brief's examples,
-  edge cases and random inputs, compared with the reference solution.
-- Failing tests show the input, the expected output and what their code
-  returned, and they can open a failing case in the visualiser.
-- New evidence types: "implemented" (independently, or after hints) and
-  "debugged". These feed "understood" and become the basis for interview
-  readiness.
-- **Open question for the user:** which language do students practise in?
-  Python is all that's supported today.
+**Next: M11, interview mode.**
+- An unseen problem from the library, chosen from concepts the student
+  hasn't proven.
+- Timed, with no hints and no lesson.
+- They state their approach and its complexity, then implement it.
+- A follow-up variation.
+- A readiness view built only from interview evidence:
+  - solved independently, on time;
+  - complexity stated correctly;
+  - the variation handled.
+- New evidence types: `interview-solve`, `interview-explain`.
+
+**Still open:** which language students practise in (only Python is
+supported). Accounts and sync are needed before a real university pilot.
 
 ## Outstanding issues
 - No Anthropic API key, so Explain and AI drafting haven't run live.

@@ -45,7 +45,8 @@ export interface Trace {
   truncated: boolean;
   result?: Value;
   resultHeap?: Record<HeapId, HeapObject>;
-  error?: { type: string; message: string };
+  /** `line` is the solution's line where it failed, when known. */
+  error?: { type: string; message: string; line?: number };
 }
 
 export type Arg =

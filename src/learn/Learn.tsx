@@ -4,6 +4,7 @@ import type { Problem } from "../content/problems";
 import { growthOf, preparedFor } from "../lib/data";
 import { saveNote } from "../lib/notes";
 import { record } from "../knowledge/evidence";
+import { Solve } from "../solve/Solve";
 import { misconceptionById } from "../knowledge/misconceptions";
 import type { ReasoningStep } from "../content/lesson";
 import { type Choice, complexityFor, type ComplexityQuestion, type Prediction, predictionFor } from "../knowledge/questions";
@@ -16,9 +17,9 @@ import { inputPicture, pacing, simplified, stepAt } from "./pace";
 // next, and ends by asking how the work grows. Your answers are evidence for your knowledge map:
 // watching alone never counts as understanding.
 
-type Beat = "problem" | "slow" | "think" | "trick" | "fast" | "note";
-const BEATS: Beat[] = ["problem", "slow", "think", "trick", "fast", "note"];
-const NEXT: Record<Beat, string> = { problem: "Show Me the Slow Way", slow: "Your Turn", think: "Put It Together", trick: "Watch It Work", fast: "Keep the Note", note: "Done" };
+type Beat = "problem" | "slow" | "think" | "trick" | "fast" | "solve" | "note";
+const BEATS: Beat[] = ["problem", "slow", "think", "trick", "fast", "solve", "note"];
+const NEXT: Record<Beat, string> = { problem: "Show Me the Slow Way", slow: "Your Turn", think: "Put It Together", trick: "Watch It Work", fast: "Write It Yourself", solve: "Keep the Note", note: "Done" };
 
 interface Props { problem: Problem; onHome: () => void; onPlay: () => void; onLesson: () => void }
 
@@ -105,6 +106,7 @@ export function Learn({ problem, onHome, onPlay, onLesson }: Props) {
           </div>
         )}
         {at === "fast" && <Run prepared={runs.fast} tone="fast" during={card.trick} after={compare} {...asks.fast} onEvidence={evidence(fast)} onFinished={() => setFinished((f) => ({ ...f, fast: true }))} />}
+        {at === "solve" && <Solve problem={problem} onSolved={() => setFinished((f) => ({ ...f, solve: true }))} />}
         {at === "note" && (
           <article className="note-card" aria-label="Your note">
             <p className="note-pattern">{problem.lesson!.compare.pattern.name}</p>
@@ -121,7 +123,9 @@ export function Learn({ problem, onHome, onPlay, onLesson }: Props) {
             <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M12.5 4.5 7 10l5.5 5.5" /></svg>
           </button>
         )}
-        <button type="button" className="btn-filled next" onClick={next} disabled={locked} autoFocus>{locked ? "Answer to Continue" : NEXT[at]}</button>
+        <button type="button" className={`${at === "solve" ? "btn-gray" : "btn-filled"} next`} onClick={next} disabled={locked} autoFocus={at !== "solve"}>
+          {locked ? "Answer to Continue" : at === "solve" && !finished.solve ? "Skip for Now" : NEXT[at]}
+        </button>
         {at === "note" && (
           <span className="more">
             <button type="button" className="link" onClick={onPlay}>Play with it</button>

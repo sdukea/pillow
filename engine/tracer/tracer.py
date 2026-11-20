@@ -166,12 +166,19 @@ class Tracer:
 
     def run(self, source, entry, args):
         namespace = {"ListNode": ListNode, "TreeNode": TreeNode, "deque": deque}
-        exec(compile(source, SOLUTION_FILE, "exec"), namespace)
+        result = {"steps": self.steps, "lineHits": {}, "truncated": False}
+        # Code someone is still writing may not even compile, or may name the function wrongly:
+        # report that as a result with a line number, not as a crash.
+        try:
+            exec(compile(source, SOLUTION_FILE, "exec"), namespace)
+        except SyntaxError as e:
+            return {**result, "ok": False, "error": {"type": "SyntaxError", "message": e.msg or "invalid syntax", "line": e.lineno}}
+        except Exception as e:
+            return {**result, "ok": False, "error": {"type": type(e).__name__, "message": str(e), "line": error_line(e)}}
         fn = namespace.get(entry)
         if not callable(fn):
-            raise NameError(f"The solution has no function called {entry}")
+            return {**result, "ok": False, "error": {"type": "NameError", "message": f"Define a function called {entry}"}}
         call_args = [decode_arg(a) for a in args]
-        result = {"steps": self.steps, "lineHits": None, "truncated": False}
         sys.settrace(self.hook)
         try:
             value = fn(*call_args)
@@ -184,13 +191,29 @@ class Tracer:
             result["ok"] = False
             result["truncated"] = True
             result["error"] = {"type": "StepLimitReached", "message": f"Stopped after {self.max_steps} steps"}
+        except RecursionError:
+            result["ok"] = False
+            result["error"] = {"type": "RecursionError", "message": "maximum recursion depth exceeded"}
         except Exception as e:  # the solution itself raised
             result["ok"] = False
             result["error"] = {"type": type(e).__name__, "message": str(e)}
+            line = error_line(e)
+            if line is not None:
+                result["error"]["line"] = line
         finally:
             sys.settrace(None)
         result["lineHits"] = {str(k): v for k, v in sorted(self.line_hits.items())}
         return result
+
+
+def error_line(e):
+    """The last line of the solution that was running when e was raised, if any."""
+    tb, line = e.__traceback__, None
+    while tb is not None:
+        if tb.tb_frame.f_code.co_filename == SOLUTION_FILE:
+            line = tb.tb_lineno
+        tb = tb.tb_next
+    return line
 
 
 def trace(request):

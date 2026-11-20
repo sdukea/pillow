@@ -93,6 +93,7 @@ export const binarySearch: Lesson = {
   approaches: {
     "check-every": {
       concepts: ["arrays", "loops", "complexity"],
+      legend: [{"name": "i", "means": "the number being checked now"}, {"name": "target", "means": "the number we’re looking for"}],
       headline: "Check every number",
       intuition: "Start at the front and compare each number with the target until you find it, or run out of numbers.",
       discovery: "This is how you’d look for anything in a list you know nothing about. It’s always correct, and it’s a fair first step, as long as you notice it ignores the most useful fact you were given: the list is sorted.",
@@ -125,6 +126,7 @@ export const binarySearch: Lesson = {
 
     halving: {
       concepts: ["sorted-order", "binary-search", "invariant"],
+      legend: [{"name": "lo", "means": "the first index that could still hold the target"}, {"name": "hi", "means": "the last index that could still hold it"}, {"name": "mid", "means": "the middle of that range: the one we check"}],
       headline: "Halve the search range each time",
       intuition: "Look at the middle of the range that could still hold the target. If the middle number is too small, the target must be to the right; if it’s too big, to the left. Either way, half the range is gone.",
       discovery: "Watch the first approach on a sorted list: one comparison tells you far more than it uses. If the number at an index is smaller than the target, so is every number before it.",

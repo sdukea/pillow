@@ -44,6 +44,7 @@ const Approach = z.object({
   id: text.describe("kebab-case, e.g. \"brute-force\"."),
   name: text.describe("Short switcher label, e.g. \"Brute force\"."),
   concepts: z.array(z.enum(CONCEPTS.map((c) => c.id) as [ConceptId, ...ConceptId[]])).describe("The concepts this approach exercises."),
+  legend: z.array(z.object({ name: text, means: text })).describe("What each pointer, variable and structure on screen means, in a few words: i → \"the first number of the pair\"."),
   solution: text.describe("Python source defining the brief's entry function. Nothing else at top level."),
   spec: z.object({
     views: z.array(View),

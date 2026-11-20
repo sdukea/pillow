@@ -45,6 +45,8 @@ export interface DraftApproach {
   name: string;
   /** Concept ids this approach exercises. */
   concepts: ConceptId[];
+  /** What each pointer, variable and structure on screen means. */
+  legend: { name: string; means: string }[];
   /** Python source defining the brief's entry function. */
   solution: string;
   spec: {
@@ -138,6 +140,7 @@ export function toProblem(brief: Brief, draft: Draft, growthInputs: Record<strin
     understand: draft.understand,
     approaches: Object.fromEntries(draft.approaches.map((a) => [a.id, {
       concepts: a.concepts,
+      legend: a.legend,
       headline: a.headline,
       intuition: a.intuition,
       discovery: a.discovery,

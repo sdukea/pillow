@@ -89,6 +89,7 @@ export const longestSubstring: Lesson = {
   approaches: {
     "every-substring": {
       concepts: ["strings", "nested-loops", "hash-set"],
+      legend: [{"name": "start", "means": "where this substring starts"}, {"name": "end", "means": "the letter being added to it"}, {"name": "seen", "means": "the letters already in this substring"}, {"name": "best", "means": "the longest substring with no repeats so far"}],
       headline: "Try every starting point",
       intuition: "From every starting position, extend a substring one character at a time, remembering the characters in it. Stop as soon as one repeats. The longest run you managed is the answer.",
       discovery: "It’s how you’d check by hand: start at the first letter and go as far as you can, then start at the second letter and do it again.",
@@ -127,6 +128,7 @@ export const longestSubstring: Lesson = {
 
     "sliding-window": {
       concepts: ["sliding-window", "two-pointers", "hash-map", "invariant"],
+      legend: [{"name": "left", "means": "the window’s first letter"}, {"name": "right", "means": "the letter being added"}, {"name": "last seen at", "means": "where each letter was last seen"}, {"name": "best", "means": "the longest window so far"}],
       headline: "Slide a window forward",
       intuition: "Keep a window of characters with no repeats. Grow it on the right one character at a time. When the new character is already inside, move the window’s left edge just past its earlier copy. The window never moves backwards.",
       discovery: "Look at what the first approach throws away when it hits a repeat. Everything between the earlier copy of the character and the new one was fine, and it re-reads all of it.",

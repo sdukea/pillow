@@ -5,9 +5,12 @@
 Type a problem (its name, its number or its link). Pillow teaches it in five
 steps, and it asks before it tells:
 
-1. **The problem**, drawn.
-2. **The slow way**, running for real. It pauses for you to predict the next
-   move, then asks how the work grows.
+1. **What it teaches:** the problem drawn, and every concept it covers,
+   with where you stand on each.
+2. **The slow way**, running for real. Every marker is explained, every
+   step is explained in one large sentence, and you can step at your own
+   pace. It pauses for you to predict the next move, then asks how the work
+   grows.
 3. **Your turn:** two questions that lead you to the trick yourself. Wrong
    answers explain what's off, and hints are there if you're stuck.
 4. **The trick**, in one sentence, confirming what you found.
@@ -21,7 +24,8 @@ steps, and it asks before it tells:
 Every answer is evidence, and wrong answers name the misconception they
 reveal ("You seemed to think a hash map lookup scans every key"). **Your
 map** shows 26 concepts, from arrays to
-recursion on trees, each coloured by what you've actually shown: seen,
+recursion on trees, each a reference card (key facts, when to use it,
+common mistakes, where to practise) coloured by what you've actually shown: seen,
 learning, shaky or understood. Tap one to see why. Watching never counts
 as understanding: that needs right answers that last (in a later session)
 or transfer (to another problem). Home always tells you the one thing to
@@ -95,6 +99,7 @@ after review.
 | M8 Evidence: concept ontology, graded tasks generated from traces, evidence log, explainable student model, knowledge map, recommendations ([ADR 0011](docs/adr/0011-evidence-and-the-student-model.md)) | **Done** |
 | M9 Reasoning: a "Your turn" step with Socratic questions, misconception-tagged answers, a hint ladder; misconceptions on the map and in recommendations ([ADR 0012](docs/adr/0012-reasoning.md)) | **Done** |
 | M10 Independent solving: write it yourself; checked against the reference on edge cases and random inputs; growth check; step-through debugging; "implement" evidence ([ADR 0013](docs/adr/0013-independent-solving.md)) | **Done** |
+| M10.1 Clarity: each problem opens on what it teaches; runs with legends, one large explanation per step and stepping; the map as a reference (list view, concept cards) ([ADR 0014](docs/adr/0014-clarity.md)) | **Done** |
 | M11 Interview mode: an unseen problem, timed, no hints; explain and defend; readiness built from evidence (see [docs/PROJECT.md](docs/PROJECT.md)) | Next |
 
 **MVP problems:** Two Sum, Valid Parentheses, Binary Search, Longest

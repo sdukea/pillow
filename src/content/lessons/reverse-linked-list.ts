@@ -92,6 +92,7 @@ export const reverseLinkedList: Lesson = {
   approaches: {
     "copy": {
       concepts: ["linked-list", "space-complexity"],
+      legend: [{"name": "node", "means": "the node being copied"}, {"name": "values", "means": "the values read out so far"}, {"name": "new_head", "means": "the start of the new, reversed list"}],
       headline: "Copy it out, build it backwards",
       intuition: "Read every value into a Python list, then build a brand-new linked list from those values. Adding each new node to the **front** puts the first value at the back.",
       discovery: "It’s what you’d do with any sequence you need backwards: copy it somewhere you can work with it easily. It sidesteps pointer juggling completely, which makes it a safe first answer.",
@@ -130,6 +131,7 @@ export const reverseLinkedList: Lesson = {
 
     "in-place": {
       concepts: ["pointer-rewiring", "two-pointers"],
+      legend: [{"name": "cur", "means": "the node being turned around"}, {"name": "prev", "means": "the node it should point back to"}, {"name": "nxt", "means": "saved: where cur pointed, so the rest isn’t lost"}],
       headline: "Flip each pointer as you walk",
       intuition: "The nodes are already all there; they just point the wrong way. Walk the list once and turn each `next` pointer around as you pass it.",
       discovery: "Look at what the copy approach throws away: four perfectly good nodes, which it replaces with four new ones holding the same values. The only thing that needed changing was which way each arrow points.",

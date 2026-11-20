@@ -2,7 +2,6 @@ import { describe, expect, it } from "vitest";
 import { prepare } from "../../engine/interpreter/viewmodel";
 import { fixtureSource, traceCPython } from "../../engine/testing/trace";
 import { PROBLEMS } from "../content/problems";
-import { simplified } from "../learn/pace";
 import { CONCEPTS, conceptById, depthOf } from "./concepts";
 import { MISCONCEPTIONS, misconceptionById } from "./misconceptions";
 import type { Evidence } from "./evidence";
@@ -103,7 +102,7 @@ describe("questions generated from real traces", () => {
     for (const a of p.approaches) {
       it(`${p.slug} / ${a.name}: a prediction whose answer is what the code actually did`, () => {
         const trace = traceCPython({ source: fixtureSource(a.solution), entry: a.entry, args: p.example });
-        const prepared = prepare(trace, simplified(a.spec));
+        const prepared = prepare(trace, a.spec);
         const q = predictionFor(prepared);
         expect(q, "a question exists").not.toBeNull();
         const labels = q!.choices.map((c) => c.label);

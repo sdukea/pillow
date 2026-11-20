@@ -2,7 +2,7 @@
 
 Read this first in every session. Update it whenever something below changes.
 
-_Last updated: 2026-11-20 (M10 done)._
+_Last updated: 2026-11-20 (M10.1 clarity done)._
 
 ## Vision
 
@@ -203,6 +203,19 @@ Tests: 158 unit and 33 end-to-end (about 1 minute).
 Earlier milestones: M8 was evidence, the model and the map (ADR 0011);
 M9 was reasoning and misconceptions (ADR 0012).
 
+**M10.1, the clarity pass (ADR 0014):**
+- Problems open with an overview of what they teach, with the student's
+  state on each concept.
+- Runs have a heading, a hand-written legend for every marker, the full
+  visualisation scaled up, one large explanation per step, steady pacing
+  (no fast-forward), and a large stepper.
+- The narrations that fire on every loop were rewritten to say what's
+  compared.
+- The map defaults to a grouped list. Each concept is a reference card
+  (key facts, use it when, common mistakes, practise with, builds on,
+  evidence), and `/map?c=` links to it.
+- End-to-end tests play runs at 40×.
+
 **Next: M11, interview mode.**
 - An unseen problem from the library, chosen from concepts the student
   hasn't proven.
@@ -219,6 +232,7 @@ M9 was reasoning and misconceptions (ADR 0012).
 supported). Accounts and sync are needed before a real university pilot.
 
 ## Outstanding issues
+- Locally, `npm run e2e` can take 15+ minutes. The tests themselves finish in about 2 minutes, but Chrome is slow to close between workers. This was seen while the local Chrome had an update waiting for a relaunch. In CI, the same suite takes about 90 seconds.
 - No Anthropic API key, so Explain and AI drafting haven't run live.
 - No host for the API server; the public site is static.
 - On a phone, the playground's two solutions stack instead of sitting side by side.

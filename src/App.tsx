@@ -36,12 +36,14 @@ export function App() {
         onHome={() => go(`/p/${problem.slug}`)}
       />
     ) : (
-      <Learn key={problem.slug} problem={problem} onHome={home} onPlay={() => go(`/p/${problem.slug}/play`)} onLesson={() => go(`/p/${problem.slug}/lesson`)} />
+      <Learn key={problem.slug} problem={problem} onHome={home} onPlay={() => go(`/p/${problem.slug}/play`)} onLesson={() => go(`/p/${problem.slug}/lesson`)} onConcept={(id) => go(`/map?c=${id}`)} />
     );
     const builtIn = PROBLEMS.find((p) => p.slug === m[1]);
     return builtIn ? show(builtIn) : <Remote key={m[1]} slug={m[1]} onHome={home} render={show} />;
   }
-  if (route.path === "/map") return <KnowledgeMap onOpen={(slug) => go(`/p/${slug}`)} onHome={home} />;
+  if (route.path === "/map") {
+    return <KnowledgeMap key={route.search.get("c") ?? ""} initial={route.search.get("c")} onOpen={(slug) => go(`/p/${slug}`)} onHome={() => (history.length > 1 ? history.back() : home())} />;
+  }
   if (route.path !== "/") return <NotFound onHome={home} message="There’s nothing at this address." />;
   return <Home onOpen={(slug) => go(`/p/${slug}`)} onExplain={(q) => go(`/explain?q=${encodeURIComponent(q)}`)} onMap={() => go("/map")} />;
 }

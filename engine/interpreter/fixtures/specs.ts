@@ -34,8 +34,8 @@ export const twoSumBrute: VizSpec = {
     { kind: "vars", id: "vars", show: ["nums[i] + nums[j]", "target"] },
   ],
   lines: {
-    2: { tag: "loop", narrate: [{ when: "_next_line == 6", text: "Every pair has been checked." }, { text: "Fix the first number at index {i}." }] },
-    3: { tag: "loop", narrate: [{ when: "_next_line == 2", text: "No partner for index {i}; move the first number on." }, { text: "Try pairing it with index {j}." }] },
+    2: { tag: "loop", narrate: [{ when: "_next_line == 6", text: "Every pair has been checked." }, { text: "First number: {nums[i]}, at index {i}. Now try each number after it as its partner." }] },
+    3: { tag: "loop", narrate: [{ when: "_next_line == 2", text: "Nothing after {nums[i]} adds up to {target} with it. Move on to the next first number." }, { text: "Partner: {nums[j]}, at index {j}. Do {nums[i]} and {nums[j]} add up to {target}?" }] },
     4: {
       tag: "compare",
       narrate: [
@@ -57,7 +57,7 @@ export const validParentheses: VizSpec = {
   lines: {
     2: { tag: "init", narrate: [{ text: "Note which opening bracket each closing bracket needs." }] },
     3: { tag: "init", narrate: [{ text: "Start with an empty stack of open brackets." }] },
-    4: { tag: "loop", narrate: [{ when: "_next_line == 11", text: "Every character has been read." }, { text: "Read '{ch}'." }] },
+    4: { tag: "loop", narrate: [{ when: "_next_line == 11", text: "Every character has been read." }, { text: "Read the next bracket: '{ch}'." }] },
     5: { tag: "branch", narrate: [{ when: "ch in pairs", text: "'{ch}' is a closing bracket." }, { text: "'{ch}' is an opening bracket." }] },
     6: {
       tag: "compare",
@@ -81,7 +81,7 @@ export const binarySearch: VizSpec = {
   ],
   lines: {
     2: { tag: "init", narrate: [{ when: "hi < lo", text: "The list is empty, so there's nowhere to look." }, { text: "The target could be anywhere from index {lo} to {hi}." }] },
-    3: { tag: "loop", narrate: [{ when: "lo > hi", text: "The range is empty: the target isn't here." }, { text: "Indices {lo} to {hi} are still possible." }] },
+    3: { tag: "loop", narrate: [{ when: "lo > hi", text: "The range is empty: the target isn't here." }, { text: "The target can only be between index {lo} and {hi}: {hi - lo + 1} numbers left to consider." }] },
     4: { tag: "update", narrate: [{ text: "Check the middle: index {mid}, which holds {nums[mid]}." }] },
     5: { tag: "compare", narrate: [{ when: "nums[mid] == target", text: "{nums[mid]} is the target." }, { text: "{nums[mid]} isn't {target}." }] },
     6: { tag: "return", narrate: [{ text: "Found it at index {mid}." }] },
@@ -176,7 +176,7 @@ export const validParenthesesDelete: VizSpec = {
     4: { tag: "init", narrate: [{ text: "Pretend something was removed, so the first pass runs." }] },
     5: { tag: "loop", narrate: [{ when: "_next_line == 12", text: "A whole pass found no pair, so stop." }, { text: "Scan the list again from the start." }] },
     6: { tag: "init", narrate: [{ text: "Nothing removed yet in this pass." }] },
-    7: { tag: "loop", narrate: [{ when: "_next_line == 5", text: "Reached the end of the list without finding a pair." }, { text: "Look at positions {i} and {i + 1}." }] },
+    7: { tag: "loop", narrate: [{ when: "_next_line == 5", text: "Reached the end of the list without finding a pair." }, { text: "Are {chars[i]} and {chars[i + 1]}, side by side at {i} and {i + 1}, a matching pair?" }] },
     8: {
       tag: "compare",
       narrate: [
@@ -198,7 +198,7 @@ export const binarySearchLinear: VizSpec = {
     { kind: "vars", id: "vars", show: ["target"] },
   ],
   lines: {
-    2: { tag: "loop", narrate: [{ when: "_next_line == 5", text: "Every number has been checked." }, { text: "Look at index {i}: {nums[i]}." }] },
+    2: { tag: "loop", narrate: [{ when: "_next_line == 5", text: "Every number has been checked." }, { text: "Check index {i}: is {nums[i]} the target, {target}?" }] },
     3: { tag: "compare", narrate: [{ when: "nums[i] == target", text: "{nums[i]} is the target." }, { text: "{nums[i]} isn't {target}. Move on." }] },
     4: { tag: "return", narrate: [{ text: "Found it at index {i}, after checking {i + 1} numbers." }] },
     5: { tag: "return", narrate: [{ text: "{target} isn't in the list. Every number had to be checked to be sure." }] },
@@ -213,9 +213,9 @@ export const longestSubstringBrute: VizSpec = {
   ],
   lines: {
     2: { tag: "init", narrate: [{ text: "Nothing measured yet, so the best length is 0." }] },
-    3: { tag: "loop", narrate: [{ when: "_next_line == 10", text: "Every starting point has been tried." }, { text: "Start a new substring at index {start}." }] },
+    3: { tag: "loop", narrate: [{ when: "_next_line == 10", text: "Every starting point has been tried." }, { text: "Start fresh at '{s[start]}' (index {start}) and grow a substring with no repeats." }] },
     4: { tag: "init", narrate: [{ text: "Begin with an empty set for this starting point." }] },
-    5: { tag: "loop", narrate: [{ when: "_next_line == 3", text: "This substring reached the end of the string." }, { text: "Try extending it to '{s[end]}' at {end}." }] },
+    5: { tag: "loop", narrate: [{ when: "_next_line == 3", text: "This substring reached the end of the string." }, { text: "Can the substring take '{s[end]}' (index {end}) too?" }] },
     6: { tag: "lookup", focus: { view: "seen", key: "s[end]" }, narrate: [{ when: "s[end] in seen", text: "'{s[end]}' is already in this substring, so it can't grow any further." }, { text: "'{s[end]}' is new to this substring." }] },
     7: { tag: "loop", narrate: [{ text: "Stop extending, and try the next starting point." }] },
     8: { tag: "update", narrate: [{ text: "Add '{s[end]}' to the set." }] },

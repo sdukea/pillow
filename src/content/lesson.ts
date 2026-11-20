@@ -44,6 +44,8 @@ export interface Complexity {
 export interface ApproachLesson {
   /** The concepts this approach exercises (ids from src/knowledge/concepts.ts). */
   concepts: ConceptId[];
+  /** What each thing on screen is, as the student sees it: "i: the first number of the pair". */
+  legend: { name: string; means: string }[];
   /** Chapter heading, e.g. "Check every pair". */
   headline: string;
   intuition: string;

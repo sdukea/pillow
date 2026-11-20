@@ -90,6 +90,7 @@ export const maximumDepth: Lesson = {
   approaches: {
     "level-by-level": {
       concepts: ["trees", "queue", "bfs"],
+      legend: [{"name": "node", "means": "the node being visited (filled in)"}, {"name": "queue", "means": "nodes waiting on the next level (ringed)"}, {"name": "depth", "means": "levels counted so far"}],
       headline: "Count the levels, one at a time",
       intuition: "Visit the tree one level at a time, using a queue that holds the next level. Each time you finish a level, add one to the depth.",
       discovery: "Depth is literally “how many levels”, so the natural first idea is to walk the levels and count them. A queue keeps the nodes in level order: first in, first out.",
@@ -133,6 +134,7 @@ export const maximumDepth: Lesson = {
 
     recursion: {
       concepts: ["tree-recursion", "call-stack", "space-complexity"],
+      legend: [{"name": "root", "means": "the node this call is asking about (filled in)"}, {"name": "call stack", "means": "calls waiting for their children’s answers"}],
       headline: "Ask each side how deep it is",
       intuition: "A tree’s depth is one (for the root) plus the deeper of its two sides. Each side is itself a smaller tree, so ask it the same question. An empty tree is 0 deep.",
       discovery: "Look at the level-by-level approach and ask what you actually need from each part of the tree: just one number, its depth. The root doesn’t need levels; it needs its two children’s answers.",

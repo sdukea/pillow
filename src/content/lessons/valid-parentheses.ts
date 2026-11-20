@@ -92,6 +92,7 @@ export const validParentheses: Lesson = {
   approaches: {
     "delete-pairs": {
       concepts: ["strings", "loops", "complexity"],
+      legend: [{"name": "i", "means": "where the scan for a matching pair is"}, {"name": "chars", "means": "the brackets still left; matched pairs get deleted"}, {"name": "removed", "means": "whether this pass deleted a pair"}],
       headline: "Delete matching pairs until none are left",
       intuition: "A valid string always has at least one matching pair sitting side by side, like `()`. Delete it, and the brackets around it may now form a pair. Keep deleting adjacent pairs. If everything disappears, the string was valid.",
       discovery: "Try it on paper with `{[()]}`: cross out `()`, then `[]` is touching, then `{}`. That’s exactly what this approach automates.",
@@ -132,6 +133,7 @@ export const validParentheses: Lesson = {
 
     stack: {
       concepts: ["stack", "matching"],
+      legend: [{"name": "ch", "means": "the bracket being read now"}, {"name": "stack", "means": "open brackets still waiting for their closer, newest on top"}],
       headline: "Keep a stack of open brackets",
       intuition: "Read left to right. Put each opening bracket on a stack. When a closing bracket arrives, it must match the bracket on top, the most recently opened one. If it does, pop it; if it doesn’t, the string is invalid.",
       discovery: "Notice what the delete-pairs approach keeps re-reading: the brackets that are still open. A closing bracket only ever needs the **most recent** of them, so keep just those, in order.",

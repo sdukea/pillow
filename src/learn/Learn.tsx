@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { prepare, type Prepared } from "../../engine/interpreter/viewmodel";
+import { prepare, type Prepared, type ViewModel } from "../../engine/interpreter/viewmodel";
 import type { Problem } from "../content/problems";
 import { growthOf, preparedFor } from "../lib/data";
 import { saveNote } from "../lib/notes";
@@ -9,29 +9,29 @@ import { misconceptionById } from "../knowledge/misconceptions";
 import type { ReasoningStep } from "../content/lesson";
 import { type Choice, complexityFor, type ComplexityQuestion, type Prediction, predictionFor } from "../knowledge/questions";
 import { Canvas } from "../views/Canvas";
-import { inputPicture, pacing, simplified, stepAt } from "./pace";
+import { inputPicture, STEP_MS } from "./pace";
+import { type ConceptId, conceptById } from "../knowledge/concepts";
+import { useEvidence } from "../knowledge/evidence";
+import { assess } from "../knowledge/model";
+import { Rich } from "../lesson/Rich";
 
-// One idea, in five beats you move through yourself:
-//   problem → the slow way → the trick → the fast way → your note.
-// One picture or one sentence at a time. Each run stops once to ask you to predict what happens
-// next, and ends by asking how the work grows. Your answers are evidence for your knowledge map:
-// watching alone never counts as understanding.
+// A problem, start to finish: what it teaches, the slow way, your turn to find the trick, the trick,
+// the fast way, writing it yourself, and the note. Every step explains itself in one large sentence
+// at a time; every run can be stepped through at your own pace. Your answers are evidence for your
+// knowledge map: watching alone never counts as understanding.
 
-type Beat = "problem" | "slow" | "think" | "trick" | "fast" | "solve" | "note";
-const BEATS: Beat[] = ["problem", "slow", "think", "trick", "fast", "solve", "note"];
-const NEXT: Record<Beat, string> = { problem: "Show Me the Slow Way", slow: "Your Turn", think: "Put It Together", trick: "Watch It Work", fast: "Write It Yourself", solve: "Keep the Note", note: "Done" };
+type Beat = "overview" | "slow" | "think" | "trick" | "fast" | "solve" | "note";
+const BEATS: Beat[] = ["overview", "slow", "think", "trick", "fast", "solve", "note"];
+const NEXT: Record<Beat, string> = { overview: "Start With the Slow Way", slow: "Your Turn", think: "Put It Together", trick: "Watch It Work", fast: "Write It Yourself", solve: "Keep the Note", note: "Done" };
 
-interface Props { problem: Problem; onHome: () => void; onPlay: () => void; onLesson: () => void }
+interface Props { problem: Problem; onHome: () => void; onPlay: () => void; onLesson: () => void; onConcept: (id: string) => void }
 
-export function Learn({ problem, onHome, onPlay, onLesson }: Props) {
+export function Learn({ problem, onHome, onPlay, onLesson, onConcept }: Props) {
   const card = problem.lesson!.card;
   const [beat, setBeat] = useState(0);
   const at = BEATS[beat];
   const [slow, fast] = [problem.approaches[0], problem.approaches.at(-1)!];
-  const runs = useMemo(() => ({
-    slow: rerender(preparedFor(problem, slow), slow.spec),
-    fast: rerender(preparedFor(problem, fast), fast.spec),
-  }), [problem, slow, fast]);
+  const runs = useMemo(() => ({ slow: preparedFor(problem, slow), fast: preparedFor(problem, fast) }), [problem, slow, fast]);
   const picture = useMemo(() => prepare(runs.slow.trace, inputPicture(problem)).view(0).views, [runs, problem]);
   const compare = useMemo(() => comparison(problem, runs.slow.moments.length, runs.fast.moments.length), [problem, runs]);
   const asks = useMemo(() => ({
@@ -77,13 +77,8 @@ export function Learn({ problem, onHome, onPlay, onLesson }: Props) {
       </header>
 
       <main className="learn-stage" key={at}>
-        {at === "problem" && (
-          <>
-            <div className="stage-card"><Canvas views={picture} /></div>
-            <p className="line">{problem.summary}</p>
-          </>
-        )}
-        {at === "slow" && <Run prepared={runs.slow} tone="slow" during={card.slow} after={card.waste} {...asks.slow} onEvidence={evidence(slow)} onFinished={() => setFinished((f) => ({ ...f, slow: true }))} />}
+        {at === "overview" && <Overview problem={problem} picture={picture} onConcept={onConcept} />}
+        {at === "slow" && <Run prepared={runs.slow} tone="slow" title={problem.lesson!.approaches[slow.id].headline} legend={problem.lesson!.approaches[slow.id].legend} after={card.waste} {...asks.slow} onEvidence={evidence(slow)} onFinished={() => setFinished((f) => ({ ...f, slow: true }))} />}
         {at === "think" && (
           <Think
             seed={problem.slug}
@@ -105,7 +100,7 @@ export function Learn({ problem, onHome, onPlay, onLesson }: Props) {
             <p className="trick-text">{card.trick}</p>
           </div>
         )}
-        {at === "fast" && <Run prepared={runs.fast} tone="fast" during={card.trick} after={compare} {...asks.fast} onEvidence={evidence(fast)} onFinished={() => setFinished((f) => ({ ...f, fast: true }))} />}
+        {at === "fast" && <Run prepared={runs.fast} tone="fast" title={problem.lesson!.approaches[fast.id].headline} legend={problem.lesson!.approaches[fast.id].legend} after={compare} {...asks.fast} onEvidence={evidence(fast)} onFinished={() => setFinished((f) => ({ ...f, fast: true }))} />}
         {at === "solve" && <Solve problem={problem} onSolved={() => setFinished((f) => ({ ...f, solve: true }))} />}
         {at === "note" && (
           <article className="note-card" aria-label="Your note">
@@ -141,7 +136,9 @@ export function Learn({ problem, onHome, onPlay, onLesson }: Props) {
 interface RunProps {
   prepared: Prepared;
   tone: "slow" | "fast";
-  during: string;
+  title: string;
+  legend: { name: string; means: string }[];
+  /** What the run shows, said once it's finished. */
   after: string;
   prediction: Prediction | null;
   growth: ComplexityQuestion | null;
@@ -150,70 +147,118 @@ interface RunProps {
 }
 
 /**
- * A run that plays on its own and stops once for you to predict the next move; tap the picture to
- * pause or replay. When it ends, it asks how the work grows.
+ * A run you can follow: it says what every marker means, plays one step at a time at a pace you
+ * can read (or step through yourself), explains each step in one large sentence, and stops once for
+ * you to predict the next move. When it ends, it asks how the work grows.
  */
-function Run({ prepared, tone, during, after, prediction, growth, onEvidence, onFinished }: RunProps) {
-  const pace = useMemo(() => pacing(prepared.moments.length), [prepared]);
-  const total = pace.reduce((a, b) => a + b, 0);
-  const stopAt = prediction ? pace.slice(0, prediction.moment).reduce((a, b) => a + b, 0) : Infinity;
-  const [ms, setMs] = useState(0);
+function Run({ prepared, tone, title, legend, after, prediction, growth, onEvidence, onFinished }: RunProps) {
+  const last = prepared.moments.length - 1;
+  const [index, setIndex] = useState(0);
   const [playing, setPlaying] = useState(true);
   const [predicted, setPredicted] = useState<number | null>(null);
   const [grew, setGrew] = useState<number | null>(null);
-  const asking = !!prediction && predicted === null && ms >= stopAt;
-  const done = ms >= total;
+  const asking = !!prediction && predicted === null && index >= prediction.moment;
+  const done = index >= last;
   const exposed = useRef(false);
   const reported = useRef(false);
 
   useEffect(() => {
     if (!playing || done || asking) return;
-    let last = performance.now(), raf = 0;
-    const tick = (now: number) => {
-      setMs((m) => Math.min(predicted === null && prediction ? stopAt : Infinity, m + (now - last)));
-      last = now;
-      raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [playing, done, asking, predicted, prediction, stopAt]);
+    const t = setTimeout(() => setIndex((i) => Math.min(last, prediction && predicted === null ? Math.min(prediction.moment, i + 1) : i + 1)), STEP_MS);
+    return () => clearTimeout(t);
+  }, [playing, done, asking, index, last, prediction, predicted]);
 
   useEffect(() => {
     if (done && !exposed.current) { exposed.current = true; onEvidence("exposure", undefined, "watched it run"); }
     if (done && !reported.current && (!prediction || predicted !== null) && (!growth || grew !== null)) { reported.current = true; onFinished(); }
   }, [done, predicted, grew, prediction, growth, onEvidence, onFinished]);
 
-  const index = done ? prepared.moments.length - 1 : stepAt(pace, ms);
   const view = prepared.view(index);
-  const toggle = () => { if (asking) return; if (done) { setMs(predicted === null ? 0 : stopAt); setPlaying(true); } else setPlaying((p) => !p); };
+  const go = (to: number) => {
+    setPlaying(false);
+    setIndex(Math.max(0, Math.min(prediction && predicted === null ? prediction.moment : last, to)));
+  };
+  const explanation = done ? `${view.narration ? view.narration + " " : ""}${after}` : view.narration ?? (index === 0 ? "Here’s the input, before anything runs." : " ");
 
   return (
-    <>
-      <div className={`stage-card run ${tone} ${done ? "done" : ""} ${asking ? "asking" : ""}`} onClick={toggle} role="button" tabIndex={0} aria-label={asking ? "Waiting for your prediction" : done ? "Replay" : playing ? "Pause" : "Play"}
-        onKeyDown={(e) => { if (e.key === " " || e.key === "Enter") { e.preventDefault(); toggle(); } }}>
-        <span className={`count ${tone}`} aria-live="off"><strong>{index + 1}</strong> steps</span>
-        <Canvas views={view.views} />
-        <span className="caption-live">{asking ? "\u00a0" : view.narration ?? "\u00a0"}</span>
-        {!playing && !done && !asking && <span className="paused" aria-hidden="true">❚❚</span>}
-        {done && <span className="replay" aria-hidden="true">↻</span>}
+    <section className={`run-beat ${tone}`}>
+      <header className="run-head">
+        <p className="run-kind">{tone === "slow" ? "The slow way" : "The fast way"}</p>
+        <h2 className="run-title">{title}</h2>
+      </header>
+      <dl className="legend">
+        {legend.map((l) => <div key={l.name}><dt><code>{l.name}</code></dt><dd>{l.means}</dd></div>)}
+      </dl>
+      <div className={`stage-card run ${tone} ${done ? "done" : ""} ${asking ? "asking" : ""}`}>
+        <div className="canvas-big"><Canvas views={view.views} /></div>
       </div>
-      {prediction && (asking || (predicted !== null && !done)) ? (
+      {prediction && asking ? (
         <Ask prompt={prediction.prompt} choices={prediction.choices} picked={predicted} onPick={(i) => {
           setPredicted(i);
           onEvidence("predict", prediction.choices[i].correct, prediction.detail);
           setPlaying(true);
         }} />
-      ) : done && growth ? (
-        <>
-          <p className="line strong">{after}</p>
-          <Ask prompt={growth.prompt} choices={growth.choices} picked={grew} onPick={(i) => { setGrew(i); onEvidence("complexity", growth.choices[i].correct, growth.detail); }} />
-        </>
       ) : (
-        <p className={`line ${done ? "strong" : ""}`}>{done ? after : during}</p>
+        <>
+          <p className={`explain ${done ? "strong" : ""}`} aria-live="polite">{explanation}</p>
+          {predicted !== null && prediction && !done && (
+            <p className={`ask-verdict ${prediction.choices[predicted].correct ? "right" : "wrong"}`}>
+              {prediction.choices[predicted].correct ? "Your prediction was right." : `Your prediction: ${prediction.choices[predicted].label}. Watch where it actually goes.`}
+            </p>
+          )}
+          <div className="stepper" role="toolbar" aria-label="Step through the run">
+            <button type="button" className="step-btn" onClick={() => go(index - 1)} disabled={index === 0} aria-label="Step back">‹</button>
+            <button type="button" className="step-btn play" onClick={() => (done ? (setIndex(0), setPlaying(true)) : setPlaying((p) => !p))} aria-label={done ? "Replay" : playing ? "Pause" : "Play"}>
+              {done ? "↻" : playing ? "❚❚" : "▶"}
+            </button>
+            <button type="button" className="step-btn" onClick={() => go(index + 1)} disabled={done || asking} aria-label="Step forward">›</button>
+            <span className="step-count">Step {index + 1} of {last + 1}</span>
+          </div>
+        </>
       )}
-    </>
+      {done && growth && <Ask prompt={growth.prompt} choices={growth.choices} picked={grew} onPick={(i) => { setGrew(i); onEvidence("complexity", growth.choices[i].correct, growth.detail); }} />}
+    </section>
   );
 }
+
+/** What this problem is, and what it will teach you: the concepts, with where you stand on each. */
+function Overview({ problem, picture, onConcept }: { problem: Problem; picture: ViewModel[]; onConcept: (id: string) => void }) {
+  const log = useEvidence();
+  const states = useMemo(() => assess(log), [log]);
+  const teaches = useMemo(() => [...new Set(problem.approaches.flatMap((a) => problem.lesson!.approaches[a.id].concepts))], [problem]);
+  const buildsOn = useMemo(() => [...new Set(teaches.flatMap((c) => conceptById.get(c)!.requires))].filter((c) => !teaches.includes(c as ConceptId)), [teaches]);
+  return (
+    <section className="overview">
+      <h1 className="overview-title">{problem.title}</h1>
+      <p className="overview-statement"><Rich text={problem.lesson!.understand.statement} /></p>
+      <div className="stage-card"><div className="canvas-big"><Canvas views={picture} /></div></div>
+      <p className="overview-output"><Rich text={problem.lesson!.understand.output} /></p>
+      <h2 className="overview-h">What this problem teaches</h2>
+      <ul className="teaches">
+        {teaches.map((id) => {
+          const c = conceptById.get(id)!;
+          const s = states.get(id)!;
+          return (
+            <li key={id}>
+              <button type="button" className="teach-row" onClick={() => onConcept(id)}>
+                <span className={`teach-state ${s.state}`}>{STATE_WORD[s.state]}</span>
+                <span className="teach-name">{c.name}</span>
+                <span className="teach-means">{c.means}</span>
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+      {buildsOn.length > 0 && (
+        <p className="builds-on">Builds on {buildsOn.map((id, i) => (
+          <span key={id}>{i > 0 && ", "}<button type="button" className="link" onClick={() => onConcept(id)}>{conceptById.get(id)!.name}</button></span>
+        ))}.</p>
+      )}
+    </section>
+  );
+}
+
+const STATE_WORD: Record<string, string> = { unseen: "New", seen: "Seen", learning: "Learning", shaky: "Needs work", understood: "Understood" };
 
 /**
  * Your turn: work the trick out, one question at a time. Hints are there (each one weakens the
@@ -298,11 +343,6 @@ function Ask({ prompt, choices, picked, onPick }: { prompt: string; choices: Cho
 /** `code` in a prompt, rendered as code. */
 function Code({ text }: { text: string }) {
   return <>{text.split(/(`[^`]+`)/).map((part, i) => part.startsWith("`") ? <code key={i}>{part.slice(1, -1)}</code> : part)}</>;
-}
-
-/** The same traces, drawn with the simplified spec. */
-function rerender(p: Prepared, spec: Problem["approaches"][number]["spec"]): Prepared {
-  return prepare(p.trace, simplified(spec));
 }
 
 /** One line that makes the difference concrete: here, and at scale. */

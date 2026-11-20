@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { PROBLEMS, type Problem } from "../content/problems";
 import { CONCEPTS, type ConceptId, conceptById, depthOf } from "../knowledge/concepts";
+import { MISCONCEPTIONS } from "../knowledge/misconceptions";
 import { useEvidence } from "../knowledge/evidence";
 import { assess, type ConceptState, type State, summarize } from "../knowledge/model";
 import { recommend } from "../knowledge/recommend";
@@ -8,17 +9,20 @@ import { recommend } from "../knowledge/recommend";
 // The student's knowledge map: every concept, laid out by what it builds on, coloured by what the
 // evidence shows. Tap a concept to see why it's in that state and what to practise.
 
-export const STATE_LABEL: Record<State, string> = { unseen: "Not yet", seen: "Seen", learning: "Learning", shaky: "Shaky", understood: "Understood" };
+export const STATE_LABEL: Record<State, string> = { unseen: "Not met yet", seen: "Seen", learning: "Learning", shaky: "Needs work", understood: "Understood" };
 const COL = 190, ROW = 58, PAD = 28;
 
-interface Props { onOpen: (slug: string) => void; onHome: () => void }
+interface Props { onOpen: (slug: string) => void; onHome: () => void; initial?: string | null }
 
-export function KnowledgeMap({ onOpen, onHome }: Props) {
+export function KnowledgeMap({ onOpen, onHome, initial }: Props) {
   const log = useEvidence();
   const states = useMemo(() => assess(log), [log]);
   const counts = summarize(states);
   const layout = useMemo(layoutConcepts, []);
-  const [selected, setSelected] = useState<ConceptId | null>(null);
+  const [selected, setSelected] = useState<ConceptId | null>(initial && conceptById.has(initial) ? (initial as ConceptId) : null);
+  const [mode, setMode] = useState<"list" | "graph">(() => { try { return localStorage.getItem("pillow.mapMode") === "graph" ? "graph" : "list"; } catch { return "list"; } });
+  useEffect(() => { try { localStorage.setItem("pillow.mapMode", mode); } catch { /* a convenience */ } }, [mode]);
+  useEffect(() => { if (selected) document.querySelector(".concept")?.scrollIntoView({ block: "nearest" }); }, [selected]);
   const recs = useMemo(() => recommend(PROBLEMS, states), [states]);
   useEffect(() => { document.title = "Your Map · Pillow"; }, []);
 
@@ -34,10 +38,20 @@ export function KnowledgeMap({ onOpen, onHome }: Props) {
         </div>
       </header>
 
+      <div className="map-modes" role="tablist" aria-label="View">
+        <button type="button" role="tab" aria-selected={mode === "list"} className={mode === "list" ? "on" : ""} onClick={() => setMode("list")}>List</button>
+        <button type="button" role="tab" aria-selected={mode === "graph"} className={mode === "graph" ? "on" : ""} onClick={() => setMode("graph")}>Graph</button>
+      </div>
+
+      <div className={`map-body ${selected ? "has-card" : ""}`}>
+      <div className="map-main">
+      {mode === "list" ? (
+        <ConceptList states={states} selected={selected} onPick={setSelected} />
+      ) : (
+      <>
       <div className="map-legend" aria-hidden="true">
         {(["understood", "learning", "shaky", "seen", "unseen"] as State[]).map((s) => <span key={s}><i className={`dot ${s}`} />{STATE_LABEL[s]}</span>)}
       </div>
-
       <div className="map-scroll">
         <svg className="map-graph" width={layout.width} height={layout.height} role="group" aria-label="Concepts and what they build on">
           {layout.edges.map((e) => {
@@ -59,9 +73,12 @@ export function KnowledgeMap({ onOpen, onHome }: Props) {
           })}
         </svg>
       </div>
+      </>
+      )}
+      </div>
 
       {selected ? (
-        <ConceptDetail state={states.get(selected)!} states={states} onOpen={onOpen} onPick={setSelected} />
+        <ConceptDetail state={states.get(selected)!} states={states} onOpen={onOpen} onPick={setSelected} onClose={() => setSelected(null)} />
       ) : (
         <section className="map-next">
           {recs[0] && (
@@ -71,48 +88,112 @@ export function KnowledgeMap({ onOpen, onHome }: Props) {
               <span className="next-why">{recs[0].reason}</span>
             </button>
           )}
-          <p className="map-hint">Tap a concept to see what you’ve shown about it.</p>
+          <p className="map-hint">Tap a concept for its reference card: what it is, the key facts, when to use it, common mistakes, and your evidence.</p>
         </section>
       )}
+      </div>
     </main>
   );
 }
 
-function ConceptDetail({ state, states, onOpen, onPick }: { state: ConceptState; states: Map<ConceptId, ConceptState>; onOpen: (slug: string) => void; onPick: (id: ConceptId) => void }) {
+/** Every concept, grouped by where you stand: what needs work comes first. */
+function ConceptList({ states, selected, onPick }: { states: Map<ConceptId, ConceptState>; selected: ConceptId | null; onPick: (id: ConceptId) => void }) {
+  const groups: { title: string; ids: ConceptId[] }[] = [
+    { title: "Needs work", ids: [] }, { title: "Review", ids: [] }, { title: "Learning", ids: [] },
+    { title: "Understood", ids: [] }, { title: "Seen", ids: [] }, { title: "Not met yet", ids: [] },
+  ];
+  for (const c of CONCEPTS) {
+    const s = states.get(c.id)!;
+    const g = s.state === "shaky" ? 0 : s.state === "understood" ? (s.due ? 1 : 3) : s.state === "learning" ? 2 : s.state === "seen" ? 4 : 5;
+    groups[g].ids.push(c.id);
+  }
+  return (
+    <div className="concept-list">
+      {groups.filter((g) => g.ids.length).map((g) => (
+        <section key={g.title} className="cl-group">
+          <h2>{g.title} <span className="muted">{g.ids.length}</span></h2>
+          <ul>
+            {g.ids.map((id) => {
+              const c = conceptById.get(id)!;
+              const s = states.get(id)!;
+              return (
+                <li key={id}>
+                  <button type="button" className={`cl-row ${selected === id ? "on" : ""}`} onClick={() => onPick(id)} aria-label={`${c.name}: ${STATE_LABEL[s.state]}`}>
+                    <i className={`dot ${s.state}`} aria-hidden="true" />
+                    <span className="cl-name">{c.name}</span>
+                    <span className="cl-means">{c.means}</span>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      ))}
+    </div>
+  );
+}
+
+/** A concept's reference card: everything worth keeping about it, and what you've shown. */
+function ConceptDetail({ state, states, onOpen, onPick, onClose }: { state: ConceptState; states: Map<ConceptId, ConceptState>; onOpen: (slug: string) => void; onPick: (id: ConceptId) => void; onClose: () => void }) {
   const c = conceptById.get(state.id)!;
   const teaching = PROBLEMS.filter((p) => conceptsOf(p).includes(state.id));
   const title = (slug: string) => PROBLEMS.find((p) => p.slug === slug)?.title ?? slug;
+  const mistakes = MISCONCEPTIONS.filter((m) => m.concept === state.id);
+  const shown = new Set(state.misconceptions.map((m) => m.id));
   return (
     <section className="concept" aria-label={c.name}>
-      <p className={`concept-state ${state.state}`}>{STATE_LABEL[state.state]}{state.due && state.state === "understood" ? " · review due" : ""}</p>
+      <header className="concept-head">
+        <p className={`concept-state ${state.state}`}>{STATE_LABEL[state.state]}{state.due && state.state === "understood" ? " · review due" : ""}</p>
+        <button type="button" className="link" onClick={onClose}>Close</button>
+      </header>
       <h2>{c.name}</h2>
       <p className="concept-means">{c.means}</p>
       <p className="concept-why">{state.why}</p>
-      {state.misconceptions.some((m) => !state.why.includes(m.belief)) && (
-        <ul className="misconceptions" aria-label="Still seems off">
-          {state.misconceptions.filter((m) => !state.why.includes(m.belief)).map((m) => <li key={m.id}>You seemed to think {m.belief}.</li>)}
-        </ul>
+
+      <h3>Key facts</h3>
+      <ul className="facts">{c.facts.map((f) => <li key={f}>{f}</li>)}</ul>
+
+      <h3>Use it when</h3>
+      <p className="concept-use">{c.useWhen}</p>
+
+      {mistakes.length > 0 && (
+        <>
+          <h3>Common mistakes</h3>
+          <ul className="mistakes">
+            {mistakes.map((m) => <li key={m.id} className={shown.has(m.id) ? "yours" : ""}>Thinking {m.belief}.{shown.has(m.id) && <strong> You made this one.</strong>}</li>)}
+          </ul>
+        </>
       )}
-      {state.evidence.length > 0 && (
-        <ul className="evidence">
-          {state.evidence.slice(0, 6).map((e, i) => (
-            <li key={i}>
-              <span className={`ev-mark ${e.correct === undefined ? "seen" : e.correct ? "right" : "wrong"}`} aria-label={e.correct === undefined ? "watched" : e.correct ? "right" : "wrong"}>{e.correct === undefined ? "•" : e.correct ? "✓" : "✗"}</span>
-              <span className="ev-detail">{e.detail}</span>
-              <span className="ev-where">{title(e.problem)} · {ago(e.at)}</span>
-            </li>
-          ))}
-        </ul>
-      )}
-      {c.requires.length > 0 && (
-        <p className="concept-requires">Builds on {c.requires.map((r, i) => (
-          <span key={r}>{i > 0 && ", "}<button type="button" className="link" onClick={() => onPick(r as ConceptId)}>{conceptById.get(r)!.name}</button> <span className="muted">({STATE_LABEL[states.get(r as ConceptId)!.state].toLowerCase()})</span></span>
-        ))}</p>
-      )}
+
+      <h3>Practise with</h3>
       <div className="concept-practice">
-        {teaching.length ? teaching.map((p) => <button key={p.slug} type="button" className="btn-gray" onClick={() => onOpen(p.slug)}>Practise with {p.title}</button>)
+        {teaching.length ? teaching.map((p) => <button key={p.slug} type="button" className="btn-gray" onClick={() => onOpen(p.slug)}>{p.title}</button>)
           : <p className="muted">No problem in the library teaches this yet.</p>}
       </div>
+
+      {c.requires.length > 0 && (
+        <>
+          <h3>Builds on</h3>
+          <p className="concept-requires">{c.requires.map((r, i) => (
+            <span key={r}>{i > 0 && ", "}<button type="button" className="link" onClick={() => onPick(r as ConceptId)}>{conceptById.get(r)!.name}</button> <span className="muted">({STATE_LABEL[states.get(r as ConceptId)!.state].toLowerCase()})</span></span>
+          ))}</p>
+        </>
+      )}
+
+      {state.evidence.length > 0 && (
+        <>
+          <h3>Your evidence</h3>
+          <ul className="evidence">
+            {state.evidence.slice(0, 8).map((e, i) => (
+              <li key={i}>
+                <span className={`ev-mark ${e.correct === undefined ? "seen" : e.correct ? "right" : "wrong"}`} aria-label={e.correct === undefined ? "watched" : e.correct ? "right" : "wrong"}>{e.correct === undefined ? "•" : e.correct ? "✓" : "✗"}</span>
+                <span className="ev-detail">{e.detail}{e.hinted ? " (with a hint)" : ""}</span>
+                <span className="ev-where">{title(e.problem)} · {ago(e.at)}</span>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
     </section>
   );
 }

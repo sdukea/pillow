@@ -93,6 +93,7 @@ export const twoSum: Lesson = {
   approaches: {
     "brute-force": {
       concepts: ["arrays", "nested-loops", "complexity"],
+      legend: [{"name": "i", "means": "the first number of the pair"}, {"name": "j", "means": "the second number, always to the right of i"}, {"name": "nums[i] + nums[j]", "means": "the pair’s sum, compared with the target"}],
       headline: "Check every pair",
       intuition: "If you don’t know which two numbers work, try them all. Pair the first number with each number after it, then the second number with each number after it, and so on, until a pair adds up to the target.",
       discovery: "This is what you’d do by hand with a short list. It’s the natural first answer, and it’s worth writing because it’s obviously correct. Every faster approach has to give the same answers.",
@@ -126,6 +127,7 @@ export const twoSum: Lesson = {
 
     "hash-map": {
       concepts: ["hash-map", "hash-lookup", "complement", "time-space"],
+      legend: [{"name": "i", "means": "the number being looked at now"}, {"name": "x", "means": "its value"}, {"name": "need", "means": "the partner it needs: target − x"}, {"name": "seen", "means": "every number passed so far, and where it was"}],
       headline: "Look the partner up",
       intuition: "Walk through the list once. For each number, ask: have I already seen the number that would complete the pair? Keep everything you’ve seen in a map, so that question takes one step instead of a search.",
       discovery: "Watch brute force and notice what it keeps doing: for every number it searches for one specific partner, target minus that number. If we remembered the numbers we’d passed, we could just look that partner up.",

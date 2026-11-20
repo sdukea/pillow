@@ -2,9 +2,9 @@ import { expect, type Page, test } from "@playwright/test";
 import { chaptersOf } from "../src/workspace/chapters";
 import { PROBLEMS } from "../src/content/problems";
 
-// Runs play at reading speed for people; here they play 10× faster so the suite stays quick.
+// Runs play at reading speed for people; here they play 40× faster so the suite stays quick.
 test.beforeEach(async ({ page }) => {
-  await page.addInitScript(() => { try { localStorage.setItem("pillow.speed", "10"); } catch { /* not every page allows storage */ } });
+  await page.addInitScript(() => { try { localStorage.setItem("pillow.speed", "40"); } catch { /* not every page allows storage */ } });
 });
 
 /** Fail the test on any uncaught error or console error. */
@@ -21,7 +21,7 @@ async function answerFirst(page: Page) {
   await expect(card).toBeVisible({ timeout: 40_000 });
   const prompt = await card.locator(".ask-prompt").innerText();
   await card.locator(".choice").first().click();
-  await expect(card.locator(".ask-verdict")).toBeVisible();
+  await expect(page.locator(".ask-verdict").first()).toBeVisible();
   return prompt;
 }
 
@@ -56,8 +56,13 @@ test("a problem asks before it tells: predict, then say how it grows, then the n
   await expect(page.getByRole("option", { name: /Valid Parentheses/ })).toBeVisible();
   await ask.press("Enter");
   await expect(page).toHaveURL(/\/pillow\/p\/valid-parentheses$/);
-  await expect(page.getByText("Decide whether every bracket", { exact: false })).toBeVisible();
-  await page.getByRole("button", { name: "Show Me the Slow Way" }).click();
+  // It opens on what the problem teaches, with where you stand on each concept.
+  await expect(page.getByRole("heading", { name: "What this problem teaches" })).toBeVisible();
+  await expect(page.locator(".teach-row").filter({ hasText: "Stacks" })).toContainText("New");
+  await page.getByRole("button", { name: "Start With the Slow Way" }).click();
+  // Every marker on screen is explained, and the run can be stepped through.
+  await expect(page.locator(".legend")).toContainText("the brackets still left; matched pairs get deleted");
+  await expect(page.getByRole("button", { name: "Step forward" })).toBeVisible();
   // The run stops to ask; moving on is locked until you answer.
   await expect(page.locator(".ask-card")).toBeVisible({ timeout: 40_000 });
   await expect(page.locator(".learn-next .next")).toBeDisabled();
@@ -109,20 +114,20 @@ test("the map changes because of what you answered, never because you watched", 
   await page.locator(".learn-next .next").click();
   await finishRun(page);
   await page.goto("map");
-  await expect(page.locator(".map-node.unseen")).not.toHaveCount(26);
+  await expect(page.locator(".cl-group h2").filter({ hasText: /Needs work|Learning/ }).first()).toBeVisible();
   await page.getByRole("button", { name: /^Arrays: / }).click();
   const panel = page.locator(".concept");
   await expect(panel).toContainText("Arrays");
   await expect(panel.locator(".evidence li").first()).toBeVisible();
   await expect(panel).toContainText("Binary Search");
-  await expect(panel.getByRole("button", { name: /Practise with/ }).first()).toBeVisible();
+  await expect(panel.getByRole("button", { name: "Binary Search" })).toBeVisible();
   // Nothing becomes understood in one sitting.
   await expect(page.locator(".map-node.understood")).toHaveCount(0);
 });
 
 test("a note asks you to recall the trick, and the answer becomes evidence", async ({ page }) => {
   await page.goto("p/two-sum");
-  await page.getByRole("button", { name: "Show Me the Slow Way" }).click();
+  await page.getByRole("button", { name: "Start With the Slow Way" }).click();
   await finishRun(page);
   await page.getByRole("button", { name: "Your Turn" }).click();
   await solveThink(page);
@@ -142,7 +147,7 @@ test("a note asks you to recall the trick, and the answer becomes evidence", asy
 
 test("your turn: hints weaken the evidence, a wrong answer explains itself, and the misconception reaches the map", async ({ page }) => {
   await page.goto("p/two-sum");
-  await page.getByRole("button", { name: "Show Me the Slow Way" }).click();
+  await page.getByRole("button", { name: "Start With the Slow Way" }).click();
   await finishRun(page);
   await page.getByRole("button", { name: "Your Turn" }).click();
   // Question 1: take a hint first, then answer right. The answer is recorded as hinted.
@@ -164,7 +169,7 @@ test("your turn: hints weaken the evidence, a wrong answer explains itself, and 
     expect.objectContaining({ correct: false, misconception: "lookup-scans" }),
   ]);
   await page.goto("map");
-  await page.getByRole("button", { name: /^Instant lookup: Shaky/ }).click();
+  await page.getByRole("button", { name: /^Instant lookup: Needs work/ }).click();
   await expect(page.locator(".concept")).toContainText("You seemed to think looking something up in a hash map means scanning every key.");
   await page.goto("./");
   await expect(page.locator(".home-next .next-row")).toContainText("Fix");
@@ -228,6 +233,32 @@ test("write it yourself: syntax errors point at the line", async ({ page }) => {
   await page.getByRole("textbox", { name: "Your solution, in Python" }).fill("def is_valid(s):\n    return s ==\n");
   await page.getByRole("button", { name: "Run", exact: true }).click();
   await expect(page.locator(".case-error").first()).toContainText("Line 2: SyntaxError", { timeout: 45_000 });
+});
+
+test("the overview links each concept to its reference card on the map", async ({ page }) => {
+  await page.goto("p/two-sum");
+  await page.locator(".teach-row").filter({ hasText: "Hash maps" }).click();
+  await expect(page).toHaveURL(/\/map\?c=hash-map$/);
+  const card = page.locator(".concept");
+  await expect(card.getByRole("heading", { name: "Hash maps" })).toBeVisible();
+  await expect(card).toContainText("Adding, finding and removing a key take about one step on average.");
+  await expect(card).toContainText("Use it when");
+  await card.getByRole("button", { name: "Two Sum" }).click();
+  await expect(page).toHaveURL(/\/p\/two-sum$/);
+});
+
+test("stepping through a run shows each step's explanation, one at a time", async ({ page }) => {
+  await page.goto("p/two-sum");
+  await page.getByRole("button", { name: "Start With the Slow Way" }).click();
+  await page.getByRole("button", { name: "Pause" }).click();
+  const explain = page.locator(".explain");
+  const count = page.locator(".stepper .step-count");
+  const before = await count.innerText();
+  await page.getByRole("button", { name: "Step forward" }).click();
+  await expect(count).not.toHaveText(before);
+  await expect(explain).not.toHaveText(" ");
+  await page.getByRole("button", { name: "Step back" }).click();
+  await expect(count).toHaveText(before);
 });
 
 test("a new student is told where to start, and the next step moves on as they learn", async ({ page }) => {

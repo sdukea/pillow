@@ -54,6 +54,7 @@ export function validateLesson(problem: Problem, measured: Measured): string[] {
     const m = measured.approaches[approach.id];
     checkOf(approach.name, al.check);
     if (!al.concepts?.length) out.push(`${approach.name}: tag at least one concept`);
+    if (!al.legend?.length) out.push(`${approach.name}: explain what's on screen (legend)`);
     for (const c of al.concepts ?? []) if (!conceptById.has(c)) out.push(`${approach.name}: unknown concept "${c}"`);
 
     // Every line that ran in any measurement needs a note and narration.

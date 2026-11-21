@@ -29,7 +29,7 @@ interview by **April 2027**.
 
 | System | What it does | Status |
 |---|---|---|
-| A. Adaptive roadmap | A 16-week plan of 205 problems in dependency order; next actions from evidence | **Partial**: the plan, the roadmap screen and the next problem from evidence are built. Diagnostic and adaptive re-sequencing are P5 |
+| A. Adaptive roadmap | A 16-week plan of 205 problems in dependency order; next actions from evidence | **Built**: the plan, the roadmap, the placement check, per-learner start dates, and next steps that follow the current week, all from evidence |
 | B. Knowledge graph | A typed concept graph; each problem tagged; the student's state per concept | **Partial**: 55 concepts in 3 kinds, the map, reference cards and six mastery dimensions are built |
 | C. Lesson engine | First-principles lessons: overview, brute force, reasoning, trick, fast way, write it, note | **Built for 6 problems**; the schema upgrade is P3; the 199 others are planned |
 | D. Retention | Spaced review of concepts, patterns and code | **Partial**: a doubling schedule and recall notes. FSRS is P6 |
@@ -41,8 +41,8 @@ interview by **April 2027**.
 1. **First visit:** Home → Roadmap → Week 1 → Two Sum lesson. Built.
 2. **Daily session:** Home shows Fix, Review or Next; do it; evidence updates
    the map and the roadmap. Built (single dimension).
-3. **Diagnostic onboarding:** a short set of predictions and recall
-   questions places a student who already knows the basics. P5.
+3. **Placement:** a short check (one to 15 questions) places a student who
+   already knows the basics. Built.
 4. **Weekly:** finish the week's core problems; the roadmap moves when the
    week's concepts are understood. Built (evidence-driven week).
 5. **Interview prep:** Week 16 and beyond: timed mock interviews and a

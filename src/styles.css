@@ -780,3 +780,19 @@ svg .solid { fill: currentColor; stroke: none; }
 .dim.emerging .dim-level { color: var(--chg); }
 .dim.slipping .dim-level { color: var(--del); }
 .dim-why { font-size: 15px; color: var(--muted); }
+
+/* Placement check */
+.placement { max-width: 720px; margin: 0 auto; padding: max(12px, env(safe-area-inset-top)) 16px 64px; display: flex; flex-direction: column; gap: 22px; }
+.pl-card { background: var(--surface); border-radius: 22px; padding: 22px 24px; }
+.pl-second { font-size: 13px; font-weight: 600; color: var(--chg); }
+.pl-after { display: grid; gap: 10px; justify-items: start; }
+.pl-explain { font-size: 17px; line-height: 1.45; }
+.pl-skip { justify-self: start; color: var(--muted); }
+.pl-result { background: var(--surface); border-radius: 22px; padding: 28px 24px; display: grid; gap: 10px; }
+.pl-result h2 { font-size: clamp(26px, 4vw, 34px); font-weight: 700; letter-spacing: -0.02em; }
+.pl-sub { font-size: 18px; line-height: 1.45; }
+.pl-note { font-size: 15px; color: var(--muted); }
+.pl-actions { margin-top: 8px; }
+.rm-settings { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; }
+.rm-start { display: inline-flex; align-items: center; gap: 10px; font-size: 15px; color: var(--muted); }
+.rm-start input { font: inherit; color: var(--text); background: var(--surface); border: 0; border-radius: 10px; padding: 8px 12px; min-height: 40px; color-scheme: light dark; }

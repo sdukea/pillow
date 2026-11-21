@@ -6,6 +6,7 @@ import { MISCONCEPTIONS } from "../knowledge/misconceptions";
 import { useEvidence } from "../knowledge/evidence";
 import { assess, type ConceptState, type State, summarize } from "../knowledge/model";
 import { recommend } from "../knowledge/recommend";
+import { currentWeek } from "../curriculum/progress";
 
 // The student's knowledge map: every concept, laid out by what it builds on, coloured by what the
 // evidence shows. Tap a concept to see why it's in that state and what to practise.
@@ -26,7 +27,7 @@ export function KnowledgeMap({ onOpen, onHome, initial }: Props) {
   const [mode, setMode] = useState<"list" | "graph">(() => { try { return localStorage.getItem("pillow.mapMode") === "graph" ? "graph" : "list"; } catch { return "list"; } });
   useEffect(() => { try { localStorage.setItem("pillow.mapMode", mode); } catch { /* a convenience */ } }, [mode]);
   useEffect(() => { if (selected) document.querySelector(".concept")?.scrollIntoView({ block: "nearest" }); }, [selected]);
-  const recs = useMemo(() => recommend(PROBLEMS, states), [states]);
+  const recs = useMemo(() => recommend(PROBLEMS, states, currentWeek(states, log)), [states, log]);
   useEffect(() => { document.title = "Your Map · Pillow"; }, []);
 
   return (

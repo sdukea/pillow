@@ -8,39 +8,13 @@
 // the table below, so every problem is marked `review: "auto"` until a person checks its tags.
 import sources from "./sources.json";
 import { conceptById, type ConceptId } from "../knowledge/concepts";
+import { introWeek } from "./weeks";
+
+export { introWeek, WEEKS, type Week } from "./weeks";
 import { PROBLEMS } from "../content/problems";
 
 export type Tier = "core" | "reinforcement" | "stretch";
 export type ListId = "blind-75" | "neetcode-150" | "grind-169";
-
-export interface Week {
-  week: number;
-  title: string;
-  /** Concepts first taught this week. Each one's prerequisites are taught this week or earlier. */
-  introduces: ConceptId[];
-}
-
-export const WEEKS: Week[] = [
-  { week: 1, title: "Arrays and hashing", introduces: ["arrays", "loops", "strings", "nested-loops", "complexity", "space-complexity", "hash-map", "hash-set", "hash-lookup", "complement", "time-space", "counting"] },
-  { week: 2, title: "Two pointers and sorting", introduces: ["invariant", "two-pointers", "sorted-order", "sorting", "grid"] },
-  { week: 3, title: "Sliding windows and running totals", introduces: ["sliding-window", "prefix-sum", "kadane", "queue", "deque"] },
-  { week: 4, title: "Stacks", introduces: ["stack", "matching", "monotonic-stack", "design"] },
-  { week: 5, title: "Binary search", introduces: ["binary-search"] },
-  { week: 6, title: "Linked lists", introduces: ["linked-list", "pointer-rewiring", "fast-slow"] },
-  { week: 7, title: "Recursion and trees", introduces: ["recursion", "call-stack", "trees", "tree-recursion", "bfs", "divide-conquer"] },
-  { week: 8, title: "Search trees and tries", introduces: ["bst", "trie"] },
-  { week: 9, title: "Heaps and intervals", introduces: ["heap", "quickselect", "intervals"] },
-  { week: 10, title: "Backtracking", introduces: ["backtracking"] },
-  { week: 11, title: "Graphs", introduces: ["graphs", "graph-traversal"] },
-  { week: 12, title: "Advanced graphs", introduces: ["topological-sort", "union-find", "shortest-path", "mst"] },
-  { week: 13, title: "Dynamic programming", introduces: ["memoization", "dynamic-programming"] },
-  { week: 14, title: "Two-dimensional DP", introduces: ["dp-2d", "knapsack"] },
-  { week: 15, title: "Greedy, bits and maths", introduces: ["greedy", "bit-manipulation", "math"] },
-  { week: 16, title: "Review and mock interviews", introduces: [] },
-];
-
-/** The week each concept is first taught. */
-export const introWeek = new Map<ConceptId, number>(WEEKS.flatMap((w) => w.introduces.map((c) => [c, w.week] as const)));
 
 /** A list's topic label → the concepts it exercises. Some labels depend on the list's section. */
 function topicConcepts(topic: string, section: string): ConceptId[] {
@@ -143,13 +117,4 @@ export const CURRICULUM: CurriculumProblem[] = (sources.problems as Source[]).ma
 
 export const ATTRIBUTION = sources.attribution;
 
-/** The plan's default first Monday; week 16 ends Sunday 4 April 2027. Learners will set their own (P5). */
-export const PLAN_START = "2026-12-14";
-
-export function weekDates(week: number, start = PLAN_START): { from: Date; to: Date } {
-  const from = new Date(`${start}T00:00:00`);
-  from.setDate(from.getDate() + (week - 1) * 7);
-  const to = new Date(from);
-  to.setDate(to.getDate() + 6);
-  return { from, to };
-}
+export { PLAN_START, weekDates } from "./weeks";

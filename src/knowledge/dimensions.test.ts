@@ -86,4 +86,15 @@ describe("mastery dimensions", () => {
       expect([l.transfer, l.retention]).toContain("solid");
     }
   });
+
+  it("placement answers feed recognition or explanation by facet, but never transfer or understanding", () => {
+    const diag = (facet: "recognition" | "explanation", at: number): Evidence => ev({ at, task: "diagnostic", problem: "diagnostic", facet, week: 1, correct: true });
+    const log = [diag("recognition", 0), diag("explanation", 1), ev({ at: 2, problem: "contains-duplicate", correct: true })];
+    const l = levels(log, 3);
+    expect(l.recognition).toBe("emerging");
+    expect(l.explanation).toBe("solid"); // the placement answer plus a prediction elsewhere: two questions
+    expect(l.transfer).toBe("emerging"); // only one real problem
+    expect(levels([diag("recognition", 0)], 1).explanation).toBe("none");
+    expect(assess(log, 3).get("hash-map")!.state).toBe("learning");
+  });
 });

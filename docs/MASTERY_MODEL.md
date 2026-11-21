@@ -42,10 +42,10 @@ from the same evidence log. They're pure functions, and nothing is stored.
 | Dimension | On the card | Question it answers | Evidence that moves it |
 |---|---|---|---|
 | Exposure | Met it | Have you come across it? | Any evidence |
-| Recognition | Spot it | Do you know when it applies? | `recall` (which trick fits this problem) |
-| Explanation | Explain it | Can you say how it behaves and what it costs? | `predict`, `complexity`, `reason` |
+| Recognition | Spot it | Do you know when it applies? | `recall` (which trick fits this problem); placement recognition questions |
+| Explanation | Explain it | Can you say how it behaves and what it costs? | `predict`, `complexity`, `reason`; placement explanation questions |
 | Implementation | Write it | Can you code it, fast enough? | `implement` (passes, and is as fast as the trick) |
-| Transfer | Use it elsewhere | Can you use it in more than one problem? | Correct, unhinted answers in two different problems |
+| Transfer | Use it elsewhere | Can you use it in more than one problem? | Correct, unhinted answers in two different problems (placement answers don't count) |
 | Retention | Keep it | Do you still have it later? | Correct, unhinted answers in sessions at least 8 hours apart; slips when a review is overdue |
 
 ### Levels and transitions

@@ -2,7 +2,10 @@
 import type { Evidence } from "../knowledge/evidence";
 import type { ConceptId } from "../knowledge/concepts";
 import type { ConceptState } from "../knowledge/model";
-import { CURRICULUM, WEEKS, type CurriculumProblem } from "./curriculum";
+import { CURRICULUM, type CurriculumProblem } from "./curriculum";
+import { currentWeek } from "./progress";
+
+export { currentWeek, placementWeek } from "./progress";
 
 export type Progress = "new" | "practised" | "solved";
 
@@ -13,15 +16,9 @@ export function progressOf(log: Evidence[], slug: string): Progress {
   return mine.length ? "practised" : "new";
 }
 
-/** The first week that teaches a concept the student hasn't yet shown they understand. */
-export function currentWeek(states: Map<ConceptId, ConceptState>): number {
-  const open = WEEKS.find((w) => w.introduces.some((c) => states.get(c)?.state !== "understood"));
-  return open?.week ?? WEEKS[WEEKS.length - 1].week;
-}
-
 /** The next problem to work on: the first one with a lesson, from the current week on, not yet solved. */
 export function nextProblem(states: Map<ConceptId, ConceptState>, log: Evidence[]): CurriculumProblem | null {
-  const week = currentWeek(states);
+  const week = currentWeek(states, log);
   return CURRICULUM.find((p) => p.week >= week && p.lesson === "built" && progressOf(log, p.slug) !== "solved")
     ?? CURRICULUM.find((p) => p.lesson === "built" && progressOf(log, p.slug) !== "solved")
     ?? null;

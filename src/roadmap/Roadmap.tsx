@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { ATTRIBUTION, CURRICULUM, WEEKS, weekDates, type CurriculumProblem, type Tier } from "../curriculum/curriculum";
+import { planStart, setPlanStart } from "../curriculum/weeks";
 import { currentWeek, nextProblem, progressOf, type Progress } from "../curriculum/roadmap";
 import { conceptById } from "../knowledge/concepts";
 import { useEvidence } from "../knowledge/evidence";
@@ -11,13 +12,14 @@ const TIER_LABEL: Record<Tier, string> = { core: "Core", reinforcement: "Reinfor
 const PROGRESS_LABEL: Record<Progress, string> = { new: "", practised: "Practised", solved: "Solved" };
 const fmt = (d: Date) => d.toLocaleDateString(undefined, { day: "numeric", month: "short" });
 
-interface Props { onOpen: (slug: string) => void; onConcept: (id: string) => void; onHome: () => void }
+interface Props { onOpen: (slug: string) => void; onConcept: (id: string) => void; onHome: () => void; onPlacement: () => void }
 
-export function Roadmap({ onOpen, onConcept, onHome }: Props) {
+export function Roadmap({ onOpen, onConcept, onHome, onPlacement }: Props) {
   const log = useEvidence();
   const states = useMemo(() => assess(log), [log]);
-  const now = currentWeek(states);
+  const now = currentWeek(states, log);
   const next = nextProblem(states, log);
+  const [start, setStart] = useState(planStart);
   const [all, setAll] = useState<boolean>(() => { try { return localStorage.getItem("pillow.roadmapTiers") === "all"; } catch { return false; } });
   useEffect(() => { try { localStorage.setItem("pillow.roadmapTiers", all ? "all" : "core"); } catch { /* a convenience */ } }, [all]);
   useEffect(() => { document.title = "Roadmap · Pillow"; }, []);
@@ -43,6 +45,14 @@ export function Roadmap({ onOpen, onConcept, onHome }: Props) {
         </button>
       )}
 
+      <div className="rm-settings">
+        <label className="rm-start">
+          <span>Your week 1 starts</span>
+          <input type="date" value={start} onChange={(e) => { if (e.target.value) { setStart(e.target.value); setPlanStart(e.target.value); } }} />
+        </label>
+        <button type="button" className="text-btn" onClick={onPlacement}>Retake the placement check</button>
+      </div>
+
       <div className="map-modes" role="tablist" aria-label="Problems shown">
         <button type="button" role="tab" aria-selected={!all} className={!all ? "on" : ""} onClick={() => setAll(false)}>Core</button>
         <button type="button" role="tab" aria-selected={all} className={all ? "on" : ""} onClick={() => setAll(true)}>All tiers</button>
@@ -51,7 +61,7 @@ export function Roadmap({ onOpen, onConcept, onHome }: Props) {
       <ol className="rm-weeks">
         {WEEKS.map((w) => {
           const problems = shown.filter((p) => p.week === w.week);
-          const { from, to } = weekDates(w.week);
+          const { from, to } = weekDates(w.week, start);
           return (
             <li key={w.week} className={`rm-week ${w.week === now ? "now" : ""}`}>
               <details open={w.week === now}>

@@ -48,7 +48,7 @@ run for real. **Missing** means it isn't built.
 | Spaced review | Partial: a doubling interval, recall only | `model.ts`, notes |
 | FSRS scheduling, multiple recall types, remediation | **Missing** | |
 | Curriculum (16 weeks, 205 problems, dependency graph), roadmap | Built (P2) | `src/curriculum`, `src/roadmap` |
-| Diagnostic onboarding | **Missing** | |
+| Placement check (diagnostic onboarding) | Built (P5) | `src/diagnostic` |
 | Interview mode | **Missing** | |
 | Notifications and email | **Missing** (needs a backend) | |
 | Accounts, a database, cross-device persistence | **Missing**: everything is in `localStorage` | |
@@ -206,6 +206,23 @@ criteria, tests, risks, and its completion evidence when done.
   learner-specific sequencing, skipping concepts the student has
   demonstrated, and recommendations driven by the roadmap.
 - **Depends on:** P2 and P4.
+- **Files:** `src/diagnostic/*`, `src/curriculum/{weeks,progress}.ts`,
+  `src/knowledge/{evidence,model,dimensions,recommend}.ts`, Home, Roadmap,
+  App, tests.
+- **Accept:**
+  - placement from right answers only, re-derived from evidence;
+  - wrong guesses not recorded;
+  - placement answers never count as transfer or understanding;
+  - the roadmap and Home start at the placement;
+  - each learner sets a start date.
+- **Status:** done 2026-11-22. Completion evidence:
+  - **The check:** a 30-question placement check at `/placement`.
+  - **Unit tests:** 10 new (the question bank, flow branches, placement
+    from evidence, diagnostic evidence in dimensions).
+  - **E2E:** two new journeys (place at week 3; beginner stops at once),
+    on desktop and phone.
+  - **Checked in the browser:** the walk-through, the roadmap at week 3
+    with Next = Longest Substring, and start dates moving every week.
 
 ### P6 — Retention
 - **Scope:** an FSRS-based scheduler, recall task types (concept,

@@ -3,8 +3,8 @@
 // one. The dimensions say which part is there and which isn't, each with the evidence behind it.
 //
 //   exposure        met it at all                       any evidence
-//   recognition     knows when it applies               recall (which trick fits this problem)
-//   explanation     can say how it behaves and costs    predict, complexity, reason
+//   recognition     knows when it applies               recall, placement "which fits?" questions
+//   explanation     can say how it behaves and costs    predict, complexity, reason, placement "how?" questions
 //   implementation  can write it                        implement (passing, as fast as the trick)
 //   transfer        uses it beyond one problem          right, unhinted, in two different problems
 //   retention       still has it later                  right, unhinted, in sessions 8+ hours apart
@@ -41,6 +41,9 @@ const TASKS: Partial<Record<Dimension, Task[]>> = {
   explanation: ["predict", "complexity", "reason"],
   implementation: ["implement"],
 };
+
+/** Whether a piece of evidence tests a dimension: by its task, or a placement question's facet. */
+const tests = (id: Dimension, e: Evidence) => (TASKS[id] ?? []).includes(e.task) || (e.task === "diagnostic" && e.facet === id);
 
 const SESSION_GAP = 8 * 3_600_000;
 const clean = (e: Evidence) => e.correct === true && !e.hinted;
@@ -82,7 +85,7 @@ function judge(id: Dimension, state: ConceptState, graded: Evidence[]): Omit<Dim
 
   const tasks = TASKS[id];
   if (tasks) {
-    const mine = graded.filter((e) => tasks.includes(e.task));
+    const mine = graded.filter((e) => tests(id, e));
     const level = ladder(mine, differentQuestions);
     const tried = mine.length > 0;
     const why: Record<DimensionLevel, string> = {
@@ -95,8 +98,9 @@ function judge(id: Dimension, state: ConceptState, graded: Evidence[]): Omit<Dim
   }
 
   if (id === "transfer") {
-    const problems = new Set(graded.filter(clean).map((e) => e.problem));
-    const level = ladder(graded, (r) => new Set(r.map((e) => e.problem)).size >= 2);
+    const inProblems = graded.filter((e) => e.task !== "diagnostic");
+    const problems = new Set(inProblems.filter(clean).map((e) => e.problem));
+    const level = ladder(inProblems, (r) => new Set(r.map((e) => e.problem)).size >= 2);
     const why: Record<DimensionLevel, string> = {
       none: "Not used yet: answer a question about it in any problem.",
       emerging: problems.size >= 2 ? "Used in two problems; get the next one right to make it solid again." : "Used in one problem so far. Use it in another to show it transfers.",

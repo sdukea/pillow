@@ -61,7 +61,9 @@ function judge(id: ConceptId, events: Evidence[], now: number): ConceptState {
   }
   const clean = graded.filter((e) => e.correct && !e.hinted);
   const sources = new Set(clean.map((e) => `${e.task}|${e.problem}`));
-  const problems = new Set(clean.map((e) => e.problem));
+  // Placement-check answers show what a student knew coming in, but never count as using a concept
+  // in another problem: they're one sitting, about many concepts.
+  const problems = new Set(clean.filter((e) => e.task !== "diagnostic").map((e) => e.problem));
   const span = clean.length ? clean[0].at - clean[clean.length - 1].at : 0;
   const lasting = problems.size >= 2 || span >= SESSION_GAP;
   if (clean.length >= 2 && sources.size >= 2 && lasting) {

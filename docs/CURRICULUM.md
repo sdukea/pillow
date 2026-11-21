@@ -55,7 +55,8 @@ problem sits in the first week by which all of its concepts are taught.
 | 16 | Review and mock interviews | — | review and Interview Mode |
 
 **Dates:** the default plan starts Monday 14 December 2026 and week 16
-ends Sunday 4 April 2027. Learners will set their own start date (P5).
+ends Sunday 4 April 2027. Each learner can set their own start date on the
+roadmap; it's stored as a preference.
 **After April:** stretch problems, scheduled reviews and mock interviews
 continue indefinitely.
 
@@ -63,12 +64,16 @@ continue indefinitely.
 
 Worked out from evidence only (`src/curriculum/roadmap.ts`):
 
-- **Current week:** the first week that introduces a concept not yet
-  understood.
+- **Placement:** the first teaching week with no right placement-check
+  answer (week 1 if the check was never taken).
+- **Current week:** from the placement on, the first week that introduces
+  a concept not yet understood.
 - **Next:** the first problem with a built lesson, from that week on, that
   isn't solved yet.
 - **Solved:** an implementation that passes every case, as fast as the
   trick, without opening the solution.
+- **Home's Next:** follows the roadmap. The frontier prefers problems at
+  or after the current week, earliest first.
 - **Planned lessons:** problems without a lesson link to LeetCode until
   their lesson is built.
 

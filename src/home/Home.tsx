@@ -6,15 +6,18 @@ import { record, useEvidence } from "../knowledge/evidence";
 import { assess, summarize } from "../knowledge/model";
 import { recallFor } from "../knowledge/questions";
 import { recommend } from "../knowledge/recommend";
+import { currentWeek } from "../curriculum/progress";
+import { placementTaken } from "../diagnostic/store";
 
 interface Props {
   onOpen: (slug: string) => void;
   onExplain: (query: string) => void;
   onMap: () => void;
   onRoadmap: () => void;
+  onPlacement: () => void;
 }
 
-export function Home({ onOpen, onExplain, onMap, onRoadmap }: Props) {
+export function Home({ onOpen, onExplain, onMap, onRoadmap, onPlacement }: Props) {
   const [query, setQuery] = useState("");
   const [active, setActive] = useState(0);
   const input = useRef<HTMLInputElement>(null);
@@ -23,7 +26,7 @@ export function Home({ onOpen, onExplain, onMap, onRoadmap }: Props) {
   const log = useEvidence();
   const states = assess(log);
   const counts = summarize(states);
-  const next = recommend(PROBLEMS, states)[0];
+  const next = recommend(PROBLEMS, states, currentWeek(states, log))[0];
   const started = log.length > 0;
 
   useEffect(() => { document.title = "Pillow"; migrateOld(PROBLEMS); input.current?.focus(); }, []);
@@ -103,6 +106,12 @@ export function Home({ onOpen, onExplain, onMap, onRoadmap }: Props) {
             <span className="next-title">{next.problem.title}</span>
             <span className="next-why">{next.reason}</span>
           </button>
+          {!started && !placementTaken() && (
+            <button type="button" className="map-link" onClick={onPlacement}>
+              <span>Already know some of this?</span>
+              <span className="muted">Find your starting week: a few questions, no sign-up</span>
+            </button>
+          )}
           <button type="button" className="map-link" onClick={onRoadmap}>
             <span>Your 16-week roadmap</span>
             <span className="muted">From arrays to dynamic programming</span>

@@ -24,22 +24,45 @@ assessment moved to `docs/history/LEETSEE_ASSESSMENT.md`.)
 | Recall the trick | The note; distractors are other problems' tricks | Frozen when asked; exact choice | Built |
 | Reasoning step | Hand-written per lesson | Choice; misconception-tagged | Built (6 lessons) |
 | Write it yourself | Student code vs the reference, on the example, edge cases and 8 seeded random inputs | All pass, then growth as fast as the trick | Built (Python) |
-| Diagnostic placement | Cue recognition, prediction and complexity across weeks 1–7 | As above, adaptive stop | Designed (P5) |
+| Placement check | Hand-written recognition and explanation questions, two per week | Exact choice; adaptive stop | Built (P5) |
 | Explain it (free text) | Interview Mode | Rubric; AI-assisted, human-auditable | Designed (P7) |
 | Reconstruction | Re-order or fill in the solution's lines | Exact | Designed (P6) |
 
-## Diagnostic (P5)
+## Placement check (built, P5)
 
-About 12 questions, about 10 minutes. It walks the weekly concept order,
-starting at week 1.
+At `/placement`, offered on Home to new students and on the roadmap as a
+retake. It's a hand-written bank of 30 questions in
+`src/diagnostic/questions.ts`, two for each teaching week:
 
-- **Mastered:** two correct answers on a concept's recognition and
-  explanation questions mark it `emerging` for both.
-- **Stop:** the diagnostic stops at the first week where the student
-  misses two.
-- **Placement:** the roadmap starts at that week.
-- **Low stakes:** everything skipped stays reviewable, and the diagnostic
-  only ever *adds* evidence.
+- a **recognition** question ("which approach fits?");
+- an **explanation** question ("how does it behave, or what does it
+  cost?").
+
+**Flow** (`src/diagnostic/flow.ts`), week by week from week 1:
+
+1. Ask the recognition question. Right means the week is passed.
+2. Wrong means the explanation question, as a second chance. Right means
+   passed; wrong means stop.
+3. **"I haven't learned this yet"** stops immediately.
+
+The check takes 1 question for a beginner who stops at once, and at most
+15 for a student who knows everything; at most two per week.
+
+**What's recorded:**
+
+- **Right answers only,** as `task: "diagnostic"` evidence with the facet
+  and week. Wrong guesses aren't recorded, so beginners aren't marked
+  "Needs work" on things they were never taught.
+- **Placement from evidence:** the placement is re-derived from that
+  evidence. It's the first teaching week with no right answer
+  (`placementWeek`).
+- **Dimensions:** diagnostic answers feed Spot it or Explain it by facet.
+- **Never transfer:** they never count as transfer, so they can't make a
+  concept Understood on their own.
+
+**Tests:** every teaching week has both question types; questions only
+test concepts taught by their week; four distinct choices; the flow's
+branches.
 
 ## Integrity
 

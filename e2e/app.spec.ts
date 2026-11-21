@@ -469,3 +469,38 @@ test("a concept's card shows what you've shown, one dimension at a time @phone",
   await expect(level("Keep it")).toHaveText("Started"); // right answers only an hour apart: never kept across sessions
   expect(errors).toEqual([]);
 });
+
+test("the placement check finds a starting week from right answers only, and the roadmap starts there @phone", async ({ page }) => {
+  const errors = watchErrors(page);
+  await page.goto("./");
+  await page.getByRole("button", { name: /Already know some of this/ }).click();
+  await expect(page.getByRole("heading", { name: "Find your starting week" })).toBeVisible();
+  const answer = async (text: string, verdict: string) => {
+    await page.getByRole("button", { name: text }).click();
+    await expect(page.locator(".ask-verdict")).toHaveText(verdict);
+    await page.getByRole("button", { name: "Continue" }).click();
+  };
+  await answer("A set of the values seen so far", "Right.");
+  await answer("A pointer at each end, moving inwards", "Right.");
+  await answer("Sort the characters first", "Not quite.");
+  await expect(page.getByText("A second chance on this week")).toBeVisible();
+  await answer("prefix[5] − prefix[2]", "Not quite.");
+  await expect(page.getByRole("heading", { name: "Week 3: Sliding windows and running totals" })).toBeVisible();
+  const recorded = await page.evaluate(() => JSON.parse(localStorage.getItem("pillow.evidence") ?? "[]").map((e: { task: string; week: number }) => `${e.task}:${e.week}`));
+  expect(recorded).toEqual(["diagnostic:1", "diagnostic:2"]);
+  await page.getByRole("button", { name: "Open Your Roadmap" }).click();
+  await expect(page.getByText(/Week 3 of 16/)).toBeVisible();
+  await expect(page.locator(".rm-next")).toContainText("Longest Substring Without Repeating Characters");
+  // Home no longer offers the check, and follows the roadmap.
+  await page.goto("./");
+  await expect(page.getByRole("button", { name: /Already know some of this/ })).toHaveCount(0);
+  await expect(page.locator(".home-next .next-row")).toContainText("Longest Substring");
+  expect(errors).toEqual([]);
+});
+
+test("a beginner can stop the placement check at once, and starts at week 1", async ({ page }) => {
+  await page.goto("placement");
+  await page.getByRole("button", { name: "I haven’t learned this yet" }).click();
+  await expect(page.getByRole("heading", { name: "Week 1: Arrays and hashing" })).toBeVisible();
+  expect(await page.evaluate(() => localStorage.getItem("pillow.evidence"))).toBeNull();
+});

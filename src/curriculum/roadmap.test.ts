@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import type { Evidence } from "../knowledge/evidence";
 import { assess } from "../knowledge/model";
 import { WEEKS } from "./curriculum";
-import { currentWeek, nextProblem, progressOf } from "./roadmap";
+import { currentWeek, nextProblem, placementWeek, progressOf } from "./roadmap";
 
 const DAY = 86_400_000;
 const ev = (over: Partial<Evidence>): Evidence => ({ at: 0, task: "predict", problem: "two-sum", concepts: ["hash-map"], detail: "x", ...over });
@@ -39,5 +39,16 @@ describe("the roadmap", () => {
   it("skips solved problems", () => {
     const log = [ev({ task: "implement", correct: true })];
     expect(nextProblem(assess(log), log)?.slug).not.toBe("two-sum");
+  });
+
+  it("places from the placement check's right answers, and starts the roadmap there", () => {
+    const diag = (week: number): Evidence => ev({ task: "diagnostic", problem: "diagnostic", week, facet: "recognition", concepts: ["arrays"], correct: true });
+    expect(placementWeek([])).toBe(1);
+    const log = [diag(1), diag(2), diag(3)];
+    expect(placementWeek(log)).toBe(4);
+    expect(currentWeek(assess(log), log)).toBe(4);
+    expect(nextProblem(assess(log), log)?.slug).toBe("valid-parentheses");
+    // A gap means the check stopped there.
+    expect(placementWeek([diag(1), diag(3)])).toBe(2);
   });
 });

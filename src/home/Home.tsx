@@ -11,9 +11,10 @@ interface Props {
   onOpen: (slug: string) => void;
   onExplain: (query: string) => void;
   onMap: () => void;
+  onRoadmap: () => void;
 }
 
-export function Home({ onOpen, onExplain, onMap }: Props) {
+export function Home({ onOpen, onExplain, onMap, onRoadmap }: Props) {
   const [query, setQuery] = useState("");
   const [active, setActive] = useState(0);
   const input = useRef<HTMLInputElement>(null);
@@ -101,6 +102,10 @@ export function Home({ onOpen, onExplain, onMap }: Props) {
             <span className="next-kind">{next.kind === "fix" ? "Fix" : next.kind === "review" ? "Review" : started ? "Next" : "Start here"}</span>
             <span className="next-title">{next.problem.title}</span>
             <span className="next-why">{next.reason}</span>
+          </button>
+          <button type="button" className="map-link" onClick={onRoadmap}>
+            <span>Your 16-week roadmap</span>
+            <span className="muted">From arrays to dynamic programming</span>
           </button>
           {started && (
             <button type="button" className="map-link" onClick={onMap}>

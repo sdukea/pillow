@@ -1,0 +1,3420 @@
+{
+ "attribution": {
+  "source": "https://github.com/sumitsingh4411/faang",
+  "commit": "fa161dba94cb9991ebedd12b13633db2ce7d0563",
+  "license": "MIT",
+  "notice": "Copyright (c) 2026 Sumit Singh",
+  "lists": [
+   "blind-75",
+   "neetcode-150",
+   "grind-169"
+  ]
+ },
+ "problems": [
+  {
+   "slug": "01-matrix",
+   "title": "01 Matrix",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "grind-169",
+     "section": "Graphs",
+     "topic": "BFS"
+    }
+   ]
+  },
+  {
+   "slug": "3sum",
+   "title": "3Sum",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Array",
+     "topic": "Two Pointers"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Two Pointers",
+     "topic": "Two Pointers"
+    },
+    {
+     "list": "grind-169",
+     "section": "Arrays & Strings",
+     "topic": "Two Pointers"
+    }
+   ]
+  },
+  {
+   "slug": "accounts-merge",
+   "title": "Accounts Merge",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "grind-169",
+     "section": "Graphs",
+     "topic": "Union Find"
+    }
+   ]
+  },
+  {
+   "slug": "add-binary",
+   "title": "Add Binary",
+   "difficulty": "Easy",
+   "entries": [
+    {
+     "list": "grind-169",
+     "section": "Arrays & Strings",
+     "topic": "Math"
+    }
+   ]
+  },
+  {
+   "slug": "add-two-numbers",
+   "title": "Add Two Numbers",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Linked List",
+     "topic": "Linked List"
+    },
+    {
+     "list": "grind-169",
+     "section": "Linked List — Extended",
+     "topic": "Linked List"
+    }
+   ]
+  },
+  {
+   "slug": "alien-dictionary",
+   "title": "Alien Dictionary",
+   "difficulty": "Hard",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Graph",
+     "topic": "Topological Sort"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Advanced Graphs",
+     "topic": "Topological Sort"
+    }
+   ]
+  },
+  {
+   "slug": "all-nodes-distance-k-in-binary-tree",
+   "title": "All Nodes Distance K in Binary Tree",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "grind-169",
+     "section": "Trees — Extended",
+     "topic": "BFS"
+    }
+   ]
+  },
+  {
+   "slug": "asteroid-collision",
+   "title": "Asteroid Collision",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "grind-169",
+     "section": "Stack & Monotonic Stack",
+     "topic": "Stack"
+    }
+   ]
+  },
+  {
+   "slug": "backspace-string-compare",
+   "title": "Backspace String Compare",
+   "difficulty": "Easy",
+   "entries": [
+    {
+     "list": "grind-169",
+     "section": "Two Pointers & Sliding Window",
+     "topic": "Two Pointers"
+    }
+   ]
+  },
+  {
+   "slug": "balanced-binary-tree",
+   "title": "Balanced Binary Tree",
+   "difficulty": "Easy",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Trees",
+     "topic": "DFS"
+    },
+    {
+     "list": "grind-169",
+     "section": "Trees",
+     "topic": "DFS"
+    }
+   ]
+  },
+  {
+   "slug": "basic-calculator",
+   "title": "Basic Calculator",
+   "difficulty": "Hard",
+   "entries": [
+    {
+     "list": "grind-169",
+     "section": "Linked List & Stack",
+     "topic": "Stack"
+    }
+   ]
+  },
+  {
+   "slug": "best-time-to-buy-and-sell-stock",
+   "title": "Best Time to Buy and Sell Stock",
+   "difficulty": "Easy",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Array",
+     "topic": "Greedy"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Sliding Window",
+     "topic": "Sliding Window"
+    },
+    {
+     "list": "grind-169",
+     "section": "Arrays & Strings",
+     "topic": "Greedy"
+    }
+   ]
+  },
+  {
+   "slug": "best-time-to-buy-and-sell-stock-ii",
+   "title": "Best Time to Buy and Sell Stock II",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "grind-169",
+     "section": "Arrays & Strings — Extended",
+     "topic": "Greedy"
+    }
+   ]
+  },
+  {
+   "slug": "best-time-to-buy-and-sell-stock-with-cooldown",
+   "title": "Best Time to Buy and Sell Stock with Cooldown",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "2-D Dynamic Programming",
+     "topic": "Dynamic Programming"
+    }
+   ]
+  },
+  {
+   "slug": "binary-search",
+   "title": "Binary Search",
+   "difficulty": "Easy",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Binary Search",
+     "topic": "Binary Search"
+    },
+    {
+     "list": "grind-169",
+     "section": "Binary Search",
+     "topic": "Binary Search"
+    }
+   ]
+  },
+  {
+   "slug": "binary-tree-level-order-traversal",
+   "title": "Binary Tree Level Order Traversal",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Tree",
+     "topic": "BFS"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Trees",
+     "topic": "BFS"
+    },
+    {
+     "list": "grind-169",
+     "section": "Trees",
+     "topic": "BFS"
+    }
+   ]
+  },
+  {
+   "slug": "binary-tree-maximum-path-sum",
+   "title": "Binary Tree Maximum Path Sum",
+   "difficulty": "Hard",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Tree",
+     "topic": "DFS"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Trees",
+     "topic": "DFS"
+    },
+    {
+     "list": "grind-169",
+     "section": "Trees — Extended",
+     "topic": "DFS"
+    }
+   ]
+  },
+  {
+   "slug": "binary-tree-paths",
+   "title": "Binary Tree Paths",
+   "difficulty": "Easy",
+   "entries": [
+    {
+     "list": "grind-169",
+     "section": "Trees — Extended",
+     "topic": "DFS"
+    }
+   ]
+  },
+  {
+   "slug": "binary-tree-right-side-view",
+   "title": "Binary Tree Right Side View",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Trees",
+     "topic": "BFS"
+    },
+    {
+     "list": "grind-169",
+     "section": "Trees",
+     "topic": "BFS"
+    }
+   ]
+  },
+  {
+   "slug": "binary-tree-zigzag-level-order-traversal",
+   "title": "Binary Tree Zigzag Level Order Traversal",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "grind-169",
+     "section": "Trees — Extended",
+     "topic": "BFS"
+    }
+   ]
+  },
+  {
+   "slug": "burst-balloons",
+   "title": "Burst Balloons",
+   "difficulty": "Hard",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "2-D Dynamic Programming",
+     "topic": "Dynamic Programming"
+    }
+   ]
+  },
+  {
+   "slug": "car-fleet",
+   "title": "Car Fleet",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Stack",
+     "topic": "Monotonic Stack"
+    },
+    {
+     "list": "grind-169",
+     "section": "Stack & Monotonic Stack",
+     "topic": "Monotonic Stack"
+    }
+   ]
+  },
+  {
+   "slug": "cheapest-flights-within-k-stops",
+   "title": "Cheapest Flights Within K Stops",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Advanced Graphs",
+     "topic": "Bellman-Ford"
+    },
+    {
+     "list": "grind-169",
+     "section": "Graphs — Extended",
+     "topic": "Bellman-Ford"
+    }
+   ]
+  },
+  {
+   "slug": "climbing-stairs",
+   "title": "Climbing Stairs",
+   "difficulty": "Easy",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Dynamic Programming",
+     "topic": "Dynamic Programming"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "1-D Dynamic Programming",
+     "topic": "Dynamic Programming"
+    },
+    {
+     "list": "grind-169",
+     "section": "Dynamic Programming",
+     "topic": "Dynamic Programming"
+    }
+   ]
+  },
+  {
+   "slug": "clone-graph",
+   "title": "Clone Graph",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Graph",
+     "topic": "BFS/DFS"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Graphs",
+     "topic": "BFS/DFS"
+    },
+    {
+     "list": "grind-169",
+     "section": "Graphs",
+     "topic": "BFS/DFS"
+    }
+   ]
+  },
+  {
+   "slug": "coin-change",
+   "title": "Coin Change",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Dynamic Programming",
+     "topic": "Dynamic Programming"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "1-D Dynamic Programming",
+     "topic": "Dynamic Programming"
+    },
+    {
+     "list": "grind-169",
+     "section": "Dynamic Programming",
+     "topic": "Dynamic Programming"
+    }
+   ]
+  },
+  {
+   "slug": "coin-change-ii",
+   "title": "Coin Change II",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "2-D Dynamic Programming",
+     "topic": "Unbounded Knapsack"
+    },
+    {
+     "list": "grind-169",
+     "section": "Dynamic Programming — Extended",
+     "topic": "Unbounded Knapsack"
+    }
+   ]
+  },
+  {
+   "slug": "combination-sum",
+   "title": "Combination Sum",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Dynamic Programming",
+     "topic": "Backtracking"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Backtracking",
+     "topic": "Backtracking"
+    },
+    {
+     "list": "grind-169",
+     "section": "Backtracking",
+     "topic": "Backtracking"
+    }
+   ]
+  },
+  {
+   "slug": "combination-sum-ii",
+   "title": "Combination Sum II",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Backtracking",
+     "topic": "Backtracking"
+    },
+    {
+     "list": "grind-169",
+     "section": "Backtracking — Extended",
+     "topic": "Backtracking"
+    }
+   ]
+  },
+  {
+   "slug": "construct-binary-tree-from-preorder-and-inorder-traversal",
+   "title": "Construct Binary Tree from Preorder and Inorder Traversal",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Tree",
+     "topic": "DFS"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Trees",
+     "topic": "DFS"
+    },
+    {
+     "list": "grind-169",
+     "section": "Trees",
+     "topic": "DFS"
+    }
+   ]
+  },
+  {
+   "slug": "container-with-most-water",
+   "title": "Container With Most Water",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Array",
+     "topic": "Two Pointers"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Two Pointers",
+     "topic": "Two Pointers"
+    },
+    {
+     "list": "grind-169",
+     "section": "Arrays & Strings",
+     "topic": "Two Pointers"
+    }
+   ]
+  },
+  {
+   "slug": "contains-duplicate",
+   "title": "Contains Duplicate",
+   "difficulty": "Easy",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Array",
+     "topic": "Hash Set"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Arrays & Hashing",
+     "topic": "Hash Set"
+    },
+    {
+     "list": "grind-169",
+     "section": "Arrays & Strings",
+     "topic": "Hash Set"
+    }
+   ]
+  },
+  {
+   "slug": "convert-sorted-array-to-binary-search-tree",
+   "title": "Convert Sorted Array to Binary Search Tree",
+   "difficulty": "Easy",
+   "entries": [
+    {
+     "list": "grind-169",
+     "section": "Trees — Extended",
+     "topic": "Binary Search Tree"
+    }
+   ]
+  },
+  {
+   "slug": "copy-list-with-random-pointer",
+   "title": "Copy List with Random Pointer",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Linked List",
+     "topic": "Linked List"
+    },
+    {
+     "list": "grind-169",
+     "section": "Linked List — Extended",
+     "topic": "Linked List"
+    }
+   ]
+  },
+  {
+   "slug": "count-good-nodes-in-binary-tree",
+   "title": "Count Good Nodes in Binary Tree",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Trees",
+     "topic": "DFS"
+    },
+    {
+     "list": "grind-169",
+     "section": "Trees — Extended",
+     "topic": "DFS"
+    }
+   ]
+  },
+  {
+   "slug": "counting-bits",
+   "title": "Counting Bits",
+   "difficulty": "Easy",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Binary",
+     "topic": "Bit Manipulation"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Bit Manipulation",
+     "topic": "Bit Manipulation"
+    }
+   ]
+  },
+  {
+   "slug": "course-schedule",
+   "title": "Course Schedule",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Graph",
+     "topic": "Topological Sort"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Graphs",
+     "topic": "Topological Sort"
+    },
+    {
+     "list": "grind-169",
+     "section": "Graphs",
+     "topic": "Topological Sort"
+    }
+   ]
+  },
+  {
+   "slug": "course-schedule-ii",
+   "title": "Course Schedule II",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Graphs",
+     "topic": "Topological Sort"
+    },
+    {
+     "list": "grind-169",
+     "section": "Graphs — Extended",
+     "topic": "Topological Sort"
+    }
+   ]
+  },
+  {
+   "slug": "daily-temperatures",
+   "title": "Daily Temperatures",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Stack",
+     "topic": "Monotonic Stack"
+    },
+    {
+     "list": "grind-169",
+     "section": "Stack & Monotonic Stack",
+     "topic": "Monotonic Stack"
+    }
+   ]
+  },
+  {
+   "slug": "decode-string",
+   "title": "Decode String",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "grind-169",
+     "section": "Stack & Monotonic Stack",
+     "topic": "Stack"
+    }
+   ]
+  },
+  {
+   "slug": "decode-ways",
+   "title": "Decode Ways",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Dynamic Programming",
+     "topic": "Dynamic Programming"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "1-D Dynamic Programming",
+     "topic": "Dynamic Programming"
+    },
+    {
+     "list": "grind-169",
+     "section": "Dynamic Programming — Extended",
+     "topic": "Dynamic Programming"
+    }
+   ]
+  },
+  {
+   "slug": "delete-node-in-a-bst",
+   "title": "Delete Node in a BST",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "grind-169",
+     "section": "Trees — Extended",
+     "topic": "Binary Search Tree"
+    }
+   ]
+  },
+  {
+   "slug": "design-add-and-search-words-data-structure",
+   "title": "Design Add and Search Words Data Structure",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Tree",
+     "topic": "Trie"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Tries",
+     "topic": "Trie"
+    }
+   ]
+  },
+  {
+   "slug": "design-twitter",
+   "title": "Design Twitter",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Heap & Priority Queue",
+     "topic": "Heap"
+    }
+   ]
+  },
+  {
+   "slug": "detect-squares",
+   "title": "Detect Squares",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Math & Geometry",
+     "topic": "Hash Map"
+    }
+   ]
+  },
+  {
+   "slug": "diameter-of-binary-tree",
+   "title": "Diameter of Binary Tree",
+   "difficulty": "Easy",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Trees",
+     "topic": "DFS"
+    },
+    {
+     "list": "grind-169",
+     "section": "Trees",
+     "topic": "DFS"
+    }
+   ]
+  },
+  {
+   "slug": "distinct-subsequences",
+   "title": "Distinct Subsequences",
+   "difficulty": "Hard",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "2-D Dynamic Programming",
+     "topic": "Dynamic Programming"
+    }
+   ]
+  },
+  {
+   "slug": "edit-distance",
+   "title": "Edit Distance",
+   "difficulty": "Hard",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "2-D Dynamic Programming",
+     "topic": "Dynamic Programming"
+    },
+    {
+     "list": "grind-169",
+     "section": "Dynamic Programming — Extended",
+     "topic": "Dynamic Programming"
+    }
+   ]
+  },
+  {
+   "slug": "encode-and-decode-strings",
+   "title": "Encode and Decode Strings",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "String",
+     "topic": "Design"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Arrays & Hashing",
+     "topic": "Design"
+    }
+   ]
+  },
+  {
+   "slug": "evaluate-reverse-polish-notation",
+   "title": "Evaluate Reverse Polish Notation",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Stack",
+     "topic": "Stack"
+    },
+    {
+     "list": "grind-169",
+     "section": "Linked List & Stack",
+     "topic": "Stack"
+    }
+   ]
+  },
+  {
+   "slug": "find-all-anagrams-in-a-string",
+   "title": "Find All Anagrams in a String",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "grind-169",
+     "section": "Arrays & Strings",
+     "topic": "Sliding Window"
+    }
+   ]
+  },
+  {
+   "slug": "find-all-numbers-disappeared-in-an-array",
+   "title": "Find All Numbers Disappeared in an Array",
+   "difficulty": "Easy",
+   "entries": [
+    {
+     "list": "grind-169",
+     "section": "Arrays & Strings — Extended",
+     "topic": "Arrays"
+    }
+   ]
+  },
+  {
+   "slug": "find-median-from-data-stream",
+   "title": "Find Median from Data Stream",
+   "difficulty": "Hard",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Heap",
+     "topic": "Heap"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Heap & Priority Queue",
+     "topic": "Heap"
+    },
+    {
+     "list": "grind-169",
+     "section": "Heap & Intervals",
+     "topic": "Heap"
+    }
+   ]
+  },
+  {
+   "slug": "find-minimum-in-rotated-sorted-array",
+   "title": "Find Minimum in Rotated Sorted Array",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Array",
+     "topic": "Binary Search"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Binary Search",
+     "topic": "Binary Search"
+    },
+    {
+     "list": "grind-169",
+     "section": "Binary Search — Extended",
+     "topic": "Binary Search"
+    }
+   ]
+  },
+  {
+   "slug": "find-peak-element",
+   "title": "Find Peak Element",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "grind-169",
+     "section": "Binary Search — Extended",
+     "topic": "Binary Search"
+    }
+   ]
+  },
+  {
+   "slug": "find-the-duplicate-number",
+   "title": "Find the Duplicate Number",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Linked List",
+     "topic": "Fast & Slow"
+    }
+   ]
+  },
+  {
+   "slug": "first-bad-version",
+   "title": "First Bad Version",
+   "difficulty": "Easy",
+   "entries": [
+    {
+     "list": "grind-169",
+     "section": "Binary Search",
+     "topic": "Binary Search"
+    }
+   ]
+  },
+  {
+   "slug": "flood-fill",
+   "title": "Flood Fill",
+   "difficulty": "Easy",
+   "entries": [
+    {
+     "list": "grind-169",
+     "section": "Graphs",
+     "topic": "BFS/DFS"
+    }
+   ]
+  },
+  {
+   "slug": "gas-station",
+   "title": "Gas Station",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Greedy",
+     "topic": "Greedy"
+    }
+   ]
+  },
+  {
+   "slug": "generate-parentheses",
+   "title": "Generate Parentheses",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Stack",
+     "topic": "Backtracking"
+    },
+    {
+     "list": "grind-169",
+     "section": "Backtracking — Extended",
+     "topic": "Backtracking"
+    }
+   ]
+  },
+  {
+   "slug": "graph-valid-tree",
+   "title": "Graph Valid Tree",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Graph",
+     "topic": "Union Find"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Graphs",
+     "topic": "Union Find"
+    },
+    {
+     "list": "grind-169",
+     "section": "Graphs — Extended",
+     "topic": "Union Find"
+    }
+   ]
+  },
+  {
+   "slug": "group-anagrams",
+   "title": "Group Anagrams",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "String",
+     "topic": "Hash Map"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Arrays & Hashing",
+     "topic": "Hash Map"
+    },
+    {
+     "list": "grind-169",
+     "section": "Arrays & Strings — Extended",
+     "topic": "Hash Map"
+    }
+   ]
+  },
+  {
+   "slug": "hand-of-straights",
+   "title": "Hand of Straights",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Greedy",
+     "topic": "Greedy"
+    }
+   ]
+  },
+  {
+   "slug": "happy-number",
+   "title": "Happy Number",
+   "difficulty": "Easy",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Math & Geometry",
+     "topic": "Fast & Slow"
+    }
+   ]
+  },
+  {
+   "slug": "house-robber",
+   "title": "House Robber",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Dynamic Programming",
+     "topic": "Dynamic Programming"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "1-D Dynamic Programming",
+     "topic": "Dynamic Programming"
+    },
+    {
+     "list": "grind-169",
+     "section": "Dynamic Programming — Extended",
+     "topic": "Dynamic Programming"
+    }
+   ]
+  },
+  {
+   "slug": "house-robber-ii",
+   "title": "House Robber II",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Dynamic Programming",
+     "topic": "Dynamic Programming"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "1-D Dynamic Programming",
+     "topic": "Dynamic Programming"
+    },
+    {
+     "list": "grind-169",
+     "section": "Dynamic Programming — Extended",
+     "topic": "Dynamic Programming"
+    }
+   ]
+  },
+  {
+   "slug": "implement-queue-using-stacks",
+   "title": "Implement Queue using Stacks",
+   "difficulty": "Easy",
+   "entries": [
+    {
+     "list": "grind-169",
+     "section": "Linked List & Stack",
+     "topic": "Stack"
+    }
+   ]
+  },
+  {
+   "slug": "implement-trie-prefix-tree",
+   "title": "Implement Trie (Prefix Tree)",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Tree",
+     "topic": "Trie"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Tries",
+     "topic": "Trie"
+    },
+    {
+     "list": "grind-169",
+     "section": "Trees",
+     "topic": "Trie"
+    }
+   ]
+  },
+  {
+   "slug": "insert-interval",
+   "title": "Insert Interval",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Interval",
+     "topic": "Intervals"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Intervals",
+     "topic": "Intervals"
+    },
+    {
+     "list": "grind-169",
+     "section": "Heap & Intervals",
+     "topic": "Intervals"
+    }
+   ]
+  },
+  {
+   "slug": "interleaving-string",
+   "title": "Interleaving String",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "2-D Dynamic Programming",
+     "topic": "Dynamic Programming"
+    }
+   ]
+  },
+  {
+   "slug": "intersection-of-two-arrays-ii",
+   "title": "Intersection of Two Arrays II",
+   "difficulty": "Easy",
+   "entries": [
+    {
+     "list": "grind-169",
+     "section": "Arrays & Strings — Extended",
+     "topic": "Hash Map"
+    }
+   ]
+  },
+  {
+   "slug": "invert-binary-tree",
+   "title": "Invert Binary Tree",
+   "difficulty": "Easy",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Tree",
+     "topic": "DFS"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Trees",
+     "topic": "DFS"
+    },
+    {
+     "list": "grind-169",
+     "section": "Trees",
+     "topic": "DFS"
+    }
+   ]
+  },
+  {
+   "slug": "is-subsequence",
+   "title": "Is Subsequence",
+   "difficulty": "Easy",
+   "entries": [
+    {
+     "list": "grind-169",
+     "section": "Arrays & Strings — Extended",
+     "topic": "Two Pointers"
+    }
+   ]
+  },
+  {
+   "slug": "jump-game",
+   "title": "Jump Game",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Dynamic Programming",
+     "topic": "Greedy"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Greedy",
+     "topic": "Greedy"
+    },
+    {
+     "list": "grind-169",
+     "section": "Dynamic Programming — Extended",
+     "topic": "Greedy"
+    }
+   ]
+  },
+  {
+   "slug": "jump-game-ii",
+   "title": "Jump Game II",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Greedy",
+     "topic": "Greedy"
+    }
+   ]
+  },
+  {
+   "slug": "k-closest-points-to-origin",
+   "title": "K Closest Points to Origin",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Heap & Priority Queue",
+     "topic": "Heap"
+    },
+    {
+     "list": "grind-169",
+     "section": "Heap & Intervals",
+     "topic": "Heap"
+    }
+   ]
+  },
+  {
+   "slug": "koko-eating-bananas",
+   "title": "Koko Eating Bananas",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Binary Search",
+     "topic": "Binary Search"
+    },
+    {
+     "list": "grind-169",
+     "section": "Binary Search — Extended",
+     "topic": "Binary Search"
+    }
+   ]
+  },
+  {
+   "slug": "kth-largest-element-in-a-stream",
+   "title": "Kth Largest Element in a Stream",
+   "difficulty": "Easy",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Heap & Priority Queue",
+     "topic": "Heap"
+    },
+    {
+     "list": "grind-169",
+     "section": "Heap & Intervals — Extended",
+     "topic": "Heap"
+    }
+   ]
+  },
+  {
+   "slug": "kth-largest-element-in-an-array",
+   "title": "Kth Largest Element in an Array",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Heap & Priority Queue",
+     "topic": "Quickselect"
+    },
+    {
+     "list": "grind-169",
+     "section": "Heap & Intervals — Extended",
+     "topic": "Quickselect"
+    }
+   ]
+  },
+  {
+   "slug": "kth-smallest-element-in-a-bst",
+   "title": "Kth Smallest Element in a BST",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Tree",
+     "topic": "DFS"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Trees",
+     "topic": "Binary Search Tree"
+    },
+    {
+     "list": "grind-169",
+     "section": "Trees",
+     "topic": "DFS"
+    }
+   ]
+  },
+  {
+   "slug": "largest-rectangle-in-histogram",
+   "title": "Largest Rectangle in Histogram",
+   "difficulty": "Hard",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Stack",
+     "topic": "Monotonic Stack"
+    },
+    {
+     "list": "grind-169",
+     "section": "Linked List & Stack",
+     "topic": "Monotonic Stack"
+    }
+   ]
+  },
+  {
+   "slug": "last-stone-weight",
+   "title": "Last Stone Weight",
+   "difficulty": "Easy",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Heap & Priority Queue",
+     "topic": "Heap"
+    },
+    {
+     "list": "grind-169",
+     "section": "Heap & Intervals — Extended",
+     "topic": "Heap"
+    }
+   ]
+  },
+  {
+   "slug": "length-of-last-word",
+   "title": "Length of Last Word",
+   "difficulty": "Easy",
+   "entries": [
+    {
+     "list": "grind-169",
+     "section": "Arrays & Strings — Extended",
+     "topic": "Strings"
+    }
+   ]
+  },
+  {
+   "slug": "letter-combinations-of-a-phone-number",
+   "title": "Letter Combinations of a Phone Number",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Backtracking",
+     "topic": "Backtracking"
+    },
+    {
+     "list": "grind-169",
+     "section": "Backtracking",
+     "topic": "Backtracking"
+    }
+   ]
+  },
+  {
+   "slug": "linked-list-cycle",
+   "title": "Linked List Cycle",
+   "difficulty": "Easy",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Linked List",
+     "topic": "Fast & Slow"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Linked List",
+     "topic": "Fast & Slow"
+    },
+    {
+     "list": "grind-169",
+     "section": "Linked List & Stack",
+     "topic": "Fast & Slow"
+    }
+   ]
+  },
+  {
+   "slug": "longest-common-prefix",
+   "title": "Longest Common Prefix",
+   "difficulty": "Easy",
+   "entries": [
+    {
+     "list": "grind-169",
+     "section": "Arrays & Strings — Extended",
+     "topic": "Strings"
+    }
+   ]
+  },
+  {
+   "slug": "longest-common-subsequence",
+   "title": "Longest Common Subsequence",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Dynamic Programming",
+     "topic": "Dynamic Programming"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "2-D Dynamic Programming",
+     "topic": "Dynamic Programming"
+    },
+    {
+     "list": "grind-169",
+     "section": "Dynamic Programming — Extended",
+     "topic": "Dynamic Programming"
+    }
+   ]
+  },
+  {
+   "slug": "longest-consecutive-sequence",
+   "title": "Longest Consecutive Sequence",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Graph",
+     "topic": "Hash Set"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Arrays & Hashing",
+     "topic": "Hash Set"
+    },
+    {
+     "list": "grind-169",
+     "section": "Arrays & Strings — Extended",
+     "topic": "Hash Set"
+    }
+   ]
+  },
+  {
+   "slug": "longest-increasing-path-in-a-matrix",
+   "title": "Longest Increasing Path in a Matrix",
+   "difficulty": "Hard",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "2-D Dynamic Programming",
+     "topic": "Memoization"
+    }
+   ]
+  },
+  {
+   "slug": "longest-increasing-subsequence",
+   "title": "Longest Increasing Subsequence",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Dynamic Programming",
+     "topic": "Dynamic Programming"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "1-D Dynamic Programming",
+     "topic": "Dynamic Programming"
+    },
+    {
+     "list": "grind-169",
+     "section": "Dynamic Programming — Extended",
+     "topic": "Dynamic Programming"
+    }
+   ]
+  },
+  {
+   "slug": "longest-palindrome",
+   "title": "Longest Palindrome",
+   "difficulty": "Easy",
+   "entries": [
+    {
+     "list": "grind-169",
+     "section": "Arrays & Strings",
+     "topic": "Hash Map"
+    }
+   ]
+  },
+  {
+   "slug": "longest-palindromic-substring",
+   "title": "Longest Palindromic Substring",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "String",
+     "topic": "Dynamic Programming"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "1-D Dynamic Programming",
+     "topic": "Dynamic Programming"
+    },
+    {
+     "list": "grind-169",
+     "section": "Arrays & Strings",
+     "topic": "Dynamic Programming"
+    }
+   ]
+  },
+  {
+   "slug": "longest-repeating-character-replacement",
+   "title": "Longest Repeating Character Replacement",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "String",
+     "topic": "Sliding Window"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Sliding Window",
+     "topic": "Sliding Window"
+    },
+    {
+     "list": "grind-169",
+     "section": "Two Pointers & Sliding Window",
+     "topic": "Sliding Window"
+    }
+   ]
+  },
+  {
+   "slug": "longest-substring-without-repeating-characters",
+   "title": "Longest Substring Without Repeating Characters",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "String",
+     "topic": "Sliding Window"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Sliding Window",
+     "topic": "Sliding Window"
+    },
+    {
+     "list": "grind-169",
+     "section": "Arrays & Strings",
+     "topic": "Sliding Window"
+    }
+   ]
+  },
+  {
+   "slug": "lowest-common-ancestor-of-a-binary-search-tree",
+   "title": "Lowest Common Ancestor of a Binary Search Tree",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Tree",
+     "topic": "Binary Search Tree"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Trees",
+     "topic": "Binary Search Tree"
+    },
+    {
+     "list": "grind-169",
+     "section": "Trees",
+     "topic": "Binary Search Tree"
+    }
+   ]
+  },
+  {
+   "slug": "lowest-common-ancestor-of-a-binary-tree",
+   "title": "Lowest Common Ancestor of a Binary Tree",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "grind-169",
+     "section": "Trees",
+     "topic": "DFS"
+    }
+   ]
+  },
+  {
+   "slug": "lru-cache",
+   "title": "LRU Cache",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Linked List",
+     "topic": "Design"
+    },
+    {
+     "list": "grind-169",
+     "section": "Linked List & Stack",
+     "topic": "Design"
+    }
+   ]
+  },
+  {
+   "slug": "majority-element",
+   "title": "Majority Element",
+   "difficulty": "Easy",
+   "entries": [
+    {
+     "list": "grind-169",
+     "section": "Arrays & Strings",
+     "topic": "Boyer-Moore"
+    }
+   ]
+  },
+  {
+   "slug": "max-area-of-island",
+   "title": "Max Area of Island",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Graphs",
+     "topic": "BFS/DFS"
+    },
+    {
+     "list": "grind-169",
+     "section": "Graphs — Extended",
+     "topic": "BFS/DFS"
+    }
+   ]
+  },
+  {
+   "slug": "max-consecutive-ones-iii",
+   "title": "Max Consecutive Ones III",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "grind-169",
+     "section": "Two Pointers & Sliding Window",
+     "topic": "Sliding Window"
+    }
+   ]
+  },
+  {
+   "slug": "maximal-square",
+   "title": "Maximal Square",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "grind-169",
+     "section": "Dynamic Programming — Extended",
+     "topic": "Dynamic Programming"
+    }
+   ]
+  },
+  {
+   "slug": "maximum-depth-of-binary-tree",
+   "title": "Maximum Depth of Binary Tree",
+   "difficulty": "Easy",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Tree",
+     "topic": "DFS"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Trees",
+     "topic": "DFS"
+    },
+    {
+     "list": "grind-169",
+     "section": "Trees",
+     "topic": "DFS"
+    }
+   ]
+  },
+  {
+   "slug": "maximum-product-subarray",
+   "title": "Maximum Product Subarray",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Array",
+     "topic": "Dynamic Programming"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "1-D Dynamic Programming",
+     "topic": "Dynamic Programming"
+    },
+    {
+     "list": "grind-169",
+     "section": "Arrays & Strings — Extended",
+     "topic": "Dynamic Programming"
+    }
+   ]
+  },
+  {
+   "slug": "maximum-profit-in-job-scheduling",
+   "title": "Maximum Profit in Job Scheduling",
+   "difficulty": "Hard",
+   "entries": [
+    {
+     "list": "grind-169",
+     "section": "Dynamic Programming",
+     "topic": "Dynamic Programming"
+    }
+   ]
+  },
+  {
+   "slug": "maximum-subarray",
+   "title": "Maximum Subarray",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Array",
+     "topic": "Kadane's"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Greedy",
+     "topic": "Kadane's"
+    },
+    {
+     "list": "grind-169",
+     "section": "Arrays & Strings",
+     "topic": "Kadane's"
+    }
+   ]
+  },
+  {
+   "slug": "median-of-two-sorted-arrays",
+   "title": "Median of Two Sorted Arrays",
+   "difficulty": "Hard",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Binary Search",
+     "topic": "Binary Search"
+    },
+    {
+     "list": "grind-169",
+     "section": "Binary Search — Extended",
+     "topic": "Binary Search"
+    }
+   ]
+  },
+  {
+   "slug": "meeting-rooms",
+   "title": "Meeting Rooms",
+   "difficulty": "Easy",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Interval",
+     "topic": "Intervals"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Intervals",
+     "topic": "Intervals"
+    },
+    {
+     "list": "grind-169",
+     "section": "Heap & Intervals — Extended",
+     "topic": "Intervals"
+    }
+   ]
+  },
+  {
+   "slug": "meeting-rooms-ii",
+   "title": "Meeting Rooms II",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Interval",
+     "topic": "Intervals"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Intervals",
+     "topic": "Intervals"
+    },
+    {
+     "list": "grind-169",
+     "section": "Heap & Intervals — Extended",
+     "topic": "Intervals"
+    }
+   ]
+  },
+  {
+   "slug": "merge-intervals",
+   "title": "Merge Intervals",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Interval",
+     "topic": "Intervals"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Intervals",
+     "topic": "Intervals"
+    },
+    {
+     "list": "grind-169",
+     "section": "Heap & Intervals",
+     "topic": "Intervals"
+    }
+   ]
+  },
+  {
+   "slug": "merge-k-sorted-lists",
+   "title": "Merge k Sorted Lists",
+   "difficulty": "Hard",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Linked List",
+     "topic": "Heap"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Linked List",
+     "topic": "Heap"
+    },
+    {
+     "list": "grind-169",
+     "section": "Heap & Intervals",
+     "topic": "Heap"
+    }
+   ]
+  },
+  {
+   "slug": "merge-sorted-array",
+   "title": "Merge Sorted Array",
+   "difficulty": "Easy",
+   "entries": [
+    {
+     "list": "grind-169",
+     "section": "Arrays & Strings — Extended",
+     "topic": "Two Pointers"
+    }
+   ]
+  },
+  {
+   "slug": "merge-triplets-to-form-target-triplet",
+   "title": "Merge Triplets to Form Target Triplet",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Greedy",
+     "topic": "Greedy"
+    }
+   ]
+  },
+  {
+   "slug": "merge-two-sorted-lists",
+   "title": "Merge Two Sorted Lists",
+   "difficulty": "Easy",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Linked List",
+     "topic": "Linked List"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Linked List",
+     "topic": "Linked List"
+    },
+    {
+     "list": "grind-169",
+     "section": "Linked List & Stack",
+     "topic": "Linked List"
+    }
+   ]
+  },
+  {
+   "slug": "middle-of-the-linked-list",
+   "title": "Middle of the Linked List",
+   "difficulty": "Easy",
+   "entries": [
+    {
+     "list": "grind-169",
+     "section": "Linked List & Stack",
+     "topic": "Fast & Slow"
+    }
+   ]
+  },
+  {
+   "slug": "min-cost-climbing-stairs",
+   "title": "Min Cost Climbing Stairs",
+   "difficulty": "Easy",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "1-D Dynamic Programming",
+     "topic": "Dynamic Programming"
+    },
+    {
+     "list": "grind-169",
+     "section": "Dynamic Programming — Extended",
+     "topic": "Dynamic Programming"
+    }
+   ]
+  },
+  {
+   "slug": "min-cost-to-connect-all-points",
+   "title": "Min Cost to Connect All Points",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Advanced Graphs",
+     "topic": "Minimum Spanning Tree"
+    }
+   ]
+  },
+  {
+   "slug": "min-stack",
+   "title": "Min Stack",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Stack",
+     "topic": "Stack"
+    },
+    {
+     "list": "grind-169",
+     "section": "Linked List & Stack",
+     "topic": "Stack"
+    }
+   ]
+  },
+  {
+   "slug": "minimum-height-trees",
+   "title": "Minimum Height Trees",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "grind-169",
+     "section": "Graphs",
+     "topic": "Topological Sort"
+    }
+   ]
+  },
+  {
+   "slug": "minimum-interval-to-include-each-query",
+   "title": "Minimum Interval to Include Each Query",
+   "difficulty": "Hard",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Intervals",
+     "topic": "Intervals"
+    }
+   ]
+  },
+  {
+   "slug": "minimum-size-subarray-sum",
+   "title": "Minimum Size Subarray Sum",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "grind-169",
+     "section": "Two Pointers & Sliding Window",
+     "topic": "Sliding Window"
+    }
+   ]
+  },
+  {
+   "slug": "minimum-window-substring",
+   "title": "Minimum Window Substring",
+   "difficulty": "Hard",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "String",
+     "topic": "Sliding Window"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Sliding Window",
+     "topic": "Sliding Window"
+    },
+    {
+     "list": "grind-169",
+     "section": "Arrays & Strings",
+     "topic": "Sliding Window"
+    }
+   ]
+  },
+  {
+   "slug": "missing-number",
+   "title": "Missing Number",
+   "difficulty": "Easy",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Binary",
+     "topic": "Bit Manipulation"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Bit Manipulation",
+     "topic": "Bit Manipulation"
+    },
+    {
+     "list": "grind-169",
+     "section": "Arrays & Strings — Extended",
+     "topic": "Bit Manipulation"
+    }
+   ]
+  },
+  {
+   "slug": "move-zeroes",
+   "title": "Move Zeroes",
+   "difficulty": "Easy",
+   "entries": [
+    {
+     "list": "grind-169",
+     "section": "Arrays & Strings — Extended",
+     "topic": "Two Pointers"
+    }
+   ]
+  },
+  {
+   "slug": "multiply-strings",
+   "title": "Multiply Strings",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Math & Geometry",
+     "topic": "Math"
+    }
+   ]
+  },
+  {
+   "slug": "n-queens",
+   "title": "N-Queens",
+   "difficulty": "Hard",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Backtracking",
+     "topic": "Backtracking"
+    },
+    {
+     "list": "grind-169",
+     "section": "Backtracking — Extended",
+     "topic": "Backtracking"
+    }
+   ]
+  },
+  {
+   "slug": "network-delay-time",
+   "title": "Network Delay Time",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Advanced Graphs",
+     "topic": "Dijkstra"
+    },
+    {
+     "list": "grind-169",
+     "section": "Graphs — Extended",
+     "topic": "Dijkstra"
+    }
+   ]
+  },
+  {
+   "slug": "next-greater-element-i",
+   "title": "Next Greater Element I",
+   "difficulty": "Easy",
+   "entries": [
+    {
+     "list": "grind-169",
+     "section": "Stack & Monotonic Stack",
+     "topic": "Monotonic Stack"
+    }
+   ]
+  },
+  {
+   "slug": "next-permutation",
+   "title": "Next Permutation",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "grind-169",
+     "section": "Arrays & Strings — Extended",
+     "topic": "Arrays"
+    }
+   ]
+  },
+  {
+   "slug": "non-overlapping-intervals",
+   "title": "Non-overlapping Intervals",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Interval",
+     "topic": "Intervals"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Intervals",
+     "topic": "Intervals"
+    },
+    {
+     "list": "grind-169",
+     "section": "Arrays & Strings — Extended",
+     "topic": "Intervals"
+    }
+   ]
+  },
+  {
+   "slug": "number-of-1-bits",
+   "title": "Number of 1 Bits",
+   "difficulty": "Easy",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Binary",
+     "topic": "Bit Manipulation"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Bit Manipulation",
+     "topic": "Bit Manipulation"
+    }
+   ]
+  },
+  {
+   "slug": "number-of-connected-components-in-an-undirected-graph",
+   "title": "Number of Connected Components in an Undirected Graph",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Graph",
+     "topic": "Union Find"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Graphs",
+     "topic": "Union Find"
+    },
+    {
+     "list": "grind-169",
+     "section": "Graphs — Extended",
+     "topic": "Union Find"
+    }
+   ]
+  },
+  {
+   "slug": "number-of-islands",
+   "title": "Number of Islands",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Graph",
+     "topic": "BFS/DFS"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Graphs",
+     "topic": "BFS/DFS"
+    },
+    {
+     "list": "grind-169",
+     "section": "Graphs",
+     "topic": "BFS/DFS"
+    }
+   ]
+  },
+  {
+   "slug": "number-of-provinces",
+   "title": "Number of Provinces",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "grind-169",
+     "section": "Graphs — Extended",
+     "topic": "Union Find"
+    }
+   ]
+  },
+  {
+   "slug": "odd-even-linked-list",
+   "title": "Odd Even Linked List",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "grind-169",
+     "section": "Linked List — Extended",
+     "topic": "Linked List"
+    }
+   ]
+  },
+  {
+   "slug": "pacific-atlantic-water-flow",
+   "title": "Pacific Atlantic Water Flow",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Graph",
+     "topic": "BFS/DFS"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Graphs",
+     "topic": "BFS/DFS"
+    },
+    {
+     "list": "grind-169",
+     "section": "Graphs — Extended",
+     "topic": "BFS/DFS"
+    }
+   ]
+  },
+  {
+   "slug": "palindrome-linked-list",
+   "title": "Palindrome Linked List",
+   "difficulty": "Easy",
+   "entries": [
+    {
+     "list": "grind-169",
+     "section": "Linked List — Extended",
+     "topic": "Fast & Slow"
+    }
+   ]
+  },
+  {
+   "slug": "palindrome-number",
+   "title": "Palindrome Number",
+   "difficulty": "Easy",
+   "entries": [
+    {
+     "list": "grind-169",
+     "section": "Arrays & Strings — Extended",
+     "topic": "Math"
+    }
+   ]
+  },
+  {
+   "slug": "palindrome-partitioning",
+   "title": "Palindrome Partitioning",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Backtracking",
+     "topic": "Backtracking"
+    },
+    {
+     "list": "grind-169",
+     "section": "Backtracking — Extended",
+     "topic": "Backtracking"
+    }
+   ]
+  },
+  {
+   "slug": "palindromic-substrings",
+   "title": "Palindromic Substrings",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "String",
+     "topic": "Dynamic Programming"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "1-D Dynamic Programming",
+     "topic": "Dynamic Programming"
+    }
+   ]
+  },
+  {
+   "slug": "partition-equal-subset-sum",
+   "title": "Partition Equal Subset Sum",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "1-D Dynamic Programming",
+     "topic": "0/1 Knapsack"
+    },
+    {
+     "list": "grind-169",
+     "section": "Dynamic Programming",
+     "topic": "Dynamic Programming"
+    }
+   ]
+  },
+  {
+   "slug": "partition-labels",
+   "title": "Partition Labels",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Greedy",
+     "topic": "Greedy"
+    }
+   ]
+  },
+  {
+   "slug": "path-sum",
+   "title": "Path Sum",
+   "difficulty": "Easy",
+   "entries": [
+    {
+     "list": "grind-169",
+     "section": "Trees — Extended",
+     "topic": "DFS"
+    }
+   ]
+  },
+  {
+   "slug": "permutation-in-string",
+   "title": "Permutation in String",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Sliding Window",
+     "topic": "Sliding Window"
+    },
+    {
+     "list": "grind-169",
+     "section": "Two Pointers & Sliding Window",
+     "topic": "Sliding Window"
+    }
+   ]
+  },
+  {
+   "slug": "permutations",
+   "title": "Permutations",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Backtracking",
+     "topic": "Backtracking"
+    },
+    {
+     "list": "grind-169",
+     "section": "Backtracking",
+     "topic": "Backtracking"
+    }
+   ]
+  },
+  {
+   "slug": "permutations-ii",
+   "title": "Permutations II",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "grind-169",
+     "section": "Backtracking — Extended",
+     "topic": "Backtracking"
+    }
+   ]
+  },
+  {
+   "slug": "plus-one",
+   "title": "Plus One",
+   "difficulty": "Easy",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Math & Geometry",
+     "topic": "Math"
+    },
+    {
+     "list": "grind-169",
+     "section": "Arrays & Strings — Extended",
+     "topic": "Math"
+    }
+   ]
+  },
+  {
+   "slug": "powx-n",
+   "title": "Pow(x, n)",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Math & Geometry",
+     "topic": "Divide & Conquer"
+    }
+   ]
+  },
+  {
+   "slug": "product-of-array-except-self",
+   "title": "Product of Array Except Self",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Array",
+     "topic": "Prefix Sum"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Arrays & Hashing",
+     "topic": "Prefix Sum"
+    },
+    {
+     "list": "grind-169",
+     "section": "Arrays & Strings",
+     "topic": "Prefix Sum"
+    }
+   ]
+  },
+  {
+   "slug": "ransom-note",
+   "title": "Ransom Note",
+   "difficulty": "Easy",
+   "entries": [
+    {
+     "list": "grind-169",
+     "section": "Arrays & Strings",
+     "topic": "Hash Map"
+    }
+   ]
+  },
+  {
+   "slug": "reconstruct-itinerary",
+   "title": "Reconstruct Itinerary",
+   "difficulty": "Hard",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Advanced Graphs",
+     "topic": "Eulerian Path"
+    }
+   ]
+  },
+  {
+   "slug": "redundant-connection",
+   "title": "Redundant Connection",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Graphs",
+     "topic": "Union Find"
+    },
+    {
+     "list": "grind-169",
+     "section": "Graphs — Extended",
+     "topic": "Union Find"
+    }
+   ]
+  },
+  {
+   "slug": "regular-expression-matching",
+   "title": "Regular Expression Matching",
+   "difficulty": "Hard",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "2-D Dynamic Programming",
+     "topic": "Dynamic Programming"
+    }
+   ]
+  },
+  {
+   "slug": "remove-duplicates-from-sorted-array",
+   "title": "Remove Duplicates from Sorted Array",
+   "difficulty": "Easy",
+   "entries": [
+    {
+     "list": "grind-169",
+     "section": "Two Pointers & Sliding Window",
+     "topic": "Two Pointers"
+    }
+   ]
+  },
+  {
+   "slug": "remove-element",
+   "title": "Remove Element",
+   "difficulty": "Easy",
+   "entries": [
+    {
+     "list": "grind-169",
+     "section": "Arrays & Strings — Extended",
+     "topic": "Two Pointers"
+    }
+   ]
+  },
+  {
+   "slug": "remove-nth-node-from-end-of-list",
+   "title": "Remove Nth Node From End of List",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Linked List",
+     "topic": "Two Pointers"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Linked List",
+     "topic": "Two Pointers"
+    },
+    {
+     "list": "grind-169",
+     "section": "Linked List — Extended",
+     "topic": "Two Pointers"
+    }
+   ]
+  },
+  {
+   "slug": "reorder-list",
+   "title": "Reorder List",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Linked List",
+     "topic": "Linked List"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Linked List",
+     "topic": "Linked List"
+    },
+    {
+     "list": "grind-169",
+     "section": "Linked List — Extended",
+     "topic": "Linked List"
+    }
+   ]
+  },
+  {
+   "slug": "reverse-bits",
+   "title": "Reverse Bits",
+   "difficulty": "Easy",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Binary",
+     "topic": "Bit Manipulation"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Bit Manipulation",
+     "topic": "Bit Manipulation"
+    }
+   ]
+  },
+  {
+   "slug": "reverse-integer",
+   "title": "Reverse Integer",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Bit Manipulation",
+     "topic": "Math"
+    }
+   ]
+  },
+  {
+   "slug": "reverse-linked-list",
+   "title": "Reverse Linked List",
+   "difficulty": "Easy",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Linked List",
+     "topic": "Linked List"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Linked List",
+     "topic": "Linked List"
+    },
+    {
+     "list": "grind-169",
+     "section": "Linked List & Stack",
+     "topic": "Linked List"
+    }
+   ]
+  },
+  {
+   "slug": "reverse-nodes-in-k-group",
+   "title": "Reverse Nodes in k-Group",
+   "difficulty": "Hard",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Linked List",
+     "topic": "Linked List"
+    },
+    {
+     "list": "grind-169",
+     "section": "Linked List — Extended",
+     "topic": "Linked List"
+    }
+   ]
+  },
+  {
+   "slug": "roman-to-integer",
+   "title": "Roman to Integer",
+   "difficulty": "Easy",
+   "entries": [
+    {
+     "list": "grind-169",
+     "section": "Arrays & Strings — Extended",
+     "topic": "Strings"
+    }
+   ]
+  },
+  {
+   "slug": "rotate-array",
+   "title": "Rotate Array",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "grind-169",
+     "section": "Arrays & Strings — Extended",
+     "topic": "Reversal"
+    }
+   ]
+  },
+  {
+   "slug": "rotate-image",
+   "title": "Rotate Image",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Matrix",
+     "topic": "Matrix"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Math & Geometry",
+     "topic": "Matrix"
+    },
+    {
+     "list": "grind-169",
+     "section": "Arrays & Strings — Extended",
+     "topic": "Matrix"
+    }
+   ]
+  },
+  {
+   "slug": "rotting-oranges",
+   "title": "Rotting Oranges",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Graphs",
+     "topic": "BFS"
+    },
+    {
+     "list": "grind-169",
+     "section": "Graphs",
+     "topic": "BFS"
+    }
+   ]
+  },
+  {
+   "slug": "same-tree",
+   "title": "Same Tree",
+   "difficulty": "Easy",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Tree",
+     "topic": "DFS"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Trees",
+     "topic": "DFS"
+    },
+    {
+     "list": "grind-169",
+     "section": "Trees — Extended",
+     "topic": "DFS"
+    }
+   ]
+  },
+  {
+   "slug": "search-a-2d-matrix",
+   "title": "Search a 2D Matrix",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Binary Search",
+     "topic": "Binary Search"
+    }
+   ]
+  },
+  {
+   "slug": "search-in-rotated-sorted-array",
+   "title": "Search in Rotated Sorted Array",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Array",
+     "topic": "Binary Search"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Binary Search",
+     "topic": "Binary Search"
+    },
+    {
+     "list": "grind-169",
+     "section": "Binary Search",
+     "topic": "Binary Search"
+    }
+   ]
+  },
+  {
+   "slug": "search-insert-position",
+   "title": "Search Insert Position",
+   "difficulty": "Easy",
+   "entries": [
+    {
+     "list": "grind-169",
+     "section": "Binary Search — Extended",
+     "topic": "Binary Search"
+    }
+   ]
+  },
+  {
+   "slug": "serialize-and-deserialize-binary-tree",
+   "title": "Serialize and Deserialize Binary Tree",
+   "difficulty": "Hard",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Tree",
+     "topic": "DFS"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Trees",
+     "topic": "DFS"
+    },
+    {
+     "list": "grind-169",
+     "section": "Trees",
+     "topic": "DFS"
+    }
+   ]
+  },
+  {
+   "slug": "set-matrix-zeroes",
+   "title": "Set Matrix Zeroes",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Matrix",
+     "topic": "Matrix"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Math & Geometry",
+     "topic": "Matrix"
+    },
+    {
+     "list": "grind-169",
+     "section": "Arrays & Strings — Extended",
+     "topic": "Matrix"
+    }
+   ]
+  },
+  {
+   "slug": "simplify-path",
+   "title": "Simplify Path",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "grind-169",
+     "section": "Stack & Monotonic Stack",
+     "topic": "Stack"
+    }
+   ]
+  },
+  {
+   "slug": "single-number",
+   "title": "Single Number",
+   "difficulty": "Easy",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Bit Manipulation",
+     "topic": "Bit Manipulation"
+    },
+    {
+     "list": "grind-169",
+     "section": "Arrays & Strings — Extended",
+     "topic": "Bit Manipulation"
+    }
+   ]
+  },
+  {
+   "slug": "sliding-window-maximum",
+   "title": "Sliding Window Maximum",
+   "difficulty": "Hard",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Sliding Window",
+     "topic": "Deque"
+    },
+    {
+     "list": "grind-169",
+     "section": "Two Pointers & Sliding Window",
+     "topic": "Deque"
+    }
+   ]
+  },
+  {
+   "slug": "sort-colors",
+   "title": "Sort Colors",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "grind-169",
+     "section": "Arrays & Strings",
+     "topic": "Two Pointers"
+    }
+   ]
+  },
+  {
+   "slug": "sort-list",
+   "title": "Sort List",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "grind-169",
+     "section": "Linked List — Extended",
+     "topic": "Merge Sort"
+    }
+   ]
+  },
+  {
+   "slug": "spiral-matrix",
+   "title": "Spiral Matrix",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Matrix",
+     "topic": "Matrix"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Math & Geometry",
+     "topic": "Matrix"
+    },
+    {
+     "list": "grind-169",
+     "section": "Arrays & Strings",
+     "topic": "Matrix"
+    }
+   ]
+  },
+  {
+   "slug": "squares-of-a-sorted-array",
+   "title": "Squares of a Sorted Array",
+   "difficulty": "Easy",
+   "entries": [
+    {
+     "list": "grind-169",
+     "section": "Arrays & Strings — Extended",
+     "topic": "Two Pointers"
+    }
+   ]
+  },
+  {
+   "slug": "string-to-integer-atoi",
+   "title": "String to Integer (atoi)",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "grind-169",
+     "section": "Arrays & Strings",
+     "topic": "Strings"
+    }
+   ]
+  },
+  {
+   "slug": "subarray-sum-equals-k",
+   "title": "Subarray Sum Equals K",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "grind-169",
+     "section": "Arrays & Strings — Extended",
+     "topic": "Prefix Sum"
+    }
+   ]
+  },
+  {
+   "slug": "subsets",
+   "title": "Subsets",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Backtracking",
+     "topic": "Backtracking"
+    },
+    {
+     "list": "grind-169",
+     "section": "Backtracking",
+     "topic": "Backtracking"
+    }
+   ]
+  },
+  {
+   "slug": "subsets-ii",
+   "title": "Subsets II",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Backtracking",
+     "topic": "Backtracking"
+    },
+    {
+     "list": "grind-169",
+     "section": "Backtracking — Extended",
+     "topic": "Backtracking"
+    }
+   ]
+  },
+  {
+   "slug": "subtree-of-another-tree",
+   "title": "Subtree of Another Tree",
+   "difficulty": "Easy",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Tree",
+     "topic": "DFS"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Trees",
+     "topic": "DFS"
+    },
+    {
+     "list": "grind-169",
+     "section": "Trees — Extended",
+     "topic": "DFS"
+    }
+   ]
+  },
+  {
+   "slug": "sum-of-two-integers",
+   "title": "Sum of Two Integers",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Binary",
+     "topic": "Bit Manipulation"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Bit Manipulation",
+     "topic": "Bit Manipulation"
+    }
+   ]
+  },
+  {
+   "slug": "surrounded-regions",
+   "title": "Surrounded Regions",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Graphs",
+     "topic": "BFS/DFS"
+    },
+    {
+     "list": "grind-169",
+     "section": "Graphs — Extended",
+     "topic": "BFS/DFS"
+    }
+   ]
+  },
+  {
+   "slug": "swim-in-rising-water",
+   "title": "Swim in Rising Water",
+   "difficulty": "Hard",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Advanced Graphs",
+     "topic": "Dijkstra"
+    }
+   ]
+  },
+  {
+   "slug": "symmetric-tree",
+   "title": "Symmetric Tree",
+   "difficulty": "Easy",
+   "entries": [
+    {
+     "list": "grind-169",
+     "section": "Trees — Extended",
+     "topic": "DFS"
+    }
+   ]
+  },
+  {
+   "slug": "target-sum",
+   "title": "Target Sum",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "2-D Dynamic Programming",
+     "topic": "0/1 Knapsack"
+    }
+   ]
+  },
+  {
+   "slug": "task-scheduler",
+   "title": "Task Scheduler",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Heap & Priority Queue",
+     "topic": "Heap"
+    },
+    {
+     "list": "grind-169",
+     "section": "Heap & Intervals",
+     "topic": "Heap"
+    }
+   ]
+  },
+  {
+   "slug": "time-based-key-value-store",
+   "title": "Time Based Key-Value Store",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Binary Search",
+     "topic": "Binary Search"
+    },
+    {
+     "list": "grind-169",
+     "section": "Binary Search",
+     "topic": "Binary Search"
+    }
+   ]
+  },
+  {
+   "slug": "top-k-frequent-elements",
+   "title": "Top K Frequent Elements",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Heap",
+     "topic": "Heap"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Arrays & Hashing",
+     "topic": "Bucket Sort"
+    },
+    {
+     "list": "grind-169",
+     "section": "Heap & Intervals — Extended",
+     "topic": "Heap"
+    }
+   ]
+  },
+  {
+   "slug": "trapping-rain-water",
+   "title": "Trapping Rain Water",
+   "difficulty": "Hard",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Two Pointers",
+     "topic": "Two Pointers"
+    },
+    {
+     "list": "grind-169",
+     "section": "Arrays & Strings",
+     "topic": "Two Pointers"
+    }
+   ]
+  },
+  {
+   "slug": "two-sum",
+   "title": "Two Sum",
+   "difficulty": "Easy",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Array",
+     "topic": "Hash Map"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Arrays & Hashing",
+     "topic": "Hash Map"
+    },
+    {
+     "list": "grind-169",
+     "section": "Arrays & Strings",
+     "topic": "Hash Map"
+    }
+   ]
+  },
+  {
+   "slug": "two-sum-ii-input-array-is-sorted",
+   "title": "Two Sum II - Input Array Is Sorted",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Two Pointers",
+     "topic": "Two Pointers"
+    },
+    {
+     "list": "grind-169",
+     "section": "Two Pointers & Sliding Window",
+     "topic": "Two Pointers"
+    }
+   ]
+  },
+  {
+   "slug": "unique-paths",
+   "title": "Unique Paths",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Dynamic Programming",
+     "topic": "Dynamic Programming"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "2-D Dynamic Programming",
+     "topic": "Dynamic Programming"
+    },
+    {
+     "list": "grind-169",
+     "section": "Dynamic Programming",
+     "topic": "Dynamic Programming"
+    }
+   ]
+  },
+  {
+   "slug": "valid-anagram",
+   "title": "Valid Anagram",
+   "difficulty": "Easy",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "String",
+     "topic": "Hash Map"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Arrays & Hashing",
+     "topic": "Hash Map"
+    },
+    {
+     "list": "grind-169",
+     "section": "Arrays & Strings",
+     "topic": "Hash Map"
+    }
+   ]
+  },
+  {
+   "slug": "valid-palindrome",
+   "title": "Valid Palindrome",
+   "difficulty": "Easy",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "String",
+     "topic": "Two Pointers"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Two Pointers",
+     "topic": "Two Pointers"
+    },
+    {
+     "list": "grind-169",
+     "section": "Arrays & Strings",
+     "topic": "Two Pointers"
+    }
+   ]
+  },
+  {
+   "slug": "valid-parentheses",
+   "title": "Valid Parentheses",
+   "difficulty": "Easy",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "String",
+     "topic": "Stack"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Stack",
+     "topic": "Stack"
+    },
+    {
+     "list": "grind-169",
+     "section": "Linked List & Stack",
+     "topic": "Stack"
+    }
+   ]
+  },
+  {
+   "slug": "valid-parenthesis-string",
+   "title": "Valid Parenthesis String",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Greedy",
+     "topic": "Greedy"
+    }
+   ]
+  },
+  {
+   "slug": "valid-sudoku",
+   "title": "Valid Sudoku",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Arrays & Hashing",
+     "topic": "Hash Set"
+    }
+   ]
+  },
+  {
+   "slug": "validate-binary-search-tree",
+   "title": "Validate Binary Search Tree",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Tree",
+     "topic": "DFS"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Trees",
+     "topic": "Binary Search Tree"
+    },
+    {
+     "list": "grind-169",
+     "section": "Trees",
+     "topic": "DFS"
+    }
+   ]
+  },
+  {
+   "slug": "walls-and-gates",
+   "title": "Walls and Gates",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Graphs",
+     "topic": "BFS"
+    }
+   ]
+  },
+  {
+   "slug": "word-break",
+   "title": "Word Break",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Dynamic Programming",
+     "topic": "Dynamic Programming"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "1-D Dynamic Programming",
+     "topic": "Dynamic Programming"
+    },
+    {
+     "list": "grind-169",
+     "section": "Dynamic Programming",
+     "topic": "Dynamic Programming"
+    }
+   ]
+  },
+  {
+   "slug": "word-ladder",
+   "title": "Word Ladder",
+   "difficulty": "Hard",
+   "entries": [
+    {
+     "list": "neetcode-150",
+     "section": "Graphs",
+     "topic": "BFS"
+    },
+    {
+     "list": "grind-169",
+     "section": "Graphs",
+     "topic": "BFS"
+    }
+   ]
+  },
+  {
+   "slug": "word-search",
+   "title": "Word Search",
+   "difficulty": "Medium",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Matrix",
+     "topic": "Backtracking"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Backtracking",
+     "topic": "Backtracking"
+    },
+    {
+     "list": "grind-169",
+     "section": "Backtracking",
+     "topic": "Backtracking"
+    }
+   ]
+  },
+  {
+   "slug": "word-search-ii",
+   "title": "Word Search II",
+   "difficulty": "Hard",
+   "entries": [
+    {
+     "list": "blind-75",
+     "section": "Tree",
+     "topic": "Trie"
+    },
+    {
+     "list": "neetcode-150",
+     "section": "Tries",
+     "topic": "Trie"
+    }
+   ]
+  }
+ ]
+}

@@ -270,7 +270,7 @@ test("a new student is told where to start, and the next step moves on as they l
   await finishRun(page);
   await page.goto("./");
   await expect(page.locator(".home-next .next-row")).not.toContainText("Start here");
-  await expect(page.locator(".map-link")).toContainText("learning");
+  await expect(page.getByRole("button", { name: /^Your map/ })).toContainText("learning");
 });
 
 test("changing the input re-runs both approaches in real Python @phone", async ({ page }) => {
@@ -430,4 +430,22 @@ test("an unknown address says so and links home", async ({ page }) => {
   await expect(page.getByRole("heading", { name: "Not Found" })).toBeVisible();
   await page.getByRole("link", { name: "Search for a problem" }).click();
   await expect(page.getByRole("combobox")).toBeVisible();
+});
+
+test("the roadmap starts at week 1, opens built lessons, and links planned problems to LeetCode @phone", async ({ page }) => {
+  await page.goto("./");
+  await page.getByRole("button", { name: /Your 16-week roadmap/ }).click();
+  await expect(page.getByRole("heading", { name: "Roadmap" })).toBeVisible();
+  await expect(page.getByText(/Week 1 of 16 · 205 problems/)).toBeVisible();
+  const week1 = page.locator(".rm-week.now");
+  await expect(week1.getByText("Arrays and hashing")).toBeVisible();
+  const planned = week1.getByRole("link", { name: /Contains Duplicate/ });
+  await expect(planned).toHaveAttribute("href", "https://leetcode.com/problems/contains-duplicate/");
+  await page.getByRole("tab", { name: "All tiers" }).click();
+  await expect(page.locator(".rm-row")).not.toHaveCount(75);
+  await week1.getByRole("button", { name: "Hash maps", exact: true }).click();
+  await expect(page).toHaveURL(/map\?c=hash-map/);
+  await page.goBack();
+  await page.locator(".rm-next").click();
+  await expect(page).toHaveURL(/\/p\/two-sum$/);
 });

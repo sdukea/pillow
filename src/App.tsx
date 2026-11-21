@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { PROBLEMS, type Problem } from "./content/problems";
 import { Explain } from "./explain/Explain";
 import { Learn } from "./learn/Learn";
@@ -9,6 +9,9 @@ import { loadRemote } from "./lib/remote";
 import { href, useRoute } from "./lib/router";
 import { Workspace } from "./workspace/Workspace";
 
+// The roadmap carries the 205-problem curriculum: load it only when it's opened.
+const Roadmap = lazy(() => import("./roadmap/Roadmap").then((m) => ({ default: m.Roadmap })));
+
 // Routes:
 //   /                      search, and your notes
 //   /p/<slug>              learn it: problem, slow way, trick, fast way, note
@@ -16,6 +19,7 @@ import { Workspace } from "./workspace/Workspace";
 //   /p/<slug>/lesson       the full lesson, chapter by chapter (?chapter=)
 //   /explain?q=…           a problem that isn't in the library yet
 //   /map                   your knowledge map, from the evidence of what you've answered
+//   /roadmap               the 16-week plan, and where you are in it
 export function App() {
   const [route, go] = useRoute();
   const m = route.path.match(/^\/p\/([\w-]+)(\/lesson|\/play)?\/?$/);
@@ -44,8 +48,15 @@ export function App() {
   if (route.path === "/map") {
     return <KnowledgeMap key={route.search.get("c") ?? ""} initial={route.search.get("c")} onOpen={(slug) => go(`/p/${slug}`)} onHome={() => (history.length > 1 ? history.back() : home())} />;
   }
+  if (route.path === "/roadmap") {
+    return (
+      <Suspense fallback={<main className="roadmap" aria-busy="true" />}>
+        <Roadmap onOpen={(slug) => go(`/p/${slug}`)} onConcept={(id) => go(`/map?c=${id}`)} onHome={() => (history.length > 1 ? history.back() : home())} />
+      </Suspense>
+    );
+  }
   if (route.path !== "/") return <NotFound onHome={home} message="There’s nothing at this address." />;
-  return <Home onOpen={(slug) => go(`/p/${slug}`)} onExplain={(q) => go(`/explain?q=${encodeURIComponent(q)}`)} onMap={() => go("/map")} />;
+  return <Home onOpen={(slug) => go(`/p/${slug}`)} onExplain={(q) => go(`/explain?q=${encodeURIComponent(q)}`)} onMap={() => go("/map")} onRoadmap={() => go("/roadmap")} />;
 }
 
 /** A problem explained live, loaded from Pillow's server, then shown like any other. */

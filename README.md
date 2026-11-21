@@ -70,8 +70,9 @@ reference solution ──► tracer (Python sys.settrace) ──► trace: every
   See [docs/authoring.md](docs/authoring.md) and
   [ADR 0008](docs/adr/0008-pillow-films.md).
 
-The full reasoning is in [docs/ASSESSMENT.md](docs/ASSESSMENT.md) and
-[docs/adr/](docs/adr/).
+The product spec is [docs/PRODUCT_SPEC.md](docs/PRODUCT_SPEC.md), the plan and
+audit are in [docs/IMPLEMENTATION_PLAN.md](docs/IMPLEMENTATION_PLAN.md), and
+decisions are in [docs/adr/](docs/adr/).
 
 ## Status
 

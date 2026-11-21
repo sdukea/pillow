@@ -19,6 +19,7 @@
     "e2e": "playwright test",
     "draft": "tsx scripts/draft.ts",
     "promote": "tsx scripts/promote.ts",
+    "curriculum": "tsx scripts/build-curriculum.ts",
     "server": "tsx server/index.ts"
   },
   "dependencies": {

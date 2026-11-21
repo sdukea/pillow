@@ -164,9 +164,9 @@ model never depends on an AI judgement alone.
 | M8 | **Evidence:** concept ontology and tagging; trace-grounded prediction, complexity and recall tasks in the learn flow; evidence log; explainable student model; knowledge map; recommendations on Home | Done |
 | M9 | **Reasoning:** authored Socratic derivation with misconception-tagged answers; a ladder of hints that lowers the evidence a correct answer gives; misconceptions on the map | Done |
 | M10 | **Independent solving:** write the solution in the browser; tests run in the Pyodide worker (examples, edge cases, random inputs checked against the reference); "solved independently" evidence | Done |
-| **M11** | **Interview mode:** an unseen problem, timed, no hints, explain your approach and complexity, a follow-up variation; a readiness view built from that evidence | |
-| M12 | **Accounts and sync:** a university pilot across devices; the evidence log syncs to the server | |
-| M13 | **Scale content:** the AI pipeline drafts concept-tagged problems with tasks; reviewed before publishing | |
+| P1 | **Product foundation:** the spec, architecture, ontology, curriculum, lesson, mastery, assessment, interview, notification, security and quality docs | Done (2026-11-22) |
+| P2 | **Curriculum:** 55-concept typed ontology; 205 problems (Blind 75, NeetCode 150, Grind 169) tiered and placed in a 16-week dependency-ordered plan; the roadmap at `/roadmap` | Done (2026-11-22) |
+| P3–P9 | The lesson schema and new views, mastery dimensions, diagnostic and adaptive roadmap, FSRS retention, interview mode, accounts and notifications, quality and scale | Planned: see `docs/IMPLEMENTATION_PLAN.md` (it supersedes M11–M13) |
 
 ## Key decisions (see `docs/adr/`)
 - 0001–0007: engine, specs, lessons, honest first approaches, live input, the AI pipeline.

@@ -449,3 +449,23 @@ test("the roadmap starts at week 1, opens built lessons, and links planned probl
   await page.locator(".rm-next").click();
   await expect(page).toHaveURL(/\/p\/two-sum$/);
 });
+
+test("a concept's card shows what you've shown, one dimension at a time @phone", async ({ page }) => {
+  const errors = watchErrors(page);
+  await page.addInitScript(() => {
+    const H = 3_600_000, now = Date.now();
+    const e = (at: number, task: string, correct: boolean, problem = "two-sum") => ({ at: now - at * H, task, problem, concepts: ["hash-map"], correct, detail: `${task} on ${problem}` });
+    localStorage.setItem("pillow.evidence", JSON.stringify([e(20, "predict", true), e(19, "complexity", true), e(1, "implement", false)]));
+  });
+  await page.goto("map?c=hash-map");
+  const card = page.locator(".concept");
+  await expect(card.getByRole("heading", { name: "What you’ve shown" })).toBeVisible();
+  const level = (name: string) => card.locator(".dim").filter({ hasText: name }).locator(".dim-level");
+  await expect(level("Met it")).toHaveText("Solid");
+  await expect(level("Spot it")).toHaveText("Not yet");
+  await expect(level("Explain it")).toHaveText("Solid");
+  await expect(level("Write it")).toHaveText("Not yet");
+  await expect(level("Use it elsewhere")).toHaveText("Started");
+  await expect(level("Keep it")).toHaveText("Started"); // right answers only an hour apart: never kept across sessions
+  expect(errors).toEqual([]);
+});

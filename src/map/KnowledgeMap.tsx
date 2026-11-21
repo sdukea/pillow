@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { PROBLEMS, type Problem } from "../content/problems";
 import { CONCEPTS, type ConceptId, conceptById, depthOf } from "../knowledge/concepts";
+import { DIMENSIONS, dimensionsOf, type DimensionLevel } from "../knowledge/dimensions";
 import { MISCONCEPTIONS } from "../knowledge/misconceptions";
 import { useEvidence } from "../knowledge/evidence";
 import { assess, type ConceptState, type State, summarize } from "../knowledge/model";
@@ -10,6 +11,8 @@ import { recommend } from "../knowledge/recommend";
 // evidence shows. Tap a concept to see why it's in that state and what to practise.
 
 export const STATE_LABEL: Record<State, string> = { unseen: "Not met yet", seen: "Seen", learning: "Learning", shaky: "Needs work", understood: "Understood" };
+const DIM_LABEL: Record<DimensionLevel, string> = { none: "Not yet", emerging: "Started", solid: "Solid", slipping: "Slipping" };
+const DIM_MARK: Record<DimensionLevel, string> = { none: "○", emerging: "◐", solid: "●", slipping: "!" };
 const COL = 190, ROW = 58, PAD = 28;
 
 interface Props { onOpen: (slug: string) => void; onHome: () => void; initial?: string | null }
@@ -149,6 +152,17 @@ function ConceptDetail({ state, states, onOpen, onPick, onClose }: { state: Conc
       <h2>{c.name}</h2>
       <p className="concept-means">{c.means}</p>
       <p className="concept-why">{state.why}</p>
+
+      <h3>What you’ve shown</h3>
+      <ul className="dims">
+        {dimensionsOf(state).map((d, i) => (
+          <li key={d.dimension} className={`dim ${d.level}`}>
+            <span className="dim-mark" aria-hidden="true">{DIM_MARK[d.level]}</span>
+            <span className="dim-name">{DIMENSIONS[i].name} <span className="dim-level">{DIM_LABEL[d.level]}</span></span>
+            <span className="dim-why">{d.why}</span>
+          </li>
+        ))}
+      </ul>
 
       <h3>Key facts</h3>
       <ul className="facts">{c.facts.map((f) => <li key={f}>{f}</li>)}</ul>

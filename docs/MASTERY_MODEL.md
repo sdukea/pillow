@@ -33,43 +33,54 @@ Understood concepts come back for review after 1, 2, 4, 8… days.
 
 Each records `correct`, `hinted` and `misconception`.
 
-## Designed: six dimensions (P4)
+## Built: six dimensions (P4, `src/knowledge/dimensions.ts`)
 
 One state hides real differences: a student can recognise a sliding window
-without being able to write one. Each concept gets six dimensions, each
-fed by specific evidence.
+without being able to write one. Each concept has six dimensions, derived
+from the same evidence log. They're pure functions, and nothing is stored.
 
-| Dimension | Question it answers | Evidence that moves it |
+| Dimension | On the card | Question it answers | Evidence that moves it |
+|---|---|---|---|
+| Exposure | Met it | Have you come across it? | Any evidence |
+| Recognition | Spot it | Do you know when it applies? | `recall` (which trick fits this problem) |
+| Explanation | Explain it | Can you say how it behaves and what it costs? | `predict`, `complexity`, `reason` |
+| Implementation | Write it | Can you code it, fast enough? | `implement` (passes, and is as fast as the trick) |
+| Transfer | Use it elsewhere | Can you use it in more than one problem? | Correct, unhinted answers in two different problems |
+| Retention | Keep it | Do you still have it later? | Correct, unhinted answers in sessions at least 8 hours apart; slips when a review is overdue |
+
+### Levels and transitions
+
+| Level | On the card | Meaning |
 |---|---|---|
-| Exposure | Has the student met it? | `exposure` (watched a run, opened the card) |
-| Recognition | Do they know when it applies? | `recall` (which trick fits), `reason` steps that pick the approach, diagnostic cue questions |
-| Explanation | Can they say why it works and what it costs? | `complexity`, `predict`, `reason` steps about the invariant |
-| Implementation | Can they write it? | `implement`: passing, fast enough, unhinted |
-| Transfer | Can they use it on a problem they haven't been taught? | Correct `implement` or `reason` on a problem whose lesson they haven't seen, and Interview Mode |
-| Retention | Do they still have it later? | Correct reviews spaced by the scheduler (P6) |
+| none | Not yet | No correct, unhinted answer yet |
+| emerging | Started | At least one correct, unhinted answer; not yet solid |
+| solid | Solid | The dimension's bar is met: two correct answers from different questions (for transfer, different problems; for retention, sessions at least 8 hours apart), and the latest answer is correct |
+| slipping | Slipping | The latest answer was wrong *and* the dimension was solid before it, or (for retention) a review is overdue |
 
-### Transitions
+- **Back from slipping:** two correct answers in a row.
+- **A miss before solid:** a wrong answer before a dimension was ever
+  solid leaves it at Started, never Slipping.
+- **Hinted answers:** they count toward exposure only.
 
-Each dimension has its own state: none, emerging, solid or slipping. The
-transitions are:
+Each dimension shows a one-sentence reason drawn from the evidence, on the
+concept's reference card under **What you've shown**.
 
-- **none → emerging:** the first correct, unhinted piece of evidence.
-- **emerging → solid:** two correct, unhinted answers from different
-  problems or sessions, with the latest one correct.
-- **solid → slipping:** a wrong answer or a misconception, or (for
-  retention only) a review that's overdue.
-- **slipping → solid:** two correct answers in a row.
+### The overall state is unchanged, on purpose
 
-Hinted answers count toward exposure only. Misconceptions flag the
-dimension the question tested.
+The five-state rule above still decides Understood, the map's groups and
+the roadmap's week. Requiring every dimension to be solid would be
+stricter, but most concepts can't yet be tested on every dimension. For
+example, few concepts have recall questions, and implementation evidence
+comes from only six problems. So the stricter rule would stall the
+roadmap for reasons the student can't act on.
 
-**Understood** (the overall state) will mean that recognition,
-explanation and implementation are solid, and transfer or retention is
-solid. That's the current rule made explicit. The map and reference cards
-will show the six as a row of marks, each with its reason.
+A test guarantees that the two never contradict each other: an
+understood concept always has transfer or retention solid. Tightening
+Understood to need recognition, explanation and implementation is
+revisited once the diagnostic (P5) and recall types (P6) give every
+concept questions on each dimension.
 
 ### Migration
 
-The evidence log already carries `task`, so the dimensions derive from
-existing data, with no migration needed. Tests will check that the
-overall state never becomes *more* generous than today's.
+None was needed. The evidence log already carries `task`, so dimensions
+derive from existing data.

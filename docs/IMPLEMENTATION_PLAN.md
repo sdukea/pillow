@@ -40,8 +40,8 @@ run for real. **Missing** means it isn't built.
 | Trace-generated predictions, growth questions, recall | Built | `src/knowledge/questions.ts`; unit tests |
 | Socratic reasoning, misconceptions, hint ladder | Built for 6 problems | `Lesson.reasoning`, `misconceptions.ts` |
 | Independent coding: tests against the reference, growth check, debugger | Built (Python only) | `src/solve` |
-| Evidence log, and an explainable student model (5 states) | Built (single dimension) | `src/knowledge/model.ts` |
-| Six mastery dimensions | **Missing** | the model has one state per concept |
+| Evidence log, and an explainable student model (5 states) | Built | `src/knowledge/model.ts` |
+| Six mastery dimensions | Built (P4) | `src/knowledge/dimensions.ts`, reference cards |
 | Concept ontology | Built (P2): 55 concepts, 3 node kinds | `concepts.ts` |
 | Knowledge map: list, graph, reference cards | Built | `src/map` |
 | Recommendations (fix, review, frontier) | Built | `recommend.ts` |
@@ -184,6 +184,22 @@ criteria, tests, risks, and its completion evidence when done.
   and retention per concept, each with its evidence transitions; reference
   cards show the dimensions.
 - **Depends on:** P2.
+- **Files:** `src/knowledge/dimensions.ts`, `src/map/KnowledgeMap.tsx`,
+  `src/styles.css`, tests.
+- **Accept:**
+  - derived from evidence only;
+  - hinted answers never count;
+  - slipping only after solid;
+  - two in a row to recover;
+  - never contradicts the overall state;
+  - shown with reasons on every reference card.
+- **Status:** done 2026-11-22. Completion evidence:
+  - **Unit tests:** 10 for dimensions (`src/knowledge/dimensions.test.ts`).
+  - **E2E:** a journey seeding evidence and checking every level on the
+    card, on desktop and phone.
+  - **Checked in the browser.**
+  - **Overall rule unchanged on purpose:** the overall Understood rule was
+    deliberately left as it was (see `MASTERY_MODEL.md`).
 
 ### P5 — Diagnostic and adaptive roadmap
 - **Scope:** an onboarding diagnostic (evidence, not self-report),

@@ -231,6 +231,13 @@ M9 was reasoning and misconceptions (ADR 0012).
 **Still open:** which language students practise in (only Python is
 supported). Accounts and sync are needed before a real university pilot.
 
+## Reference material
+Seven research repositories are cloned outside the repo: visualisers,
+interview handbooks, algorithm references, and FSRS for review scheduling.
+See `docs/REFERENCES.md` for where they are, what each is useful for, and
+the licensing rules (MIT is reusable with notice; CC BY-SA content isn't to
+be copied into lessons).
+
 ## Outstanding issues
 - Locally, `npm run e2e` can take 15+ minutes. The tests themselves finish in about 2 minutes, but Chrome is slow to close between workers. This was seen while the local Chrome had an update waiting for a relaunch. In CI, the same suite takes about 90 seconds.
 - No Anthropic API key, so Explain and AI drafting haven't run live.

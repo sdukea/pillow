@@ -1,49 +1,77 @@
-# Interview mode (designed, P7)
+# Interview mode (built, P7)
 
-Nothing here is built yet. It depends on the mastery dimensions (P4) and
-the diagnostic and adaptive roadmap (P5).
+At `/interview`, linked from Home. Code: `src/interview/`.
 
 ## What it simulates
 
-A 45-minute technical interview on a problem the student hasn't been
-taught: no lesson seen, no evidence on that problem. The problem is chosen
-from the curriculum, using concepts the student has at `emerging` or
-better.
+A technical interview on a problem the student hasn't met.
+
+- **Unseen:** no evidence on the problem, and no earlier interview on
+  it.
+- **Choosing:** of the unseen problems, it picks the latest one the
+  student's roadmap week has reached, or otherwise the earliest left
+  (`nextInterview`).
+- **The pool:** five problems with no lesson, each with a reference
+  solution and real tests: Contains Duplicate, Climbing Stairs, Unique
+  Paths, Course Schedule and Redundant Connection. The slugs come from
+  the curriculum's source lists (tested).
+
+No hints, and no feedback until the end. Leaving mid-interview records
+nothing.
 
 ## Stages
 
-| # | Stage | The student | Evidence recorded |
-|---|---|---|---|
-| 1 | Clarify (3 min) | Picks clarifying questions from a list: some matter, some don't. Answers are revealed | Recognition (choosing the questions that change the approach) |
-| 2 | Approach (5 min) | Chooses an approach and states its complexity *before* coding | Recognition, explanation |
-| 3 | Implement (20 min) | Writes Python in the editor; runs their own tests | Implementation (same checker as Write it yourself, hidden cases) |
-| 4 | Test | Picks edge cases to run; sees the results | Explanation |
-| 5 | Complexity (2 min) | States time and memory | Checked against measured growth |
-| 6 | Follow-up (5 min) | One variant ("what if the input is sorted?", "stream it"); chooses what changes | Transfer |
-| 7 | Defend (optional) | Free-text explanation, rubric-scored. AI assistance only with a configured server key, never in the browser | Explanation |
+| # | Stage | Suggested | The student | Graded |
+|---|---|---|---|---|
+| 1 | Clarify | 3 min | Picks questions to ask; the interviewer answers them | Pass: every question that changes the solution, and at most one that doesn't |
+| 2 | Approach | 5 min | Picks an approach and states its running time | Pass: an optimal approach with the right cost. Partly: working but slower, or a wrong cost |
+| 3 | Write it | 20 min | Writes Python; runs the example freely; submits to hidden tests | Pass: every test passes, and measured growth is as good as optimal. Partly: correct but slower |
+| 4 | Its cost | 2 min | States how *their own code* grows | Checked against their code's measured growth |
+| 5 | Follow-up | 5 min | Answers one variant question | Pass or miss, with the reason |
 
-## Report
+The timer guides rather than punishes: running over turns the clock
+amber, and each stage's time is reported.
 
-Each stage gets pass, partial or miss, with the reason and the evidence.
-The report also gives:
+## Honest measurement
 
-- time per stage;
-- misconceptions shown;
-- the concepts to review next.
+Pillow measures growth by counting lines run, so work inside one line
+(`set(nums)`, `sorted()`) counts as one step.
 
-All of it is stored as ordinary evidence (`task: "interview"`), so the
-map and roadmap update. Mocks start in week 16 and continue afterwards.
+- **The lower bound:** each problem declares the least work any correct
+  solution needs.
+- **Below it:** a measurement below the bound means the work was hidden.
+- **Then:** speed and the cost answer are judged against the approach the
+  student chose, and the report says so in plain words.
+- **Kth Largest** was left out of the pool because heap and sort
+  solutions hide nearly all their work this way.
 
-## Readiness
+## Report and evidence
 
-The share of the last five mocks passed. A mock is **passed** when it gets
-a pass on approach, implement and complexity, plus at least a partial
-elsewhere. Shown on Home from week 12.
+Each stage shows pass, partly or missed, with its reason and time. The
+report also reveals:
 
-## Rules
+- the questions that mattered, with their answers;
+- the optimal approach;
+- a reference solution;
+- the concepts involved, linked to their cards.
 
-- **Unseen problems only.** A problem whose lesson the student has opened
-  can't be used.
-- **No hints.** Opening anything else ends the mock as practice.
-- **The timer guides, it doesn't punish:** running over is reported, not
-  failed.
+Each stage is recorded as `task: "interview"` evidence with its `stage`:
+
+- **Clarify and approach** feed *Spot it*.
+- **Write it** feeds *Write it*.
+- **Cost and follow-up** feed *Explain it*.
+- **Transfer:** the problem is unseen, so the evidence also counts as
+  transfer.
+
+## Passing and readiness
+
+- **Passed:** approach, code and cost all pass, and clarify and the
+  follow-up aren't missed.
+- **Readiness:** the number passed among the last five interviews, shown
+  on the interview page.
+
+## Not yet
+
+- **Free-text explanations** (defend your approach) need a model to judge
+  them, so they wait for a server key.
+- **More problems** come as lessons and interview sets are added.

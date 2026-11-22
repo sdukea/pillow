@@ -5,7 +5,8 @@
 //   exposure        met it at all                       any evidence
 //   recognition     knows when it applies               recall, placement "which fits?" questions
 //   explanation     can say how it behaves and costs    predict, complexity, reason, reconstruct, placement "how?" questions
-//   implementation  can write it                        implement (passing, as fast as the trick)
+//   implementation  can write it                        implement (passing, as fast as the trick); interview code
+//   (interview stages feed recognition, implementation or explanation, and count as transfer)
 //   transfer        uses it beyond one problem          right, unhinted, in two different problems
 //   retention       still has it later                  right, unhinted, in sessions 8+ hours apart
 //
@@ -43,7 +44,12 @@ const TASKS: Partial<Record<Dimension, Task[]>> = {
 };
 
 /** Whether a piece of evidence tests a dimension: by its task, or a placement question's facet. */
-const tests = (id: Dimension, e: Evidence) => (TASKS[id] ?? []).includes(e.task) || (e.task === "diagnostic" && e.facet === id);
+const INTERVIEW_STAGE: Record<NonNullable<Evidence["stage"]>, Dimension> = {
+  clarify: "recognition", approach: "recognition", implement: "implementation", complexity: "explanation", "follow-up": "explanation",
+};
+const tests = (id: Dimension, e: Evidence) => (TASKS[id] ?? []).includes(e.task)
+  || (e.task === "diagnostic" && e.facet === id)
+  || (e.task === "interview" && !!e.stage && INTERVIEW_STAGE[e.stage] === id);
 
 const SESSION_GAP = 8 * 3_600_000;
 const clean = (e: Evidence) => e.correct === true && !e.hinted;

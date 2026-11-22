@@ -6,7 +6,7 @@ import { record } from "../knowledge/evidence";
 import { sourceOf } from "../lib/data";
 import { pythonReady, traceLive } from "../lib/live";
 import { CodePane } from "../workspace/CodePane";
-import { asGoodAs, buildCases, type CaseResult, checkSolution, type Growth, measureGrowth, type Runner, starter } from "./check";
+import { asGoodAs, buildCases, type CaseResult, checkableOf, checkSolution, type Growth, measureGrowth, type Runner, starter } from "./check";
 
 // Write it yourself: the strongest evidence that the idea is yours. Your code runs against the
 // example, the edge cases and random inputs (compared with the reference), then on growing inputs
@@ -22,7 +22,8 @@ type Status =
   | { kind: "error"; message: string };
 
 export function Solve({ problem, onSolved }: { problem: Problem; onSolved: () => void }) {
-  const [code, setCode] = useState(() => { try { return localStorage.getItem(draftKey(problem.slug)) ?? starter(problem); } catch { return starter(problem); } });
+  const checkable = useMemo(() => checkableOf(problem), [problem]);
+  const [code, setCode] = useState(() => { try { return localStorage.getItem(draftKey(problem.slug)) ?? starter(checkable); } catch { return starter(checkable); } });
   const [status, setStatus] = useState<Status>({ kind: "idle" });
   const [revealed, setRevealed] = useState(false);
   const [debugging, setDebugging] = useState<CaseResult | null>(null);
@@ -36,10 +37,10 @@ export function Solve({ problem, onSolved }: { problem: Problem; onSolved: () =>
     setDebugging(null);
     setStatus({ kind: "running", firstLoad: !pythonReady() });
     try {
-      const cases = await buildCases(problem, run);
-      const results = await checkSolution(problem, code, reference, run, cases);
+      const cases = await buildCases(checkable, run);
+      const results = await checkSolution(checkable, code, reference, run, cases);
       const allPass = results.every((r) => r.pass);
-      const growth = allPass ? await measureGrowth(problem, code, run) : null;
+      const growth = allPass ? await measureGrowth(checkable, code, run) : null;
       setStatus({ kind: "done", results, growth });
       if (allPass && !recorded.current) {
         recorded.current = true;
@@ -127,7 +128,7 @@ function show(v: unknown): string {
 }
 
 /** A small code editor: Tab indents, Enter keeps the indentation (and adds a level after a colon). */
-function Editor({ value, onChange, onRun }: { value: string; onChange: (v: string) => void; onRun: () => void }) {
+export function Editor({ value, onChange, onRun }: { value: string; onChange: (v: string) => void; onRun: () => void }) {
   const ref = useRef<HTMLTextAreaElement>(null);
   const lines = value.split("\n").length;
   const edit = (el: HTMLTextAreaElement, text: string, start: number, end: number, caret: number) => {

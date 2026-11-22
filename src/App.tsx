@@ -12,6 +12,7 @@ import { Workspace } from "./workspace/Workspace";
 
 // The roadmap carries the 205-problem curriculum: load it only when it's opened.
 const Roadmap = lazy(() => import("./roadmap/Roadmap").then((m) => ({ default: m.Roadmap })));
+const Interview = lazy(() => import("./interview/Interview").then((m) => ({ default: m.Interview })));
 const Review = lazy(() => import("./review/Review").then((m) => ({ default: m.Review })));
 // Development only: compiled out of production builds.
 const Lab = import.meta.env.DEV ? lazy(() => import("./lab/Lab").then((m) => ({ default: m.Lab }))) : null;
@@ -27,6 +28,7 @@ const Placement = lazy(() => import("./diagnostic/Placement").then((m) => ({ def
 //   /roadmap               the 16-week plan, and where you are in it
 //   /placement             a few questions to find your starting week
 //   /review                today's reviews, scheduled by FSRS, and past reviews
+//   /interview             a mock interview on an unseen problem, and past reports
 export function App() {
   const [route, go] = useRoute();
   const m = route.path.match(/^\/p\/([\w-]+)(\/lesson|\/play)?\/?$/);
@@ -65,6 +67,9 @@ export function App() {
   if (Lab && route.path === "/lab") {
     return <Suspense fallback={<main className="lab" aria-busy="true" />}><Lab id={route.search.get("v")} /></Suspense>;
   }
+  if (route.path === "/interview") {
+    return <Suspense fallback={<main className="interview" aria-busy="true" />}><Interview onHome={home} onConcept={(id) => go(`/map?c=${id}`)} /></Suspense>;
+  }
   if (route.path === "/review") {
     return (
       <Suspense fallback={<main className="review" aria-busy="true" />}>
@@ -80,7 +85,7 @@ export function App() {
     );
   }
   if (route.path !== "/") return <NotFound onHome={home} message="There’s nothing at this address." />;
-  return <Home onOpen={(slug) => go(`/p/${slug}`)} onExplain={(q) => go(`/explain?q=${encodeURIComponent(q)}`)} onMap={() => go("/map")} onRoadmap={() => go("/roadmap")} onPlacement={() => go("/placement")} onReview={() => go("/review")} />;
+  return <Home onOpen={(slug) => go(`/p/${slug}`)} onExplain={(q) => go(`/explain?q=${encodeURIComponent(q)}`)} onMap={() => go("/map")} onRoadmap={() => go("/roadmap")} onPlacement={() => go("/placement")} onReview={() => go("/review")} onInterview={() => go("/interview")} />;
 }
 
 /** Renders a problem's screens once its traces and growth have loaded (they're fetched per problem). */

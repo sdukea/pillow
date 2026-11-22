@@ -16,9 +16,10 @@ interface Props {
   onRoadmap: () => void;
   onPlacement: () => void;
   onReview: () => void;
+  onInterview: () => void;
 }
 
-export function Home({ onOpen, onExplain, onMap, onRoadmap, onPlacement, onReview }: Props) {
+export function Home({ onOpen, onExplain, onMap, onRoadmap, onPlacement, onReview, onInterview }: Props) {
   const [query, setQuery] = useState("");
   const [active, setActive] = useState(0);
   const input = useRef<HTMLInputElement>(null);
@@ -126,6 +127,10 @@ export function Home({ onOpen, onExplain, onMap, onRoadmap, onPlacement, onRevie
           <button type="button" className="map-link" onClick={onRoadmap}>
             <span>Your 16-week roadmap</span>
             <span className="muted">From arrays to dynamic programming</span>
+          </button>
+          <button type="button" className="map-link" onClick={onInterview}>
+            <span>Mock interview</span>
+            <span className="muted">An unseen problem, start to finish</span>
           </button>
           {started && (
             <button type="button" className="map-link" onClick={onMap}>

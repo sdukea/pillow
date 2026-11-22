@@ -15,7 +15,7 @@ export function generateInput(fields: InputField[], r: () => number): Arg[] {
   return fields.map((f): Arg => {
     const n = int(f.min ?? 0, f.max ?? 1);
     switch (f.type) {
-      case "int": return { kind: "value", value: int(-20, 40) };
+      case "int": return { kind: "value", value: int(f.min ?? -20, f.max ?? 40) };
       case "int-list": {
         if (f.rule === "sorted-unique") {
           const s = new Set<number>();

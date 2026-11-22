@@ -58,7 +58,7 @@ from the same evidence log. They're pure functions, and nothing is stored.
 | Recognition | Spot it | Do you know when it applies? | `recall` (which trick fits this problem); placement recognition questions |
 | Explanation | Explain it | Can you say how it behaves and what it costs? | `predict`, `complexity`, `reason`; placement explanation questions |
 | Implementation | Write it | Can you code it, fast enough? | `implement` (passes, and is as fast as the trick) |
-| Transfer | Use it elsewhere | Can you use it in more than one problem? | Correct, unhinted answers in two different problems (placement answers don't count) |
+| Transfer | Use it elsewhere | Can you use it in more than one problem? | Correct, unhinted answers in two different problems (placement answers don't count); mock interviews, on unseen problems |
 | Retention | Keep it | Do you still have it later? | Correct, unhinted answers in sessions at least 8 hours apart; slips when a review is overdue |
 
 ### Levels and transitions

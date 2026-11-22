@@ -42,6 +42,13 @@ export async function loadProblemData(problem: Problem): Promise<void> {
   }));
 }
 
+/** A reference solution's source, by fixture name (interview problems, which have no approaches). */
+export function fixtureSourceOf(name: string): string {
+  const src = SOURCES[`../../engine/tracer/fixtures/${name}.py`];
+  if (src === undefined) throw new Error(`Missing solution file for ${name}`);
+  return src.trimEnd();
+}
+
 export function sourceOf(approach: Approach): string {
   const remote = remoteSources.get(approach.solution);
   if (remote !== undefined) return remote.trimEnd();

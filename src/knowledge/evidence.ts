@@ -13,7 +13,8 @@ export type Task =
   | "reason"      // answered a Socratic question on the way to the trick
   | "implement"   // wrote a solution that passes every case (correct = as fast as the trick)
   | "diagnostic"  // answered a placement-check question right (only right answers are recorded)
-  | "reconstruct"; // picked the next line of a solution in a review
+  | "reconstruct" // picked the next line of a solution in a review
+  | "interview";  // a stage of a mock interview, on a problem never seen before
 
 export interface Evidence {
   at: number;
@@ -32,6 +33,8 @@ export interface Evidence {
   week?: number;
   /** Answered in a scheduled review session. */
   review?: boolean;
+  /** For interview evidence: which stage it came from. */
+  stage?: "clarify" | "approach" | "implement" | "complexity" | "follow-up";
   /** What was asked and answered, in a few words, for the map's explanation. */
   detail: string;
 }

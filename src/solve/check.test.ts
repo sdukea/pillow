@@ -2,7 +2,14 @@ import { describe, expect, it } from "vitest";
 import { fixtureSource, traceCPython } from "../../engine/testing/trace";
 import type { TraceRequest } from "../../engine/tracer/types";
 import { PROBLEMS } from "../content/problems";
-import { asGoodAs, buildCases, checkSolution, measureGrowth, starter } from "./check";
+import { asGoodAs, buildCases as buildCasesFor, checkableOf, checkSolution as checkSolutionFor, measureGrowth as measureGrowthFor, starter as starterFor } from "./check";
+import type { Problem } from "../content/problems";
+
+// The checker takes a Checkable; these tests check lessons' problems through checkableOf.
+const buildCases = (p: Problem, ...rest: [Parameters<typeof buildCasesFor>[1]]) => buildCasesFor(checkableOf(p), ...rest);
+const checkSolution = (p: Problem, ...rest: Parameters<typeof checkSolutionFor> extends [unknown, ...infer R] ? R : never) => checkSolutionFor(checkableOf(p), ...rest);
+const measureGrowth = (p: Problem, ...rest: Parameters<typeof measureGrowthFor> extends [unknown, ...infer R] ? R : never) => measureGrowthFor(checkableOf(p), ...rest);
+const starter = (p: Problem) => starterFor(checkableOf(p));
 
 const run = async (r: TraceRequest) => traceCPython(r);
 const problem = (slug: string) => PROBLEMS.find((p) => p.slug === slug)!;

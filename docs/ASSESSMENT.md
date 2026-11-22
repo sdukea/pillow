@@ -25,7 +25,8 @@ assessment moved to `docs/history/LEETSEE_ASSESSMENT.md`.)
 | Reasoning step | Hand-written per lesson | Choice; misconception-tagged | Built (6 lessons) |
 | Write it yourself | Student code vs the reference, on the example, edge cases and 8 seeded random inputs | All pass, then growth as fast as the trick | Built (Python) |
 | Placement check | Hand-written recognition and explanation questions, two per week | Exact choice; adaptive stop | Built (P5) |
-| Explain it (free text) | Interview Mode | Rubric; AI-assisted, human-auditable | Designed (P7) |
+| Mock interview | Clarify, approach and cost, hidden tests with a growth check, own-code cost, follow-up | Per stage (`src/interview/grade.ts`) | Built (P7) |
+| Explain it (free text) | Interview Mode | Rubric; AI-assisted, human-auditable | Waits for a model |
 | Review: when to use it | A concept's "use it when", with concepts of the same kind as distractors | Exact | Built (P6) |
 | Review: the trick | A problem's trick among other problems' tricks | Exact | Built (P6) |
 | Review: rebuild the solution | The next line of the real optimal solution; distractors only from later lines | Exact | Built (P6) |

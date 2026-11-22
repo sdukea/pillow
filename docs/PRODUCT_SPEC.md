@@ -33,7 +33,7 @@ interview by **April 2027**.
 | B. Knowledge graph | A typed concept graph; each problem tagged; the student's state per concept | **Partial**: 55 concepts in 3 kinds, the map, reference cards and six mastery dimensions are built |
 | C. Lesson engine | First-principles lessons: overview, brute force, reasoning, trick, fast way, write it, note | **Built for 6 problems**: the full lesson standard, including why it's correct, follow-ups and related problems, and views for every syllabus structure (grids, heaps, graphs, union-find). The 199 others are planned |
 | D. Retention | Spaced review of concepts, patterns and code | **Built**: FSRS-6 scheduling from evidence, a review session with four question kinds, a refresher on a miss, and history |
-| E. Interview readiness | Timed, unseen problems; explain, code, analyse, defend; a report | **Designed** (`INTERVIEW_MODE.md`), P7 |
+| E. Interview readiness | Timed, unseen problems; explain, code, analyse, defend; a report | **Built**: five-stage mock interviews on unseen problems, hidden tests, honest growth checks, a report that becomes evidence, readiness. Free-text defence waits for a model |
 | F. Continuity | Accounts, devices, email reminders, quiet hours, time zones | **Designed** (`NOTIFICATIONS.md`, `SECURITY.md`), P8: needs provider approval |
 
 ## Core journeys
@@ -45,8 +45,8 @@ interview by **April 2027**.
    already knows the basics. Built.
 4. **Weekly:** finish the week's core problems; the roadmap moves when the
    week's concepts are understood. Built (evidence-driven week).
-5. **Interview prep:** Week 16 and beyond: timed mock interviews and a
-   readiness report. P7.
+5. **Interview prep:** mock interviews on unseen problems, a report per
+   interview, and readiness over the last five. Built.
 6. **Coming back after a break:** reviews due first, then the frontier.
    Partly built (review recommendations); email nudges are P8.
 

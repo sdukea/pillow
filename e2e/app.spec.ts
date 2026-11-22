@@ -566,3 +566,68 @@ test("the full lesson says why the fast way is correct, and what interviewers as
   await expect(chapters).toBeVisible();
   await expect(page.getByText("seen holds every number at indices 0 to i − 1")).toBeVisible();
 });
+
+test("a mock interview on an unseen problem: five stages, hidden tests, then a report that becomes evidence @phone", async ({ page }) => {
+  test.setTimeout(120_000);
+  const errors = watchErrors(page);
+  await page.goto("./");
+  await page.getByRole("button", { name: /Mock interview/ }).click();
+  await page.getByRole("button", { name: "Start the Interview" }).click();
+  await expect(page.getByText("Given a list of integers")).toBeVisible();
+  // Clarify: the three that matter.
+  for (const q of ["Is the list sorted?", "How long can the list be?", "Can the list be empty?"]) await page.getByText(q).click();
+  await page.getByRole("button", { name: /^Ask/ }).click();
+  await expect(page.getByText("Up to 100,000 numbers")).toBeVisible();
+  await page.getByRole("button", { name: "Next" }).click();
+  // Approach and its cost.
+  await page.getByText("Remember the values seen so far in a set").click();
+  await page.getByRole("radio", { name: "O(n)", exact: true }).click();
+  await page.getByRole("button", { name: "Next" }).click();
+  // Write it: run the example, then submit to the hidden tests.
+  await page.getByLabel("Your solution, in Python").fill("def contains_duplicate(nums):\n    seen = set()\n    for x in nums:\n        if x in seen:\n            return True\n        seen.add(x)\n    return False\n");
+  await page.getByRole("button", { name: "Run the Example" }).click();
+  await expect(page.getByText("The example gives the right answer.")).toBeVisible({ timeout: 60_000 });
+  await page.getByRole("button", { name: "Submit" }).click();
+  await expect(page.getByText("How does the running time of your code grow?")).toBeVisible({ timeout: 60_000 });
+  await page.getByRole("radio", { name: "O(n)", exact: true }).click();
+  await page.getByRole("button", { name: "Next" }).click();
+  await page.getByText("Sort the list in place, then compare neighbours").click();
+  await page.getByRole("button", { name: "Finish" }).click();
+  // The report.
+  await expect(page.getByRole("heading", { name: "Passed" })).toBeVisible();
+  await expect(page.locator(".iv-row.pass")).toHaveCount(5);
+  await expect(page.getByText(/All \d+ tests pass, and it grows like O\(n\)/)).toBeVisible();
+  const stages = await page.evaluate(() => JSON.parse(localStorage.getItem("pillow.evidence")!).filter((e: { task: string }) => e.task === "interview").map((e: { stage: string; correct: boolean }) => `${e.stage}:${e.correct}`));
+  expect(stages).toEqual(["clarify:true", "approach:true", "implement:true", "complexity:true", "follow-up:true"]);
+  // The next interview is a different, unseen problem.
+  await page.getByRole("button", { name: "Done" }).click();
+  await expect(page.getByText("Readiness: 1 of your last 1 passed")).toBeVisible();
+  await page.getByRole("button", { name: "Start the Interview" }).click();
+  await expect(page.getByText("Given a list of integers")).toHaveCount(0);
+  expect(errors).toEqual([]);
+});
+
+test("a mock interview with wrong turns says exactly what was missed, and doesn't pass", async ({ page }) => {
+  test.setTimeout(120_000);
+  await page.goto("interview");
+  await page.getByRole("button", { name: "Start the Interview" }).click();
+  await page.getByText("Should I print the answer or return it?").click();
+  await page.getByRole("button", { name: /^Ask/ }).click();
+  await page.getByRole("button", { name: "Next" }).click();
+  await page.getByText("Compare every pair of numbers").click();
+  await page.getByRole("radio", { name: "O(n)", exact: true }).click();
+  await page.getByRole("button", { name: "Next" }).click();
+  await page.getByRole("button", { name: "Submit" }).click(); // only the starter: fails
+  await expect(page.getByText("How does the running time of your code grow?")).toBeVisible({ timeout: 60_000 });
+  await page.getByRole("radio", { name: "O(n²)", exact: true }).click();
+  await page.getByRole("button", { name: "Next" }).click();
+  await page.getByText("Keep using a set").click();
+  await page.getByRole("button", { name: "Finish" }).click();
+  await expect(page.getByRole("heading", { name: "Not yet" })).toBeVisible();
+  // Missed: clarify, the code, the follow-up. Partly: an approach that works but isn't optimal, and a
+  // cost that matches it though there was no working code to measure.
+  await expect(page.locator(".iv-row.miss")).toHaveCount(3);
+  await expect(page.locator(".iv-row.partial")).toHaveCount(2);
+  await expect(page.getByText("That matches the approach you chose, but there was no working code to measure.")).toBeVisible();
+  await expect(page.getByText(/None of your questions would change the solution/)).toBeVisible();
+});

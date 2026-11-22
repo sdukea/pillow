@@ -49,7 +49,7 @@ run for real. **Missing** means it isn't built.
 | FSRS scheduling, multiple recall types, remediation | Built (P6) | `/review` |
 | Curriculum (16 weeks, 205 problems, dependency graph), roadmap | Built (P2) | `src/curriculum`, `src/roadmap` |
 | Placement check (diagnostic onboarding) | Built (P5) | `src/diagnostic` |
-| Interview mode | **Missing** | |
+| Interview mode | Built (P7) | `src/interview`, `/interview` |
 | Notifications and email | **Missing** (needs a backend) | |
 | Accounts, a database, cross-device persistence | **Missing**: everything is in `localStorage` | |
 | AI drafting pipeline and sandbox | Built, **unverified live** (no API key) | `pipeline/`, `engine/sandbox` |
@@ -285,6 +285,18 @@ criteria, tests, risks, and its completion evidence when done.
     complexity, handle a follow-up, and defend it;
   - a report built from evidence.
 - **Depends on:** P4 and P5.
+- **Status:** done 2026-11-23 (free-text defence deferred: it needs a
+  model). Completion evidence:
+  - **Problems:** five interview problems with reference solutions
+    (slugs verified against the source lists).
+  - **The checker:** generalised to `Checkable`, which lessons and
+    interviews share.
+  - **Unit tests:** 12 (reference solutions pass and measure their target
+    growth; wrong, slow and one-line `set()` solutions graded correctly;
+    every grading branch; choosing; readiness; dimensions).
+  - **E2E:** two journeys (a passing run on desktop and phone; a run with
+    wrong turns).
+  - **Checked in the browser:** a full run and the report at phone width.
 
 ### P8 — Accounts, persistence and notifications
 - **Scope:** authentication, a per-user database, migrating the local

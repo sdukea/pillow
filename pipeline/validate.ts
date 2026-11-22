@@ -52,6 +52,8 @@ export async function validateDraft(brief: Brief, raw: unknown, sandbox: Sandbox
   const first = draft.approaches[0], last = draft.approaches.at(-1);
   if (first && !first.whyNotEnough) shape.push(`${first.name}: the first approach needs whyNotEnough`);
   if (last && last !== first && !last.insight) shape.push(`${last.name}: the better approach needs an insight`);
+  if (last && last !== first && !last.correctness) shape.push(`${last.name}: the better approach needs correctness (invariant, whyCorrect, ends)`);
+  if (!draft.followUps?.length) shape.push("give 1 to 3 follow-up questions");
   const sizes = draft.growth.sizes;
   if (sizes.length < 5) shape.push("growth needs at least 5 sizes");
   if (sizes.some((n, i) => i > 0 && n < 1.8 * sizes[i - 1])) shape.push("growth sizes should roughly double");

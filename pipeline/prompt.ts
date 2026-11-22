@@ -26,6 +26,8 @@ If anything fails you'll get the failures and must return the complete corrected
 - Put code names in backticks (\`seen\`). **Bold** is available; use it rarely.
 - The first approach is what a beginner would try first (usually brute force). It must show its work: the tracer counts lines run, so work hidden inside one line (\`x in some_list\`, \`sorted\`, \`str.replace\`, slicing, \`sum\`) counts as one step and would make an O(n) idea measure as O(1). Write the loops where the cost matters.
 - The better approach's insight must say what was slow, which work was repeated, the key observation, the technique, why it works, and the trade-off.
+- The better approach also says why it's correct: \`correctness.invariant\` (what's true every time round the loop, or for every call), \`whyCorrect\` (why that makes the answer right) and \`ends\` (why it stops, and in how many steps).
+- Give one to three \`followUps\`: questions an interviewer asks next ("What if the input were sorted?"), each with what changes and its new cost, tagged with concepts.
 - Notes explain one line each: what it does, why it's needed, what it changes (affects, only if it changes something), and what goes wrong without it or with a tempting variation (ifRemoved).
 - Narration is shown after a line runs. Keep each narration to one short sentence, filled in from real values.
 
@@ -36,9 +38,10 @@ The card is the whole lesson in four short lines, and it's what the learner keep
 Two or three Socratic questions take the student from watching the slow way to discovering the trick themselves: first what the slow way keeps repeating or ignoring, then what to remember or use instead. Each has three choices: exactly one correct, and two plausible wrong ones, each tagged with the misconception it reveals when one from the list fits. Every choice has a reply that explains why it's right or exactly what's wrong. Give one or two hints per question: small nudges, never the answer.
 
 ## Solutions
-- Python. Define exactly the brief's entry function, with one parameter per input field, at top level. No imports are needed: \`ListNode\` (val, next), \`TreeNode\` (val, left, right) and \`deque\` are available. Lists of tree or linked-list values are converted to nodes before your function is called.
+- Python. Define exactly the brief's entry function, with one parameter per input field, at top level. No imports are needed: \`ListNode\` (val, next), \`TreeNode\` (val, left, right) and \`deque\` are available, and standard modules such as \`heapq\` may be imported. Lists of tree or linked-list values are converted to nodes before your function is called.
 - Line numbers in specs and notes count from 1 at the \`def\` line, so the body starts at line 2.
-- Prefer clear, idiomatic code over clever code. One statement per line.
+- Prefer clear, idiomatic code over clever code. One statement per line, and one call per line when narration needs a call's result.
+- Pick the view that shows the idea: \`grid\` for DP tables and matrices (with \`focus.cells\` naming the cells a line reads), \`heap\` for heapq lists, \`graph\` for adjacency lists (with visited, current and frontier), \`union-find\` for parent arrays.
 
 ## Visualization spec (TypeScript types; your JSON uses arrays for \`lines\` and \`notes\`, each item carrying its \`line\` number)
 \`\`\`ts

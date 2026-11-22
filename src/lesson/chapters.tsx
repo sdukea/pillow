@@ -113,6 +113,14 @@ export function ApproachAfter({ problem, approach, onNext, nextLabel }: { proble
           </p>
         )}
       </section>
+      {al.correctness && (
+        <section className="callout correct">
+          <h3>Why it’s correct</h3>
+          <p><strong>What stays true: </strong><Rich text={al.correctness.invariant} /></p>
+          <p><strong>So the answer is right: </strong><Rich text={al.correctness.whyCorrect} /></p>
+          <p><strong>And it finishes: </strong><Rich text={al.correctness.ends} /></p>
+        </section>
+      )}
       {al.whyNotEnough && (
         <section className="callout">
           <h3>Why we can’t stop here</h3>
@@ -192,6 +200,17 @@ export function Compare({ problem, onBack }: { problem: Problem; onBack: () => v
         <p><strong>Reach for it when: </strong><Rich text={lesson.compare.pattern.recognize} /></p>
         <p className="muted-p">Also used in {lesson.compare.pattern.alsoUsedIn.join(", ")}.</p>
       </section>
+      {lesson.followUps?.length ? (
+        <section>
+          <h3>Interviewers ask next</h3>
+          {lesson.followUps.map((f) => (
+            <details key={f.ask} className="followup">
+              <summary>{f.ask}</summary>
+              <p><Rich text={f.answer} /></p>
+            </details>
+          ))}
+        </section>
+      ) : null}
       <button type="button" className="next-chapter secondary" onClick={onBack}>← Back to the playground</button>
     </article>
   );

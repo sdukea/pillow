@@ -154,6 +154,11 @@ export const twoSum: Lesson = {
         7: { what: "Remembers `x` and its index, for numbers that come later.", why: "Storing **after** the check means `x` can’t pair with itself, which matters for something like `[3, 2, 4]` with target 6.", affects: "`seen`", ifRemoved: "Without it the map stays empty and nothing is ever found. Storing before the check would let a number pair with itself." },
         8: { what: "Returns an empty list if no pair was found.", why: "Same as brute force: LeetCode guarantees an answer, so this only runs on inputs without one.", ifRemoved: "Python would return `None` for inputs with no answer." },
       },
+      correctness: {
+        invariant: "Before index i is checked, seen holds every number at indices 0 to i − 1, mapped to its index.",
+        whyCorrect: "If numbers at j < i add up to target, then when the loop reaches i, nums[j] is already in seen, so the lookup finds it. A number can’t pair with itself: it’s added only after its own lookup.",
+        ends: "Each index is visited once, so it stops within n steps.",
+      },
       complexity: {
         time: "n",
         space: "n",
@@ -192,6 +197,10 @@ export const twoSum: Lesson = {
     describe: "n numbers where the only pair that works is the last two",
   },
 
+  followUps: [
+    { ask: "What if the array were sorted?", answer: "Use two pointers from both ends: too small a sum moves the left one right, too big moves the right one left. O(n) time and O(1) memory.", concepts: ["two-pointers", "sorted-order"] },
+    { ask: "What if you had to return every pair, not just one?", answer: "Map each value to a list of its indices, and report a pair for every earlier index of the complement. The output alone can be O(n²) pairs.", concepts: ["hash-map"] },
+  ],
   edgeCases: [
     [{ kind: "value", value: [1, 2, 4] }, { kind: "value", value: 99 }], // no pair: reaches the final return
     [{ kind: "value", value: [3, 3] }, { kind: "value", value: 6 }],     // equal values at different indices

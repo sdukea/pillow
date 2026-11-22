@@ -38,6 +38,16 @@ const View = z.discriminatedUnion("kind", [
     showReturns: z.boolean().optional().describe("Show each call's return value on its node. Default true; false for non-recursive code."),
   }),
   z.object({ kind: z.literal("call-stack"), id: text, show: z.array(text), label: text.optional() }),
+  z.object({
+    kind: z.literal("grid"), id: text, of: text.describe("Expression for a list of lists: a DP table or a matrix, e.g. \"dp\"."), label: text.optional(),
+    pointers: z.array(z.object({ row: text, col: text, label: text.optional() })).optional().describe("Cells to mark, e.g. the one being filled: [{ row: \"r\", col: \"c\" }]."),
+  }),
+  z.object({ kind: z.literal("heap"), id: text, of: text.describe("A list kept as a heap with heapq."), label: text.optional() }),
+  z.object({
+    kind: z.literal("graph"), id: text, of: text.describe("An adjacency dict or list: graph[u] lists u's neighbours or (neighbour, weight) pairs."), label: text.optional(),
+    directed: z.boolean().optional(), visited: text.optional(), current: text.optional(), frontier: text.optional(),
+  }),
+  z.object({ kind: z.literal("union-find"), id: text, of: text.describe("Union-find's parent list or dict."), label: text.optional(), start: z.number().int().optional() }),
 ]);
 
 const Approach = z.object({
@@ -52,7 +62,7 @@ const Approach = z.object({
       line: z.number().int(),
       tag: z.enum(TAGS).optional(),
       narrate: z.array(z.object({ when: text.optional(), text })).describe("First entry whose `when` holds is shown. End with one that has no `when`."),
-      focus: z.object({ view: text, key: text.optional(), index: text.optional() }).optional(),
+      focus: z.object({ view: text, key: text.optional(), index: text.optional(), cells: z.array(z.tuple([text, text])).optional().describe("Grid cells this line reads, as [row, col] expressions.") }).optional(),
     })),
   }),
   headline: text,
@@ -67,6 +77,11 @@ const Approach = z.object({
     counted: text, timeWhy: text, spaceWhy: text,
   }),
   whyNotEnough: text.optional().describe("Required for the first approach; omit for the last."),
+  correctness: z.object({
+    invariant: text.describe("What's true every time round the loop, or for every call."),
+    whyCorrect: text.describe("Why that makes the returned answer right."),
+    ends: text.describe("Why it finishes, and in how many steps."),
+  }).optional().describe("Required for the last (optimal) approach."),
   check: Check.optional(),
 });
 
@@ -114,6 +129,11 @@ export const DraftSchema = z.object({
     generator: text.describe("Python source defining make_input(n) -> list with one value per input field: a worst case of size n."),
   }),
   edgeCases: z.array(text).describe("Each a JSON array, one value per input field."),
+  followUps: z.array(z.object({
+    ask: text.describe("A follow-up an interviewer might ask, e.g. \"What if the input were sorted?\""),
+    answer: text.describe("What changes in the approach, and its new cost."),
+    concepts: z.array(z.enum(CONCEPTS.map((c) => c.id) as [ConceptId, ...ConceptId[]])),
+  })).min(1).max(3).optional().describe("One to three follow-up questions."),
 });
 
 const Field = z.object({

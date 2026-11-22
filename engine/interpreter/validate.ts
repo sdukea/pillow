@@ -32,6 +32,8 @@ export function validateSpec(
       if (v.range) exprs.push([`view ${v.id} range`, v.range.from], [`view ${v.id} range`, v.range.to]);
     }
     if (v.kind === "vars" || v.kind === "call-stack") for (const e of v.show) exprs.push([`view ${v.id}`, e]);
+    if (v.kind === "grid") for (const p of v.pointers ?? []) exprs.push([`view ${v.id} pointer`, p.row], [`view ${v.id} pointer`, p.col]);
+    if (v.kind === "graph") for (const e of [v.visited, v.current, v.frontier]) if (e) exprs.push([`view ${v.id}`, e]);
     if (v.kind === "tree") {
       exprs.push([`view ${v.id} root`, v.root], [`view ${v.id} current`, v.current]);
       if (v.waiting) exprs.push([`view ${v.id} waiting`, v.waiting]);
@@ -42,6 +44,8 @@ export function validateSpec(
     if (!(n >= 1 && n <= lineCount)) problems.push({ where: `line ${line}`, message: `the solution has only ${lineCount} lines` });
     if (ls.focus && !ids.has(ls.focus.view)) problems.push({ where: `line ${line} focus`, message: `no view called ${ls.focus.view}` });
     for (const nar of ls.narrate ?? []) if (nar.when) exprs.push([`line ${line} when`, nar.when]);
+    for (const [r, c] of ls.focus?.cells ?? []) exprs.push([`line ${line} focus`, r], [`line ${line} focus`, c]);
+    if (ls.focus?.cells && spec.views.find((v) => v.id === ls.focus!.view)?.kind !== "grid") problems.push({ where: `line ${line} focus`, message: "cells can only focus a grid view" });
   }
   for (const [where, e] of exprs) {
     try { parse(e); } catch (err) { problems.push({ where, message: (err as Error).message }); }
@@ -67,6 +71,7 @@ export function validateSpec(
         narrate(ls.narrate, scope);
         if (ls.focus?.key) evaluate(ls.focus.key, scope);
         if (ls.focus?.index) evaluate(ls.focus.index, scope);
+        for (const [r, c] of ls.focus?.cells ?? []) { evaluate(r, scope); evaluate(c, scope); }
       } catch (err) {
         if (!(err instanceof ExprError)) throw err;
         problems.push({ where: `line ${m.executed.line}, moment ${m.index} (trace ${t + 1})`, message: err.message });

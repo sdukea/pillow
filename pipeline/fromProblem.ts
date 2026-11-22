@@ -34,6 +34,7 @@ export function problemToDraft(problem: Problem, sourceOf: (solution: string) =>
       notes: Object.entries(al.notes).map(([line, note]) => ({ line: Number(line), ...note })),
       complexity: al.complexity,
       ...(al.whyNotEnough ? { whyNotEnough: al.whyNotEnough } : {}),
+      ...(al.correctness ? { correctness: al.correctness } : {}),
       ...(al.check ? { check: al.check } : {}),
     };
   });
@@ -52,6 +53,7 @@ export function problemToDraft(problem: Problem, sourceOf: (solution: string) =>
       generator: `def make_input(n):\n    return ${JSON.stringify(table)}[str(n)]\n`.replace(/\bnull\b/g, "None").replace(/\btrue\b/g, "True").replace(/\bfalse\b/g, "False"),
     },
     edgeCases: lesson.edgeCases.map((args) => JSON.stringify(values(args))),
+    ...(lesson.followUps ? { followUps: lesson.followUps } : {}),
   };
 }
 

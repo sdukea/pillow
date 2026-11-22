@@ -51,7 +51,7 @@ export interface DraftApproach {
   solution: string;
   spec: {
     views: ViewSpec[];
-    lines: { line: number; tag?: LineTag; narrate: { when?: string; text: string }[]; focus?: { view: string; key?: string; index?: string } }[];
+    lines: { line: number; tag?: LineTag; narrate: { when?: string; text: string }[]; focus?: { view: string; key?: string; index?: string; cells?: [string, string][] } }[];
   };
   headline: string;
   intuition: string;
@@ -61,6 +61,7 @@ export interface DraftApproach {
   notes: ({ line: number } & LineNote)[];
   complexity: { time: GrowthClass; space: GrowthClass; timeLabel?: string; spaceLabel?: string; counted: string; timeWhy: string; spaceWhy: string };
   whyNotEnough?: string;
+  correctness?: Lesson["approaches"][string]["correctness"];
   check?: Check;
 }
 
@@ -85,6 +86,7 @@ export interface Draft {
   };
   /** Each a JSON array with one value per input field. */
   edgeCases: string[];
+  followUps?: Lesson["followUps"];
 }
 
 export interface LibraryEntry {
@@ -149,6 +151,7 @@ export function toProblem(brief: Brief, draft: Draft, growthInputs: Record<strin
       notes: Object.fromEntries(a.notes.map(({ line, ...note }) => [line, note])),
       complexity: a.complexity,
       whyNotEnough: a.whyNotEnough,
+      correctness: a.correctness,
       check: a.check,
     }])),
     compare: draft.compare,
@@ -163,6 +166,7 @@ export function toProblem(brief: Brief, draft: Draft, growthInputs: Record<strin
       },
     },
     edgeCases: draft.edgeCases.map((json) => parseValues(brief.inputs, json)),
+    followUps: draft.followUps,
   };
   return {
     slug: brief.slug,

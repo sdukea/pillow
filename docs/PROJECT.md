@@ -169,7 +169,8 @@ model never depends on an AI judgement alone.
 | P4 | **Mastery dimensions:** exposure, recognition, explanation, implementation, transfer and retention per concept, from evidence, with reasons on each reference card | Done (2026-11-22) |
 | P5 | **Placement and adaptive roadmap:** a 30-question placement check (right answers only become evidence); the roadmap and Home start from the placement and follow the current week; per-learner start dates | Done (2026-11-22) |
 | P6 | **Retention:** FSRS-6 (ported from fsrs4anki, MIT, parity-tested) replayed from evidence; `/review` with when-to-use, trick, rebuild-the-line and growth questions; refresher on a miss; history | Done (2026-11-22) |
-| P3, P7–P9 | The lesson schema and new views, interview mode, accounts and notifications, quality and scale | Planned: see `docs/IMPLEMENTATION_PLAN.md` (it supersedes M11–M13) |
+| P3 | **Lesson engine:** grid (DP table), heap, graph and union-find views from real traces; correctness and follow-ups required in every lesson; related problems from the curriculum; traces loaded per problem; a development-only view lab | Done (2026-11-23) |
+| P7–P9 | interview mode, accounts and notifications, quality and scale | Planned: see `docs/IMPLEMENTATION_PLAN.md` (it supersedes M11–M13) |
 
 ## Key decisions (see `docs/adr/`)
 - 0001–0007: engine, specs, lessons, honest first approaches, live input, the AI pipeline.

@@ -18,7 +18,13 @@ export type ViewModel =
   | { kind: "vars"; id: string; label: string; vars: { name: string; text: string; changed: boolean; present: boolean }[] }
   | { kind: "linked-list"; id: string; label: string; nodes: { id: number; text: string; next: number | null; nextChanged: boolean; pointers: string[] }[] }
   | { kind: "tree"; id: string; label: string; nodes: { id: number; text: string; x: number; y: number; current: boolean; onStack: boolean; returned?: string }[]; edges: { from: number; to: number }[] }
-  | { kind: "call-stack"; id: string; label: string; frames: { fn: string; detail: string; active: boolean }[] };
+  | { kind: "call-stack"; id: string; label: string; frames: { fn: string; detail: string; active: boolean }[] }
+  | { kind: "grid"; id: string; label: string; present: boolean; rows: { text: string; state: CellState; focused: boolean; pointers: string[] }[][] }
+  | { kind: "heap"; id: string; label: string; present: boolean; items: { text: string; state: CellState }[]; removed: string[] }
+  | { kind: "graph"; id: string; label: string; present: boolean; directed: boolean; nodes: GraphNode[]; edges: { from: string; to: string; weight?: string; fresh: boolean }[] }
+  | { kind: "union-find"; id: string; label: string; present: boolean; nodes: { key: string; parent: string; root: boolean; changed: boolean; x: number; y: number }[] };
+
+export interface GraphNode { key: string; x: number; y: number; visited: boolean; current: boolean; frontier: boolean }
 
 export interface MomentView {
   index: number;
@@ -102,7 +108,7 @@ function treeReturns(moments: Moment[], steps: Step[], current: string): Map<num
 
 // ------------------------------------------------------------------ per-view builders
 
-function buildView(spec: ViewSpec, ctx: { step: Step; moment: Moment; scope: Scope; active: Scope; focus?: LineSpec["focus"]; trace: Trace; tree?: TreeLayout; returns?: Map<number, Value> }): ViewModel {
+function buildView(spec: ViewSpec, ctx: { step: Step; prev?: Step; moment: Moment; scope: Scope; active: Scope; focus?: LineSpec["focus"]; trace: Trace; tree?: TreeLayout; returns?: Map<number, Value>; graphs?: Map<string, Map<string, { x: number; y: number }>> }): ViewModel {
   const { step, moment, active } = ctx;
   const label = spec.label ?? ("of" in spec ? spec.of : spec.id);
   const heap = step.heap;
@@ -223,6 +229,77 @@ function buildView(spec: ViewSpec, ctx: { step: Step; moment: Moment; scope: Sco
       });
       return { kind: "tree", id: spec.id, label: spec.label ?? "tree", nodes, edges: layout.edges };
     }
+    case "grid": {
+      const target = tryEval(spec.of, active);
+      const obj = target.ok ? deref(target.v, heap) : undefined;
+      const rowRefs = obj && "items" in obj ? obj.items : [];
+      const cells = (focus?.cells ?? []).flatMap(([r, c]) => {
+        const a = tryEval(r, ctx.scope), b = tryEval(c, ctx.scope);
+        return a.ok && b.ok && typeof a.v === "number" && typeof b.v === "number" ? [`${a.v},${b.v}`] : [];
+      });
+      const focused = new Set(cells);
+      const pointed = new Map<string, string[]>();
+      for (const p of spec.pointers ?? []) {
+        const a = tryEval(p.row, active), b = tryEval(p.col, active);
+        if (a.ok && b.ok && typeof a.v === "number" && typeof b.v === "number") {
+          const k = `${a.v},${b.v}`;
+          pointed.set(k, [...(pointed.get(k) ?? []), p.label ?? `${p.row}, ${p.col}`]);
+        }
+      }
+      const rows = rowRefs.map((rowRef, r) => {
+        const row = deref(rowRef, heap);
+        const items = row && "items" in row ? row.items : [];
+        const own = isRef(rowRef) ? changesFor(rowRef.ref, moment.changes) : [];
+        return items.map((v, c) => {
+          const state: CellState = own.some((x) => x.kind === "set-item" && x.index === c) ? "updated" : own.some((x) => x.kind === "push" && c === items.length - 1) ? "added" : "same";
+          return { text: describeItem(v, heap), state, focused: focused.has(`${r},${c}`), pointers: pointed.get(`${r},${c}`) ?? [] };
+        });
+      });
+      return { kind: "grid", id: spec.id, label, present: !!obj, rows };
+    }
+    case "heap": {
+      const now = listAt(spec.of, active, heap);
+      const before = ctx.prev ? listAt(spec.of, activeScope(ctx.prev), ctx.prev.heap) : undefined;
+      const texts = (now ?? []).map((v) => describeItem(v, heap));
+      const prevTexts = before ? before.map((v) => describeItem(v, ctx.prev!.heap)) : texts;
+      const items = texts.map((text, i) => ({ text, state: (i >= prevTexts.length ? "added" : prevTexts[i] !== text ? "updated" : "same") as CellState }));
+      return { kind: "heap", id: spec.id, label, present: !!now, items, removed: multisetMinus(prevTexts, texts) };
+    }
+    case "graph": {
+      const layout = ctx.graphs?.get(spec.id) ?? new Map();
+      const adj = adjacencyAt(spec.of, active, heap);
+      const prevAdj = ctx.prev ? adjacencyAt(spec.of, activeScope(ctx.prev), ctx.prev.heap) : undefined;
+      const keysOf = (expr?: string) => {
+        if (!expr) return new Set<string>();
+        const r = tryEval(expr, active);
+        if (!r.ok) return new Set<string>();
+        const obj = deref(r.v, heap);
+        if (obj && "items" in obj) return new Set(obj.items.map((v) => describeItem(v, heap)));
+        if (obj && "entries" in obj) return new Set(obj.entries.map(([k]) => describeItem(k, heap)));
+        return new Set([describeItem(r.v, heap)]);
+      };
+      const visited = keysOf(spec.visited), frontier = keysOf(spec.frontier);
+      const cur = spec.current ? tryEval(spec.current, active) : undefined;
+      const current = cur?.ok ? describeItem(cur.v, heap) : undefined;
+      const nodes = [...layout.entries()].map(([key, pos]) => ({ key, x: pos.x, y: pos.y, visited: visited.has(key), current: key === current, frontier: frontier.has(key) }));
+      const had = new Set((prevAdj?.edges ?? []).map((e) => `${e.from}>${e.to}`));
+      const directed = spec.directed ?? false;
+      const seen = new Set<string>();
+      const edges = (adj?.edges ?? []).filter((e) => {
+        if (directed) return true;
+        const k = [e.from, e.to].sort().join("~");
+        if (seen.has(k)) return false;
+        seen.add(k);
+        return true;
+      }).map((e) => ({ ...e, fresh: !!prevAdj && !had.has(`${e.from}>${e.to}`) && (directed || !had.has(`${e.to}>${e.from}`)) }));
+      return { kind: "graph", id: spec.id, label, present: !!adj, directed, nodes, edges };
+    }
+    case "union-find": {
+      const now = parentsAt(spec.of, active, heap, spec.start ?? 0);
+      const before = ctx.prev ? parentsAt(spec.of, activeScope(ctx.prev), ctx.prev.heap, spec.start ?? 0) : undefined;
+      if (!now) return { kind: "union-find", id: spec.id, label, present: false, nodes: [] };
+      return { kind: "union-find", id: spec.id, label, present: true, nodes: layoutForest(now, before) };
+    }
     case "call-stack": {
       const frames = step.frames.map((f, i) => {
         const scope = { locals: f.locals, heap };
@@ -232,6 +309,98 @@ function buildView(spec: ViewSpec, ctx: { step: Step; moment: Moment; scope: Sco
       return { kind: "call-stack", id: spec.id, label: spec.label ?? "call stack", frames };
     }
   }
+}
+
+// ------------------------------------------------------------------ helpers for the newer views
+
+const activeScope = (step: Step): Scope => ({ locals: step.frames.at(-1)?.locals ?? {}, heap: step.heap });
+
+/** The items of the list (or deque) an expression names, or undefined if it doesn't exist here. */
+function listAt(expr: string, scope: Scope, heap: Heap): Value[] | undefined {
+  const r = tryEval(expr, scope);
+  const obj = r.ok ? deref(r.v, heap) : undefined;
+  return obj && "items" in obj ? obj.items : undefined;
+}
+
+/** What's in `before` but not in `after`, counting repeats. */
+function multisetMinus(before: string[], after: string[]): string[] {
+  const left = new Map<string, number>();
+  for (const t of after) left.set(t, (left.get(t) ?? 0) + 1);
+  return before.filter((t) => { const n = left.get(t) ?? 0; if (n) { left.set(t, n - 1); return false; } return true; });
+}
+
+/** Nodes and edges of an adjacency dict ({u: [v, …]}) or list ([[v, …], …]); a neighbour may be a (v, weight) pair. */
+function adjacencyAt(expr: string, scope: Scope, heap: Heap): { nodes: string[]; edges: { from: string; to: string; weight?: string }[] } | undefined {
+  const r = tryEval(expr, scope);
+  const obj = r.ok ? deref(r.v, heap) : undefined;
+  if (!obj) return undefined;
+  const rows: [string, Value][] = "entries" in obj ? obj.entries.map(([k, v]) => [describeItem(k, heap), v])
+    : "items" in obj ? obj.items.map((v, i) => [String(i), v]) : [];
+  if (!("entries" in obj) && !("items" in obj)) return undefined;
+  const nodes = rows.map(([k]) => k);
+  const edges: { from: string; to: string; weight?: string }[] = [];
+  for (const [from, list] of rows) {
+    const l = deref(list, heap);
+    for (const n of l && "items" in l ? l.items : []) {
+      const pair = deref(n, heap);
+      if (pair && "items" in pair && pair.items.length === 2) edges.push({ from, to: describeItem(pair.items[0], heap), weight: describeItem(pair.items[1], heap) });
+      else edges.push({ from, to: describeItem(n, heap) });
+    }
+  }
+  for (const e of edges) if (!nodes.includes(e.to)) nodes.push(e.to);
+  return { nodes, edges };
+}
+
+/** Every node the graph ever has, placed once on a circle so nothing moves during the run. */
+function layoutGraph(expr: string, steps: Step[]): Map<string, { x: number; y: number }> {
+  const all: string[] = [];
+  for (const s of steps) for (const n of adjacencyAt(expr, activeScope(s), s.heap)?.nodes ?? []) if (!all.includes(n)) all.push(n);
+  const numeric = all.every((k) => /^-?\d+$/.test(k));
+  all.sort((a, b) => (numeric ? Number(a) - Number(b) : a.localeCompare(b)));
+  const out = new Map<string, { x: number; y: number }>();
+  all.forEach((k, i) => {
+    const t = -Math.PI / 2 + (2 * Math.PI * i) / Math.max(all.length, 1);
+    out.set(k, { x: 0.5 + 0.42 * Math.cos(t), y: 0.5 + 0.42 * Math.sin(t) });
+  });
+  return out;
+}
+
+/** Item → parent, from a parent list (from index `start`) or dict. */
+function parentsAt(expr: string, scope: Scope, heap: Heap, start: number): Map<string, string> | undefined {
+  const r = tryEval(expr, scope);
+  const obj = r.ok ? deref(r.v, heap) : undefined;
+  if (!obj) return undefined;
+  if ("items" in obj) return new Map(obj.items.slice(start).map((v, i) => [String(i + start), describeItem(v, heap)]));
+  if ("entries" in obj) return new Map(obj.entries.map(([k, v]) => [describeItem(k, heap), describeItem(v, heap)]));
+  return undefined;
+}
+
+/** A forest, roots along the top in item order and each child under its parent: x is a leaf slot, y the depth. */
+function layoutForest(parents: Map<string, string>, before?: Map<string, string>) {
+  const keys = [...parents.keys()];
+  const children = new Map<string, string[]>(keys.map((k) => [k, []]));
+  const roots: string[] = [];
+  for (const k of keys) {
+    const p = parents.get(k)!;
+    if (p === k || !parents.has(p)) roots.push(k);
+    else children.get(p)!.push(k);
+  }
+  const pos = new Map<string, { x: number; y: number }>();
+  let slot = 0;
+  const place = (k: string, depth: number, path: Set<string>) => {
+    if (path.has(k)) return; // a cycle mid-update: draw what we can
+    const kids = children.get(k)!;
+    const next = new Set(path).add(k);
+    if (!kids.length) pos.set(k, { x: slot++, y: depth });
+    else {
+      kids.forEach((c) => place(c, depth + 1, next));
+      const xs = kids.map((c) => pos.get(c)?.x ?? slot);
+      pos.set(k, { x: (Math.min(...xs) + Math.max(...xs)) / 2, y: depth });
+    }
+  };
+  roots.forEach((r) => place(r, 0, new Set()));
+  for (const k of keys) if (!pos.has(k)) pos.set(k, { x: slot++, y: 0 });
+  return keys.map((k) => ({ key: k, parent: parents.get(k)!, root: roots.includes(k), changed: !!before && before.get(k) !== parents.get(k), ...pos.get(k)! }));
 }
 
 function describeChange(c: Change, heap: Heap, names: (ref: number) => string): string | undefined {
@@ -284,6 +453,8 @@ export interface Prepared {
 export function prepare(trace: Trace, spec: VizSpec): Prepared {
   const moments = buildMoments(trace);
   const steps = trace.steps;
+  const graphs = new Map<string, Map<string, { x: number; y: number }>>();
+  for (const v of spec.views) if (v.kind === "graph") graphs.set(v.id, layoutGraph(v.of, steps));
   const treeSpec = spec.views.find((v): v is Extract<ViewSpec, { kind: "tree" }> => v.kind === "tree");
   let tree: TreeLayout | undefined;
   let returns: Map<number, Value>[] | undefined;
@@ -304,7 +475,9 @@ export function prepare(trace: Trace, spec: VizSpec): Prepared {
       const holders = Object.entries(active.locals).filter(([, v]) => isRef(v) && v.ref === ref).map(([k]) => k);
       return holders[0] ?? "list";
     };
-    const views = spec.views.map((v) => buildView(v, { step, moment, scope, active, focus: lineSpec?.focus, trace, tree, returns: returns?.[moment.index] }));
+    const prevMoment = moment.index > 0 ? moments[moment.index - 1] : undefined;
+    const prev = prevMoment ? steps[prevMoment.stepIndex] : undefined;
+    const views = spec.views.map((v) => buildView(v, { step, prev, moment, scope, active, focus: lineSpec?.focus, trace, tree, returns: returns?.[moment.index], graphs }));
     const ret = moment.changes.find((c) => c.kind === "return") as { value: Value } | undefined;
     const exc = moment.changes.find((c) => c.kind === "exception") as { type: string; message: string } | undefined;
     return {

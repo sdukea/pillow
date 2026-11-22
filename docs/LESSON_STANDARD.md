@@ -20,14 +20,29 @@ the schema (`src/content/lesson.ts`) and validator
 | 10 | The trick | One line (`card.trick`) | Yes |
 | 11 | Optimal solution | Traced live, with a legend for every marker | Yes |
 | 12 | Line by line | A note on every line | Yes (validated coverage) |
-| 13 | Invariant / why it's correct | What stays true, and why the answer follows | **P3** |
+| 13 | Invariant / why it's correct | What stays true, why the answer follows, why it stops (`correctness` on the optimal approach) | Yes (required by the validator) |
 | 14 | Complexity | Time and memory, measured, with the reason | Yes (measured, checked against the claim) |
 | 15 | Edge cases | One-click inputs | Yes |
 | 16 | Write it yourself | Tested against the reference, growth-checked | Yes (Python) |
 | 17 | How to recognise it | Cues in the wording (`card.recognize`) | Yes |
-| 18 | Variants and follow-ups | What an interviewer asks next, and what changes | **P3** |
-| 19 | Related problems | Same concept, harder or different shape | **P3** (from the curriculum's tags) |
+| 18 | Variants and follow-ups | What an interviewer asks next, and what changes (`followUps`, 1–3) | Yes (required by the validator) |
+| 19 | Related problems | Same main technique first, then shared concepts | Yes (derived from the curriculum: `relatedProblems`) |
 | 20 | Note and review | A recall card scheduled for review | Yes |
+
+## Views a lesson can use
+
+Array (with pointers and a range), map, set, stack, queue, variables,
+linked list, tree, call stack, and, since P3:
+
+- **grid:** DP tables and matrices. `focus.cells` outlines the cells a
+  line reads.
+- **heap:** a `heapq` list drawn as its tree.
+- **graph:** adjacency lists, with visited, current and waiting nodes,
+  direction and weights.
+- **union-find:** the parent forest.
+
+Each new view is exercised by a reference fixture in the development-only
+lab at `/lab`.
 
 ## Rules
 

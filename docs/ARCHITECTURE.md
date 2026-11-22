@@ -66,7 +66,8 @@ can improve without migrations.
 
 ## Scaling notes
 
-- **Traces load per problem** (P3) instead of eagerly, keeping the bundle
+- **Traces load per problem** (built in P3): each problem's traces and
+  growth are separate chunks, loaded when it's opened, so the bundle stays
   flat as lessons grow.
 - **Lessons ship as library JSON,** lazy-loaded per route.
 - **The curriculum JSON** is about 67 KB uncompressed, and only the

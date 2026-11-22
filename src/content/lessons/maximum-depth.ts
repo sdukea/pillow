@@ -158,6 +158,11 @@ export const maximumDepth: Lesson = {
         5: { what: "Asks the right child how deep it is.", why: "Same question, other side.", affects: "`right`", ifRemoved: "Only the left side would count, and deep right branches would be missed." },
         6: { what: "Returns 1 for this node plus the deeper side.", why: "The longest path through this node goes down whichever side is deeper.", ifRemoved: "Returning `left + right` instead would count nodes on both sides, which is a different quantity." },
       },
+      correctness: {
+        invariant: "Every call returns the depth of the subtree it was given, and 0 for an empty tree.",
+        whyCorrect: "The longest path down from a node goes through whichever child’s subtree is deeper, plus the node itself: 1 + max(left, right). Trusting each child’s answer, that’s exactly the depth.",
+        ends: "Each call is on a smaller subtree, ending at empty ones, and every node gets exactly one call: n calls.",
+      },
       complexity: {
         time: "n",
         space: "log n",
@@ -197,6 +202,10 @@ export const maximumDepth: Lesson = {
     describe: "a complete tree of n nodes, with every level full",
   },
 
+  followUps: [
+    { ask: "What about the minimum depth?", answer: "That’s the nearest leaf. Careful: a node with one child isn’t a leaf, so use the other side. Level by level, you can stop at the first leaf you meet.", concepts: ["tree-recursion", "bfs"] },
+    { ask: "Is the tree balanced (no node’s subtrees differ in height by more than 1)?", answer: "Return each subtree’s height, or −1 as soon as one is unbalanced. One pass: O(n).", concepts: ["tree-recursion"] },
+  ],
   edgeCases: [
     [{ kind: "tree", values: [] }],
     [{ kind: "tree", values: [1] }],

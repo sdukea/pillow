@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { prepare, type Prepared, type ViewModel } from "../../engine/interpreter/viewmodel";
 import type { Problem } from "../content/problems";
 import { growthOf, preparedFor } from "../lib/data";
+import { FollowUps, PractiseNext, WhyRight } from "./AfterLesson";
 import { saveNote } from "../lib/notes";
 import { record } from "../knowledge/evidence";
 import { Solve } from "../solve/Solve";
@@ -24,9 +25,9 @@ type Beat = "overview" | "slow" | "think" | "trick" | "fast" | "solve" | "note";
 const BEATS: Beat[] = ["overview", "slow", "think", "trick", "fast", "solve", "note"];
 const NEXT: Record<Beat, string> = { overview: "Start With the Slow Way", slow: "Your Turn", think: "Put It Together", trick: "Watch It Work", fast: "Write It Yourself", solve: "Keep the Note", note: "Done" };
 
-interface Props { problem: Problem; onHome: () => void; onPlay: () => void; onLesson: () => void; onConcept: (id: string) => void }
+interface Props { problem: Problem; onHome: () => void; onPlay: () => void; onLesson: () => void; onConcept: (id: string) => void; onOpen?: (slug: string) => void }
 
-export function Learn({ problem, onHome, onPlay, onLesson, onConcept }: Props) {
+export function Learn({ problem, onHome, onPlay, onLesson, onConcept, onOpen }: Props) {
   const card = problem.lesson!.card;
   const [beat, setBeat] = useState(0);
   const at = BEATS[beat];
@@ -101,6 +102,7 @@ export function Learn({ problem, onHome, onPlay, onLesson, onConcept }: Props) {
           </div>
         )}
         {at === "fast" && <Run prepared={runs.fast} tone="fast" title={problem.lesson!.approaches[fast.id].headline} legend={problem.lesson!.approaches[fast.id].legend} after={compare} {...asks.fast} onEvidence={evidence(fast)} onFinished={() => setFinished((f) => ({ ...f, fast: true }))} />}
+        {at === "fast" && finished.fast && problem.lesson!.approaches[fast.id].correctness && <WhyRight correctness={problem.lesson!.approaches[fast.id].correctness!} />}
         {at === "solve" && <Solve problem={problem} onSolved={() => setFinished((f) => ({ ...f, solve: true }))} />}
         {at === "note" && (
           <article className="note-card" aria-label="Your note">
@@ -110,6 +112,8 @@ export function Learn({ problem, onHome, onPlay, onLesson, onConcept }: Props) {
             <p className="note-saved">Saved to Notes</p>
           </article>
         )}
+        {at === "note" && problem.lesson!.followUps?.length ? <FollowUps items={problem.lesson!.followUps} /> : null}
+        {at === "note" && onOpen && <PractiseNext slug={problem.slug} onOpen={onOpen} />}
       </main>
 
       <footer className="learn-next">

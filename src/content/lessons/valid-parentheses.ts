@@ -162,6 +162,11 @@ export const validParentheses: Lesson = {
         10: { what: "Pushes the opening bracket onto the stack.", why: "It now waits, on top, for its closer.", affects: "`stack`", ifRemoved: "Openers would never be recorded, so every closer would look unmatched." },
         11: { what: "Returns `True` only if the stack is empty.", why: "Anything left on the stack was opened and never closed.", ifRemoved: "Returning `True` unconditionally would accept strings like `\"((\"`." },
       },
+      correctness: {
+        invariant: "The stack holds exactly the opening brackets still open, the most recent on top.",
+        whyCorrect: "A closer is valid only if it matches the most recent opener still open, which is the top. The string is valid exactly when every closer matched and nothing is left open: an empty stack at the end.",
+        ends: "One push or pop per character: at most n steps.",
+      },
       complexity: {
         time: "n",
         space: "n",
@@ -200,6 +205,10 @@ export const validParentheses: Lesson = {
     describe: "n brackets nested as deeply as they go, like `((()))`",
   },
 
+  followUps: [
+    { ask: "What if there’s only one kind of bracket?", answer: "A counter replaces the stack: +1 for “(”, −1 for “)”. It must never go below 0, and must end at 0. O(1) memory.", concepts: ["matching"] },
+    { ask: "What’s the fewest brackets to remove to make it valid?", answer: "Run the same stack, but count what can’t match: closers that arrive with an empty stack, plus openers left at the end.", concepts: ["stack", "matching"] },
+  ],
   edgeCases: [
     [{ kind: "value", value: "" }],
     [{ kind: "value", value: "]" }],

@@ -809,3 +809,50 @@ svg .solid { fill: currentColor; stroke: none; }
 .rv-history { display: grid; gap: 10px; }
 .rv-history h2 { font-size: 20px; font-weight: 700; }
 .concept-review { font-size: 15px; color: var(--accent-ink); font-weight: 500; }
+
+/* Grids (DP tables), heaps, graphs, union-find */
+.grid-view { border-collapse: separate; border-spacing: 4px; }
+.grid-view th { font-family: var(--mono); font-size: 10.5px; font-weight: 400; color: var(--faint); padding: 0 2px; }
+.gcell { position: relative; width: 48px; height: 44px; text-align: center; border-radius: 10px; background: var(--surface); border: 1px solid var(--hair); transition: background-color 0.25s var(--ease), border-color 0.25s var(--ease), box-shadow 0.25s var(--ease); }
+.gcell.st-added { background: var(--add-soft); border-color: var(--add); }
+.gcell.st-updated { background: var(--chg-soft); border-color: var(--chg); }
+.gcell.focused { box-shadow: 0 0 0 2px var(--accent); }
+.gcell.pointed { border-width: 2px; border-color: var(--accent); }
+.gcell { padding-top: 8px; }
+.gcell-tag { position: absolute; left: 0; right: 0; top: 2px; font-size: 9.5px; line-height: 1; font-weight: 700; color: var(--accent-ink); }
+.tnode.st-added { background: var(--add-soft); border-color: var(--add); }
+.tnode.st-updated { background: var(--chg-soft); border-color: var(--chg); }
+.tnode.top { border-width: 2px; border-color: var(--accent); }
+.tnode.root { box-shadow: 0 0 0 3px var(--surface), 0 0 0 4.5px var(--text); }
+.heap-list { font-family: var(--mono); font-size: 13px; margin-top: 8px; }
+.heap-removed { color: var(--del); }
+.heap-tree .edge, .graph-view .edge, .tree .edge[marker-end] { stroke: var(--faint); stroke-width: 1.75; }
+.graph-view .edge.hot, .tree .edge.hot[marker-end] { stroke: var(--accent); opacity: 1; stroke-width: 2.25; }
+.edge-weight { font-family: var(--mono); font-size: 12px; fill: var(--muted); text-anchor: middle; }
+
+/* Development-only view lab */
+.lab { max-width: 1180px; margin: 0 auto; padding: 16px; display: grid; gap: 14px; }
+.lab-nav { display: flex; gap: 12px; flex-wrap: wrap; font-family: var(--mono); }
+.lab-nav a.on { font-weight: 700; text-decoration: underline; }
+.lab h1 { font-size: 22px; }
+.lab-controls { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.lab-count { font-family: var(--mono); min-width: 64px; text-align: center; }
+.lab-narration { font-size: 19px; min-height: 1.5em; }
+.lab-body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+.lab-code { margin: 0; padding: 12px; border-radius: 14px; background: var(--surface); font-family: var(--mono); font-size: 13.5px; line-height: 1.6; overflow-x: auto; }
+.lab-code .ran { background: var(--accent-soft); border-radius: 4px; }
+@media (max-width: 760px) { .lab-body { grid-template-columns: 1fr; } }
+
+/* After the lesson: why it's right, follow-ups, practise next */
+.why-right { margin-top: 18px; padding: 16px 20px; border-radius: 18px; background: var(--surface); display: grid; gap: 4px; animation: rise 0.3s var(--ease) both; }
+.why-label { font-size: 13px; font-weight: 600; color: var(--add); }
+.why-text { font-size: 18px; line-height: 1.45; }
+.followups, .practise-next { margin-top: 22px; display: grid; gap: 8px; }
+.followups h2, .practise-next h2 { font-size: 20px; font-weight: 700; }
+.followup { border-radius: 14px; background: var(--surface); padding: 0 18px; }
+.followup summary { cursor: pointer; list-style: none; padding: 14px 0; font-size: 17px; font-weight: 600; min-height: 44px; }
+.followup summary::-webkit-details-marker { display: none; }
+.followup summary::after { content: "Show answer"; float: right; font-size: 14px; font-weight: 500; color: var(--accent-ink); margin-left: 12px; }
+.followup[open] summary::after { content: "Hide"; }
+.followup p { padding: 0 0 14px; font-size: 16px; line-height: 1.5; color: var(--text); }
+.practise-next ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; font-size: 16px; }

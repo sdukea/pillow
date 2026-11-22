@@ -159,6 +159,11 @@ export const reverseLinkedList: Lesson = {
         8: { what: "Moves on to the saved rest of the list.", why: "That’s the next node waiting to be flipped.", affects: "`cur`", ifRemoved: "`cur` would never move, so the loop would never end." },
         9: { what: "Returns `prev`, the new head.", why: "When the loop ends, `cur` is `None` and `prev` is the last node we flipped: the old tail, now the head.", ifRemoved: "Returning `head` instead would return the old first node, which is now the tail with nothing after it." },
       },
+      correctness: {
+        invariant: "prev is the head of the part already reversed; cur is the head of the part not yet reversed.",
+        whyCorrect: "Each step moves one node from the front of the unreversed part to the front of the reversed part. When cur is None nothing is left, so prev heads the whole reversed list.",
+        ends: "cur moves forward one node each step: n steps for n nodes.",
+      },
       complexity: {
         time: "n",
         space: "1",
@@ -196,6 +201,10 @@ export const reverseLinkedList: Lesson = {
     describe: "a linked list of n nodes",
   },
 
+  followUps: [
+    { ask: "Can you reverse it recursively?", answer: "Reverse the rest first, then point head.next back at head and set head.next to None. Still O(n) time, but O(n) memory for the call stack.", concepts: ["recursion", "pointer-rewiring"] },
+    { ask: "What if only positions left to right should be reversed?", answer: "Walk to the node before left, reverse that stretch in place the same way, then reconnect both ends.", concepts: ["pointer-rewiring"] },
+  ],
   edgeCases: [
     [{ kind: "linked_list", values: [] }],  // empty list
     [{ kind: "linked_list", values: [7] }], // a single node

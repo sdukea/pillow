@@ -6,8 +6,11 @@ import { type Approach, growthFile, type Problem, traceFile } from "../content/p
 import type { Measured } from "../content/validateLesson";
 
 const SOURCES = import.meta.glob("../../engine/tracer/fixtures/*.py", { query: "?raw", import: "default", eager: true }) as Record<string, string>;
-const GENERATED = import.meta.glob("../generated/*.json", { import: "default", eager: true }) as Record<string, unknown>;
-const TRACES = GENERATED as Record<string, Trace>;
+// Traces and growth measurements are loaded per problem, when it's opened (loadProblemData), so the
+// app's first load doesn't carry every problem's runs. Each file is its own chunk.
+const LOADERS = import.meta.glob(["../generated/*.json", "!../generated/lab--*.json"], { import: "default" }) as Record<string, () => Promise<unknown>>;
+const loaded = new Map<string, unknown>();
+const generated = (file: string) => loaded.get(file);
 
 // Problems explained live (not built into the app): their sources, traces and growth, registered at
 // runtime from the API. Everything else reads them exactly like built-in problems.
@@ -21,6 +24,22 @@ export function registerRemote(problem: Problem, sources: Record<string, string>
     remoteTraces.set(traceFile(problem, a), traces[a.id]);
   }
   remoteGrowth.set(growthFile(problem), growth);
+}
+
+/** Files a problem needs before its screens can render. */
+const filesOf = (problem: Problem) => [...problem.approaches.map((a) => traceFile(problem, a)), growthFile(problem)];
+
+export function isProblemDataLoaded(problem: Problem): boolean {
+  return filesOf(problem).every((f) => loaded.has(f) || remoteTraces.has(f) || remoteGrowth.has(f) || !LOADERS[`../generated/${f}`]);
+}
+
+/** Load a problem's traces and growth. Problems explained live are already registered. */
+export async function loadProblemData(problem: Problem): Promise<void> {
+  await Promise.all(filesOf(problem).map(async (f) => {
+    if (loaded.has(f) || remoteTraces.has(f) || remoteGrowth.has(f)) return;
+    const load = LOADERS[`../generated/${f}`];
+    if (load) loaded.set(f, await load());
+  }));
 }
 
 export function sourceOf(approach: Approach): string {
@@ -38,8 +57,8 @@ export function preparedFor(problem: Problem, approach: Approach): Prepared {
   const key = traceFile(problem, approach);
   let p = prepared.get(key);
   if (!p) {
-    const trace = remoteTraces.get(key) ?? TRACES[`../generated/${key}`];
-    if (!trace) throw new Error(`No trace for ${key}. Run npm run traces.`);
+    const trace = remoteTraces.get(key) ?? (generated(key) as Trace | undefined);
+    if (!trace) throw new Error(`No trace for ${key}: run npm run traces, and load the problem first (loadProblemData).`);
     p = prepare(trace, approach.spec);
     prepared.set(key, p);
   }
@@ -48,5 +67,5 @@ export function preparedFor(problem: Problem, approach: Approach): Prepared {
 
 /** Measured steps and memory at growing input sizes, for problems with a lesson. */
 export function growthOf(problem: Problem): Measured | undefined {
-  return remoteGrowth.get(growthFile(problem)) ?? (GENERATED[`../generated/${growthFile(problem)}`] as Measured | undefined);
+  return remoteGrowth.get(growthFile(problem)) ?? (generated(growthFile(problem)) as Measured | undefined);
 }

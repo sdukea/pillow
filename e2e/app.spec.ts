@@ -531,3 +531,38 @@ test("reviews: Home offers what's due, a miss shows the refresher, and answers b
   await expect(page.getByRole("button", { name: /to keep/ })).toHaveCount(0);
   expect(errors).toEqual([]);
 });
+
+test("after the fast way: why it's right; at the end: follow-ups to try, and what to practise next @phone", async ({ page }) => {
+  const errors = watchErrors(page);
+  await page.goto("p/binary-search");
+  await page.locator(".learn-next .next").click();
+  await finishRun(page);
+  await page.locator(".learn-next .next").click();
+  await solveThink(page);
+  await page.locator(".learn-next .next").click();
+  await page.locator(".learn-next .next").click();
+  await finishRun(page);
+  await expect(page.getByRole("region", { name: "Why it’s right" })).toContainText("between lo and hi");
+  await page.locator(".learn-next .next").click(); // to "Write it yourself"
+  await page.locator(".learn-next .next").click(); // skip for now
+  const follow = page.locator(".followup").first();
+  await expect(follow).toContainText("first one");
+  await expect(follow.locator("p")).toBeHidden();
+  await follow.locator("summary").click();
+  await expect(follow.locator("p")).toContainText("hi = mid − 1");
+  const practise = page.getByRole("region", { name: "Practise next" });
+  await expect(practise.locator("li")).toHaveCount(3);
+  await expect(practise.getByRole("link").first()).toHaveAttribute("href", /^https:\/\/leetcode\.com\/problems\//);
+  expect(errors).toEqual([]);
+});
+
+test("the full lesson says why the fast way is correct, and what interviewers ask next", async ({ page }) => {
+  await page.goto("p/two-sum/lesson?chapter=compare");
+  await expect(page.getByRole("heading", { name: "Interviewers ask next" })).toBeVisible();
+  await page.goto("p/two-sum/lesson");
+  const chapters = page.getByRole("heading", { name: "Why it’s correct" });
+  // The correctness section sits after the fast approach's run; walk the chapters until it appears.
+  for (let i = 0; i < 6 && !(await chapters.isVisible()); i++) await page.locator(".next-chapter").first().click();
+  await expect(chapters).toBeVisible();
+  await expect(page.getByText("seen holds every number at indices 0 to i − 1")).toBeVisible();
+});

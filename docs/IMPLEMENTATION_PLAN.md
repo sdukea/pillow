@@ -34,7 +34,7 @@ run for real. **Missing** means it isn't built.
 |---|---|---|
 | Execution tracer, CPython and Pyodide, with a parity test | Built | `engine/tracer`, `tracer.test.ts` |
 | Visualisations: array, pointers, window, map, set, stack, queue, linked list, tree, call stack | Built | `engine/interpreter`, `src/views` |
-| Visualisations: graph, heap, DP table, union-find | **Missing** | not in `ViewSpec` |
+| Visualisations: grid (DP table), heap, graph, union-find | Built (P3) | `src/views/AlgoViews.tsx`, `engine/interpreter/views.test.ts` |
 | Lessons, each with a brute force and an optimal solution, line notes, measured complexity | Built for **6 problems** | `src/content/lessons` |
 | Learn flow: overview → slow → your turn → trick → fast → write it → note | Built | `src/learn/Learn.tsx`; e2e tests |
 | Trace-generated predictions, growth questions, recall | Built | `src/knowledge/questions.ts`; unit tests |
@@ -85,8 +85,9 @@ run for real. **Missing** means it isn't built.
 
 ### Technical debt
 
-1. **Bundle size.** Every trace is imported eagerly (581 KB). This won't
-   scale to 200 problems; load traces per problem.
+1. **Bundle size.** *Resolved in P3:* traces and growth now load per
+   problem, as separate chunks. The main bundle (502 KB) is now mostly
+   the app itself; splitting further is P9.
 2. **Three overlapping problem screens:** Learn, Playground and the full
    Lesson. Learn is the front door. Keep the other two, but stop growing
    them.
@@ -181,6 +182,29 @@ criteria, tests, risks, and its completion evidence when done.
   - visualisations for graphs, heaps, DP tables and union-find;
   - traces loaded per problem.
 - **Depends on:** P2.
+- **Accept:**
+  - new views are derived from real traces and validated like every
+    view;
+  - every lesson states why its optimal approach is correct, and gives
+    follow-ups;
+  - related problems come from the curriculum;
+  - traces load per problem;
+  - AI drafts can, and must, produce the new parts.
+- **Status:** done 2026-11-23. Completion evidence:
+  - **Unit tests:** 7 new view tests (real CPython traces of four new
+    fixtures, specs validated on every moment, view-model contents
+    checked), plus a related-problems test.
+  - **Lessons:** all six now carry correctness and follow-ups, and the
+    trace build validates them.
+  - **E2E:** three new tests (why it's right, follow-ups and practise
+    next on desktop and phone; the full lesson's correctness and
+    follow-ups).
+  - **Bundle:** the main bundle fell from 606 KB to 494 KB with traces
+    loaded per problem; the new views brought it to 502 KB.
+  - **Checked in the browser:** every view, in the development-only lab.
+  - **Bug fixed:** the validator caught narration that referenced a
+    variable before it existed (a line with two calls); the fixture was
+    split onto two lines.
 
 ### P4 — Mastery dimensions
 - **Scope:** exposure, recognition, explanation, implementation, transfer

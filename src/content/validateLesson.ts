@@ -37,6 +37,17 @@ export function validateLesson(problem: Problem, measured: Measured): string[] {
     }
   }
 
+  // Why it's right, and what comes next in an interview.
+  const order = Object.keys(lesson.approaches);
+  const c = lesson.approaches[order[order.length - 1]]?.correctness;
+  if (!c || !c.invariant.trim() || !c.whyCorrect.trim() || !c.ends.trim()) out.push(`approach "${order[order.length - 1]}": say why it's correct (invariant, whyCorrect, ends)`);
+  const follow = lesson.followUps ?? [];
+  if (follow.length < 1 || follow.length > 3) out.push(`give 1 to 3 follow-up questions (has ${follow.length})`);
+  for (const [i, f] of follow.entries()) {
+    if (!f.ask.trim() || !f.answer.trim()) out.push(`follow-up ${i + 1}: needs a question and an answer`);
+    for (const k of f.concepts) if (!conceptById.has(k)) out.push(`follow-up ${i + 1}: unknown concept "${k}"`);
+  }
+
   // The card is what learners keep, so it has to stay short and sharp.
   const LIMITS = { slow: 60, waste: 70, trick: 90, recognize: 70 } as const;
   for (const [k, max] of Object.entries(LIMITS) as [keyof typeof LIMITS, number][]) {

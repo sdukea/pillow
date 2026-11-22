@@ -246,3 +246,88 @@ export const maxDepthBfs: VizSpec = {
     14: { tag: "return", narrate: [{ text: "The tree is {depth} levels deep." }] },
   },
 };
+
+// ------------------------------------------------------------------ P3: grids, heaps, graphs, union-find
+
+export const uniquePaths: VizSpec = {
+  views: [
+    { kind: "grid", id: "dp", of: "dp", label: "dp: ways to reach each cell", pointers: [{ row: "r", col: "c", label: "here" }] },
+    { kind: "vars", id: "vars", show: ["r", "c"] },
+  ],
+  lines: {
+    2: { tag: "init", narrate: [{ text: "Every cell on the top row or left column has exactly one path: straight along the edge. Start the whole table at 1." }] },
+    3: { tag: "loop", narrate: [{ when: "_next_line == 6", text: "Every row is filled." }, { text: "Row {r}." }] },
+    4: { tag: "loop", narrate: [{ when: "_next_line == 3", text: "Row {r} is done." }, { text: "Column {c}: how many paths reach row {r}, column {c}?" }] },
+    5: {
+      tag: "update",
+      focus: { view: "dp", cells: [["r - 1", "c"], ["r", "c - 1"]] },
+      narrate: [{ text: "You arrive from above or from the left: {dp[r - 1][c]} + {dp[r][c - 1]} = {dp[r][c]} paths." }],
+    },
+    6: { tag: "return", narrate: [{ text: "The bottom-right cell holds the answer: {dp[m - 1][n - 1]} paths." }] },
+  },
+};
+
+export const kthLargestHeap: VizSpec = {
+  views: [
+    { kind: "array", id: "nums", of: "nums" },
+    { kind: "heap", id: "heap", of: "heap", label: "heap (smallest on top)" },
+    { kind: "vars", id: "vars", show: ["x", "k", "len(heap)"] },
+  ],
+  lines: {
+    5: { tag: "init", narrate: [{ text: "An empty heap. It will hold the {k} largest numbers seen so far, the smallest of them on top." }] },
+    6: { tag: "loop", narrate: [{ when: "_next_line == 10", text: "Every number has been seen." }, { text: "Next number: {x}." }] },
+    7: { tag: "update", narrate: [{ text: "Push {x}. It moves up until its parent is no bigger than it." }] },
+    8: { tag: "compare", narrate: [{ when: "len(heap) > k", text: "{len(heap)} numbers held: one more than {k}." }, { text: "{len(heap)} held: no more than {k}, so keep them all." }] },
+    9: { tag: "update", narrate: [{ text: "Pop the smallest: it can’t be one of the {k} largest." }] },
+    10: { tag: "return", narrate: [{ text: "The top is the smallest of the {k} largest: the answer is {heap[0]}." }] },
+  },
+};
+
+export const courseSchedule: VizSpec = {
+  views: [
+    { kind: "graph", id: "graph", of: "graph", label: "prerequisite → course", directed: true, visited: "taken", current: "c", frontier: "queue" },
+    { kind: "array", id: "waiting", of: "waiting_on", label: "waiting_on (prerequisites not yet taken)" },
+    { kind: "queue", id: "queue", of: "queue", label: "ready to take" },
+    { kind: "array", id: "taken", of: "taken", label: "taken, in order" },
+  ],
+  lines: {
+    5: { tag: "init", narrate: [{ text: "One entry per course, listing the courses that need it." }] },
+    6: { tag: "init", narrate: [{ text: "No course is waiting on anything yet." }] },
+    7: { tag: "loop", narrate: [{ when: "_next_line == 10", text: "Every prerequisite is recorded." }, { text: "Course {course} needs course {pre} first." }] },
+    8: { tag: "update", narrate: [{ text: "Draw an arrow {pre} → {course}." }] },
+    9: { tag: "update", narrate: [{ text: "Course {course} now waits on {waiting_on[course]} course(s)." }] },
+    10: { tag: "init", narrate: [{ text: "A queue for courses that can be taken now." }] },
+    11: { tag: "loop", narrate: [{ when: "_next_line == 14", text: "Every course is checked." }, { text: "Course {c}." }] },
+    12: { tag: "compare", narrate: [{ when: "waiting_on[c] == 0", text: "Course {c} waits on nothing: it can be taken now." }, { text: "Course {c} waits on {waiting_on[c]}: not yet." }] },
+    13: { tag: "update", narrate: [{ text: "Course {c} joins the queue." }] },
+    14: { tag: "init", narrate: [{ text: "Nothing taken yet." }] },
+    15: { tag: "loop", narrate: [{ when: "_next_line == 22", text: "Nothing more can be taken." }, { text: "{len(queue)} course(s) ready." }] },
+    16: { tag: "update", narrate: [{ text: "Take course {c}." }] },
+    17: { tag: "update", narrate: [{ text: "Taken so far: {len(taken)} of {num_courses}." }] },
+    18: { tag: "loop", narrate: [{ when: "_next_line == 15", text: "Every course after {c} is updated." }, { text: "Course {nxt} needed {c}." }] },
+    19: { tag: "update", narrate: [{ text: "Course {nxt} now waits on {waiting_on[nxt]}." }] },
+    20: { tag: "compare", narrate: [{ when: "waiting_on[nxt] == 0", text: "Course {nxt} waits on nothing now." }, { text: "Course {nxt} still waits on {waiting_on[nxt]}." }] },
+    21: { tag: "update", narrate: [{ text: "Course {nxt} joins the queue." }] },
+    22: { tag: "return", narrate: [{ when: "len(taken) == num_courses", text: "All {num_courses} courses were taken: it’s possible." }, { text: "Only {len(taken)} of {num_courses} could be taken: the rest wait on each other in a cycle." }] },
+  },
+};
+
+export const redundantConnection: VizSpec = {
+  views: [
+    { kind: "union-find", id: "groups", of: "parent", start: 1, label: "groups (each item points to its parent)" },
+    { kind: "vars", id: "vars", show: ["a", "b", "ra", "rb", "x"] },
+  ],
+  lines: {
+    2: { tag: "init", narrate: [{ text: "Every item starts as its own group: it is its own parent." }] },
+    5: { tag: "loop", narrate: [{ when: "parent[x] != x", text: "{x} isn’t a root: it points to {parent[x]}. Keep climbing." }, { text: "{x} points to itself: it’s the root of its group." }] },
+    6: { tag: "update", narrate: [{ text: "Shortcut: {x} now points to {parent[x]}, its old grandparent, so later climbs are shorter." }] },
+    7: { tag: "move", narrate: [{ text: "Climb to {x}." }] },
+    8: { tag: "return", narrate: [{ text: "The root is {x}." }] },
+    10: { tag: "loop", narrate: [{ when: "_next_line == 16", text: "No edge closed a cycle." }, { text: "Edge {a}–{b}." }] },
+    11: { tag: "call", narrate: [{ text: "Climb from {a} to the root of its group." }] },
+    12: { tag: "call", narrate: [{ text: "Climb from {b} to the root of its group." }] },
+    13: { tag: "compare", narrate: [{ when: "ra == rb", text: "{a} and {b} both have root {ra}: they’re already connected, so this edge closes a cycle." }, { text: "{a}’s root is {ra}, {b}’s is {rb}: this edge joins two groups." }] },
+    14: { tag: "return", narrate: [{ text: "Return [{a}, {b}]: the edge that isn’t needed." }] },
+    15: { tag: "update", narrate: [{ text: "Join the groups: root {ra} now points to {rb}." }] },
+  },
+};

@@ -157,6 +157,11 @@ export const longestSubstring: Lesson = {
         9: { what: "Records the window’s length if it’s the best so far.", why: "The window is valid now, and `right − left + 1` is its length.", affects: "`best`", ifRemoved: "The answer would never be recorded." },
         10: { what: "Returns the best length found.", why: "Every possible right edge has been tried.", ifRemoved: "Python would return `None`." },
       },
+      correctness: {
+        invariant: "After each step, s[left..right] has no repeated character, and best is the longest such window so far.",
+        whyCorrect: "If ch was last seen inside the window, moving left just past it removes the repeat and nothing more, so the window is the longest one ending at right. Every substring ends somewhere, so the best window over all right is the answer.",
+        ends: "right moves forward once per character and left never moves back: n steps.",
+      },
       complexity: {
         time: "n",
         space: "n",
@@ -195,6 +200,10 @@ export const longestSubstring: Lesson = {
     describe: "a string of n characters with no repeats",
   },
 
+  followUps: [
+    { ask: "What if up to k distinct characters were allowed?", answer: "Count characters in the window, and shrink it from the left while more than k are distinct. Still O(n).", concepts: ["sliding-window", "counting"] },
+    { ask: "What if you had to return the substring itself?", answer: "Record left and right whenever best grows, then slice s once at the end.", concepts: ["sliding-window"] },
+  ],
   edgeCases: [
     [{ kind: "value", value: "" }],
     [{ kind: "value", value: "a" }],

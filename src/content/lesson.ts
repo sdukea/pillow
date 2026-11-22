@@ -66,6 +66,8 @@ export interface ApproachLesson {
   complexity: Complexity;
   /** For brute force: why we can't stop here. */
   whyNotEnough?: string;
+  /** Required on the last (optimal) approach. */
+  correctness?: Correctness;
   check?: Check;
 }
 
@@ -74,6 +76,23 @@ export interface ApproachLesson {
  * to spot the pattern next time. Each line is short (the build enforces it). This is what the
  * learn screen shows and what goes into the learner's note.
  */
+/** Why the approach is right, not just fast: what stays true, why the answer follows, and why it stops. */
+export interface Correctness {
+  /** What's true every time round the loop (or for every call). */
+  invariant: string;
+  /** Why the invariant makes the returned answer right. */
+  whyCorrect: string;
+  /** Why it finishes, and in how many steps. */
+  ends: string;
+}
+
+/** What an interviewer asks next, and what changes in the answer. */
+export interface FollowUp {
+  ask: string;
+  answer: string;
+  concepts: ConceptId[];
+}
+
 export interface Card {
   /** The slow way, as an instruction: "Try every pair of numbers." */
   slow: string;
@@ -144,4 +163,6 @@ export interface Lesson {
    * validates narration on them, and counts their lines as lines that need explanations.
    */
   edgeCases: Arg[][];
+  /** One to three follow-up questions an interviewer might ask. */
+  followUps?: FollowUp[];
 }

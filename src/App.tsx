@@ -6,12 +6,15 @@ import { KnowledgeMap } from "./map/KnowledgeMap";
 import { Playground } from "./play/Playground";
 import { Home } from "./home/Home";
 import { loadRemote } from "./lib/remote";
+import { isProblemDataLoaded, loadProblemData } from "./lib/data";
 import { href, useRoute } from "./lib/router";
 import { Workspace } from "./workspace/Workspace";
 
 // The roadmap carries the 205-problem curriculum: load it only when it's opened.
 const Roadmap = lazy(() => import("./roadmap/Roadmap").then((m) => ({ default: m.Roadmap })));
 const Review = lazy(() => import("./review/Review").then((m) => ({ default: m.Review })));
+// Development only: compiled out of production builds.
+const Lab = import.meta.env.DEV ? lazy(() => import("./lab/Lab").then((m) => ({ default: m.Lab }))) : null;
 const Placement = lazy(() => import("./diagnostic/Placement").then((m) => ({ default: m.Placement })));
 
 // Routes:
@@ -44,10 +47,10 @@ export function App() {
         onHome={() => go(`/p/${problem.slug}`)}
       />
     ) : (
-      <Learn key={problem.slug} problem={problem} onHome={home} onPlay={() => go(`/p/${problem.slug}/play`)} onLesson={() => go(`/p/${problem.slug}/lesson`)} onConcept={(id) => go(`/map?c=${id}`)} />
+      <Learn key={problem.slug} problem={problem} onHome={home} onPlay={() => go(`/p/${problem.slug}/play`)} onLesson={() => go(`/p/${problem.slug}/lesson`)} onConcept={(id) => go(`/map?c=${id}`)} onOpen={(slug) => go(`/p/${slug}`)} />
     );
     const builtIn = PROBLEMS.find((p) => p.slug === m[1]);
-    return builtIn ? show(builtIn) : <Remote key={m[1]} slug={m[1]} onHome={home} render={show} />;
+    return builtIn ? <WithData key={builtIn.slug} problem={builtIn}>{show(builtIn)}</WithData> : <Remote key={m[1]} slug={m[1]} onHome={home} render={show} />;
   }
   if (route.path === "/map") {
     return <KnowledgeMap key={route.search.get("c") ?? ""} initial={route.search.get("c")} onOpen={(slug) => go(`/p/${slug}`)} onHome={() => (history.length > 1 ? history.back() : home())} />;
@@ -58,6 +61,9 @@ export function App() {
         <Roadmap onOpen={(slug) => go(`/p/${slug}`)} onConcept={(id) => go(`/map?c=${id}`)} onPlacement={() => go("/placement")} onHome={() => (history.length > 1 ? history.back() : home())} />
       </Suspense>
     );
+  }
+  if (Lab && route.path === "/lab") {
+    return <Suspense fallback={<main className="lab" aria-busy="true" />}><Lab id={route.search.get("v")} /></Suspense>;
   }
   if (route.path === "/review") {
     return (
@@ -75,6 +81,20 @@ export function App() {
   }
   if (route.path !== "/") return <NotFound onHome={home} message="There’s nothing at this address." />;
   return <Home onOpen={(slug) => go(`/p/${slug}`)} onExplain={(q) => go(`/explain?q=${encodeURIComponent(q)}`)} onMap={() => go("/map")} onRoadmap={() => go("/roadmap")} onPlacement={() => go("/placement")} onReview={() => go("/review")} />;
+}
+
+/** Renders a problem's screens once its traces and growth have loaded (they're fetched per problem). */
+function WithData({ problem, children }: { problem: Problem; children: React.ReactNode }) {
+  const [ready, setReady] = useState(() => isProblemDataLoaded(problem));
+  const [error, setError] = useState<string | null>(null);
+  useEffect(() => {
+    if (ready) return;
+    let live = true;
+    loadProblemData(problem).then(() => { if (live) setReady(true); }, (e: Error) => { if (live) setError(e.message); });
+    return () => { live = false; };
+  }, [problem, ready]);
+  if (error) return <NotFound onHome={() => history.back()} message={`This problem couldn’t load: ${error}`} />;
+  return ready ? <>{children}</> : <main className="home" aria-busy="true" />;
 }
 
 /** A problem explained live, loaded from Pillow's server, then shown like any other. */

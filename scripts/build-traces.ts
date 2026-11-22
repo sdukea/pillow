@@ -7,6 +7,7 @@ import { join } from "node:path";
 import { validateSpec } from "../engine/interpreter/validate";
 import type { Arg, Trace } from "../engine/tracer/types";
 import { growthFile, PROBLEMS, traceFile } from "../src/content/problems";
+import { LAB, labFile } from "../src/content/lab";
 import { measureLesson } from "../src/content/measure";
 import { type Measured, validateLesson } from "../src/content/validateLesson";
 
@@ -50,6 +51,20 @@ for (const problem of PROBLEMS) {
     console.log(`✓ ${name}: ${trace.steps.length} steps`);
   }
 }
+// The view lab: same tracing and validation as lessons.
+for (const entry of LAB) {
+  const source = sourceOf(entry.solution);
+  const trace = runTracer(source, entry.entry, entry.args);
+  const problems = trace.ok ? validateSpec(entry.spec, source, [trace]) : [{ where: "trace", message: `${trace.error?.type}: ${trace.error?.message}` }];
+  if (problems.length) {
+    console.error(`✗ lab / ${entry.id}\n${problems.map((p) => `    ${p.where}: ${p.message}`).join("\n")}`);
+    failures++;
+    continue;
+  }
+  writeFileSync(join(OUT, labFile(entry)), JSON.stringify(trace));
+  console.log(`✓ lab / ${entry.id}: ${trace.steps.length} steps`);
+}
+
 // Lessons: measure how each approach's work and memory grow, and check every claim.
 for (const problem of PROBLEMS) {
   if (!problem.lesson) continue;

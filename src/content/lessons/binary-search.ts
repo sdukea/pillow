@@ -155,6 +155,11 @@ export const binarySearch: Lesson = {
         10: { what: "Moves `hi` just before the middle.", why: "The middle and everything after it are too big.", affects: "`hi`", ifRemoved: "Writing `hi = mid` instead can loop forever on the last couple of numbers." },
         11: { what: "Returns `-1` once the range is empty.", why: "Every index has been ruled out, so the target isn’t there.", ifRemoved: "Python would return `None` for a missing target." },
       },
+      correctness: {
+        invariant: "If the target is in the list, it’s between lo and hi, inclusive.",
+        whyCorrect: "The list is sorted, so comparing with nums[mid] rules out the half that can’t hold the target, and the invariant still holds. When lo passes hi the range is empty, so the target isn’t there.",
+        ends: "mid is excluded every time, so the range at least halves: about log₂ n + 1 checks.",
+      },
       complexity: {
         time: "log n",
         space: "1",
@@ -193,6 +198,10 @@ export const binarySearch: Lesson = {
     describe: "n sorted numbers and a target that isn’t there",
   },
 
+  followUps: [
+    { ask: "What if the target can appear more than once, and you need the first one?", answer: "When nums[mid] equals the target, remember mid and keep searching to the left (hi = mid − 1). Still O(log n).", concepts: ["binary-search", "invariant"] },
+    { ask: "What if the sorted list had been rotated, like [4, 5, 6, 1, 2, 3]?", answer: "One side of mid is always in order. Check whether the target lies in that side; if not, it’s in the other. Still O(log n).", concepts: ["binary-search", "sorted-order"] },
+  ],
   edgeCases: [
     [{ kind: "value", value: [] }, { kind: "value", value: 5 }],
     [{ kind: "value", value: [5] }, { kind: "value", value: 5 }],

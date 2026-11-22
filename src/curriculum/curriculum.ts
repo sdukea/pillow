@@ -118,3 +118,18 @@ export const CURRICULUM: CurriculumProblem[] = (sources.problems as Source[]).ma
 export const ATTRIBUTION = sources.attribution;
 
 export { PLAN_START, weekDates } from "./weeks";
+
+/**
+ * Problems to practise after this one: same main technique first, then shared concepts. Built
+ * lessons come first, then core problems, then the nearest weeks.
+ */
+export function relatedProblems(slug: string, limit = 3): CurriculumProblem[] {
+  const self = CURRICULUM.find((p) => p.slug === slug);
+  if (!self) return [];
+  const score = (p: CurriculumProblem) =>
+    (p.primary === self.primary ? 100 : 0) + p.concepts.filter((c) => self.concepts.includes(c)).length * 10 +
+    (p.lesson === "built" ? 5 : 0) + (p.tier === "core" ? 3 : p.tier === "reinforcement" ? 1 : 0) - Math.abs(p.week - self.week) * 0.1;
+  return CURRICULUM.filter((p) => p.slug !== slug && p.concepts.some((c) => self.concepts.includes(c)))
+    .sort((a, b) => score(b) - score(a) || a.title.localeCompare(b.title))
+    .slice(0, limit);
+}

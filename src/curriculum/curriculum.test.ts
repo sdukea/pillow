@@ -98,3 +98,16 @@ describe("the curriculum", () => {
     expect(ATTRIBUTION.commit).toMatch(/^[0-9a-f]{40}$/);
   });
 });
+
+describe("related problems", () => {
+  it("suggests problems that share the main technique, never the problem itself", async () => {
+    const { relatedProblems } = await import("./curriculum");
+    const r = relatedProblems("binary-search");
+    expect(r).toHaveLength(3);
+    for (const p of r) {
+      expect(p.slug).not.toBe("binary-search");
+      expect(p.primary).toBe("binary-search");
+    }
+    expect(relatedProblems("not-a-problem")).toEqual([]);
+  });
+});

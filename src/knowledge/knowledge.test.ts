@@ -57,13 +57,31 @@ describe("the student model", () => {
     expect(s.state).toBe("shaky");
     expect(s.why).toContain("picked the wrong trick");
   });
-  it("brings understood concepts back on a spaced schedule", () => {
+  it("schedules reviews with FSRS: due when recall falls to 90%, further out after each success", () => {
     const log = [ev({ correct: true, at: 0 }), ev({ task: "complexity", correct: true, at: 9 * HOUR })];
-    expect(state(log, 9 * HOUR + DAY / 2).due).toBe(false);
-    expect(state(log, 9 * HOUR + DAY + 1).due).toBe(true);
-    const longer = [...log, ev({ task: "recall", correct: true, at: 2 * DAY })];
-    expect(state(longer, 2 * DAY + DAY + 1).due).toBe(false); // the next interval is 2 days
-    expect(state(longer, 2 * DAY + 2 * DAY + 1).due).toBe(true);
+    const first = state(log, 9 * HOUR);
+    expect(first.state).toBe("understood");
+    expect(first.recall).toBe(1);
+    const gap1 = first.reviewAt! - 9 * HOUR;
+    expect(state(log, first.reviewAt! - 1).due).toBe(false);
+    expect(state(log, first.reviewAt!).due).toBe(true);
+    expect(state(log, first.reviewAt!).recall).toBeCloseTo(0.9, 1);
+    const longer = [...log, ev({ task: "recall", correct: true, at: first.reviewAt! })];
+    const second = state(longer, first.reviewAt!);
+    expect(second.reviewAt! - first.reviewAt!).toBeGreaterThan(gap1);
+  });
+
+  it("schedules learning concepts too, so a later review can show it lasts", () => {
+    const s = state([ev({ correct: true, at: 0 })], 0);
+    expect(s.state).toBe("learning");
+    expect(s.reviewAt).toBeGreaterThan(0);
+    expect(state([ev({ correct: true, at: 0 })], 30 * DAY).due).toBe(true);
+  });
+
+  it("a hinted answer is a weaker review than a clean one", () => {
+    const clean = state([ev({ correct: true, at: 0 })], 0).memory!;
+    const hinted = state([ev({ correct: true, hinted: true, at: 0 })], 0).memory!;
+    expect(hinted.stability).toBeLessThan(clean.stability);
   });
 });
 

@@ -460,7 +460,7 @@ test("a concept's card shows what you've shown, one dimension at a time @phone",
   await page.goto("map?c=hash-map");
   const card = page.locator(".concept");
   await expect(card.getByRole("heading", { name: "What you’ve shown" })).toBeVisible();
-  const level = (name: string) => card.locator(".dim").filter({ hasText: name }).locator(".dim-level");
+  const level = (name: string) => card.locator(".mdim").filter({ hasText: name }).locator(".dim-level");
   await expect(level("Met it")).toHaveText("Solid");
   await expect(level("Spot it")).toHaveText("Not yet");
   await expect(level("Explain it")).toHaveText("Solid");
@@ -503,4 +503,31 @@ test("a beginner can stop the placement check at once, and starts at week 1", as
   await page.getByRole("button", { name: "I haven’t learned this yet" }).click();
   await expect(page.getByRole("heading", { name: "Week 1: Arrays and hashing" })).toBeVisible();
   expect(await page.evaluate(() => localStorage.getItem("pillow.evidence"))).toBeNull();
+});
+
+test("reviews: Home offers what's due, a miss shows the refresher, and answers become history @phone", async ({ page }) => {
+  const errors = watchErrors(page);
+  await page.addInitScript(() => {
+    if (sessionStorage.getItem("seeded")) return;
+    sessionStorage.setItem("seeded", "1");
+    const D = 86_400_000, now = Date.now();
+    // Graphs, learnt 20 days ago and never reviewed: due. It has no lesson, so its review asks when to use it.
+    localStorage.setItem("pillow.evidence", JSON.stringify([{ at: now - 20 * D, task: "recall", problem: "review", concepts: ["graphs"], correct: true, detail: "seed" }]));
+  });
+  await page.goto("./");
+  await page.getByRole("button", { name: /1 concept to keep/ }).click();
+  await expect(page.getByText("Graphs · When to use it")).toBeVisible();
+  await page.locator(".choice").filter({ hasNotText: /^Graphs$/ }).first().click(); // any wrong one
+  await expect(page.getByText("Not this time. Here’s the refresher:")).toBeVisible();
+  await expect(page.locator(".rv-refresh .facts li").first()).toBeVisible();
+  await page.getByRole("button", { name: "Continue" }).click();
+  await expect(page.getByRole("heading", { name: "0 of 1 remembered" })).toBeVisible();
+  await expect(page.locator(".rv-history li")).toContainText("Graphs");
+  const recorded = await page.evaluate(() => JSON.parse(localStorage.getItem("pillow.evidence")!).filter((e: { review?: boolean }) => e.review));
+  expect(recorded).toHaveLength(1);
+  expect(recorded[0]).toMatchObject({ task: "recall", problem: "review", concepts: ["graphs"], correct: false });
+  // Missed, so it's "Needs work" now, not due for review.
+  await page.goto("./");
+  await expect(page.getByRole("button", { name: /to keep/ })).toHaveCount(0);
+  expect(errors).toEqual([]);
 });

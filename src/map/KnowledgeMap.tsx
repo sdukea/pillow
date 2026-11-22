@@ -153,11 +153,17 @@ function ConceptDetail({ state, states, onOpen, onPick, onClose }: { state: Conc
       <h2>{c.name}</h2>
       <p className="concept-means">{c.means}</p>
       <p className="concept-why">{state.why}</p>
+      {state.reviewAt && (state.state === "learning" || state.state === "understood") && (
+        <p className="concept-review">
+          {state.due ? "Due for review now" : `Next review ${new Date(state.reviewAt).toLocaleDateString(undefined, { day: "numeric", month: "short" })}`}
+          {state.recall !== undefined && ` · about ${Math.round(state.recall * 100)}% likely you’d remember it today`}
+        </p>
+      )}
 
       <h3>What you’ve shown</h3>
       <ul className="dims">
         {dimensionsOf(state).map((d, i) => (
-          <li key={d.dimension} className={`dim ${d.level}`}>
+          <li key={d.dimension} className={`mdim ${d.level}`}>
             <span className="dim-mark" aria-hidden="true">{DIM_MARK[d.level]}</span>
             <span className="dim-name">{DIMENSIONS[i].name} <span className="dim-level">{DIM_LABEL[d.level]}</span></span>
             <span className="dim-why">{d.why}</span>

@@ -15,9 +15,10 @@ interface Props {
   onMap: () => void;
   onRoadmap: () => void;
   onPlacement: () => void;
+  onReview: () => void;
 }
 
-export function Home({ onOpen, onExplain, onMap, onRoadmap, onPlacement }: Props) {
+export function Home({ onOpen, onExplain, onMap, onRoadmap, onPlacement, onReview }: Props) {
   const [query, setQuery] = useState("");
   const [active, setActive] = useState(0);
   const input = useRef<HTMLInputElement>(null);
@@ -26,7 +27,8 @@ export function Home({ onOpen, onExplain, onMap, onRoadmap, onPlacement }: Props
   const log = useEvidence();
   const states = assess(log);
   const counts = summarize(states);
-  const next = recommend(PROBLEMS, states, currentWeek(states, log))[0];
+  // Reviews have their own row, so Next is the first thing that isn't one.
+  const next = recommend(PROBLEMS, states, currentWeek(states, log)).find((r) => r.kind !== "review");
   const started = log.length > 0;
 
   useEffect(() => { document.title = "Pillow"; migrateOld(PROBLEMS); input.current?.focus(); }, []);
@@ -99,13 +101,22 @@ export function Home({ onOpen, onExplain, onMap, onRoadmap, onPlacement }: Props
         )}
       </form>
 
-      {next && (
+      {(next || counts.due > 0) && (
         <section className="home-next" aria-label="What to do next">
+          {counts.due > 0 && (
+            <button type="button" className="next-row" onClick={onReview}>
+              <span className="next-kind">Review</span>
+              <span className="next-title">{counts.due} concept{counts.due === 1 ? "" : "s"} to keep</span>
+              <span className="next-why">A few quick questions, before you’re likely to forget.</span>
+            </button>
+          )}
+          {next && (
           <button type="button" className="next-row" onClick={() => onOpen(next.problem.slug)}>
             <span className="next-kind">{next.kind === "fix" ? "Fix" : next.kind === "review" ? "Review" : started ? "Next" : "Start here"}</span>
             <span className="next-title">{next.problem.title}</span>
             <span className="next-why">{next.reason}</span>
           </button>
+          )}
           {!started && !placementTaken() && (
             <button type="button" className="map-link" onClick={onPlacement}>
               <span>Already know some of this?</span>

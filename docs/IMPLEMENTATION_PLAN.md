@@ -45,8 +45,8 @@ run for real. **Missing** means it isn't built.
 | Concept ontology | Built (P2): 55 concepts, 3 node kinds | `concepts.ts` |
 | Knowledge map: list, graph, reference cards | Built | `src/map` |
 | Recommendations (fix, review, frontier) | Built | `recommend.ts` |
-| Spaced review | Partial: a doubling interval, recall only | `model.ts`, notes |
-| FSRS scheduling, multiple recall types, remediation | **Missing** | |
+| Spaced review | Built (P6): FSRS-6, four review kinds, refresher, history | `src/knowledge/fsrs.ts`, `src/review` |
+| FSRS scheduling, multiple recall types, remediation | Built (P6) | `/review` |
 | Curriculum (16 weeks, 205 problems, dependency graph), roadmap | Built (P2) | `src/curriculum`, `src/roadmap` |
 | Placement check (diagnostic onboarding) | Built (P5) | `src/diagnostic` |
 | Interview mode | **Missing** | |
@@ -92,8 +92,11 @@ run for real. **Missing** means it isn't built.
    them.
 3. **Lesson content lives in TypeScript files.** Fine for 6 lessons, heavy
    for 200. The library JSON format (`LibraryEntry`) is the scalable path.
-4. **Local e2e runs are slow,** because Chrome is slow to close on this
-   machine. CI is fine.
+4. **Local e2e runs can be slow or fail strangely** when an old
+   `vite preview` is still listening on port 4173. Playwright reuses it
+   (`reuseExistingServer`), so tests run against a stale build. Free the
+   port (`lsof -iTCP:4173`) and a full run takes about 2 minutes. CI is
+   unaffected.
 5. **The student model is one-dimensional.** It conflates recognising,
    explaining and implementing a concept.
 
@@ -229,6 +232,27 @@ criteria, tests, risks, and its completion evidence when done.
   pattern, reconstruction, complexity, implementation), remediation,
   review history.
 - **Depends on:** P4.
+- **Files:** `src/knowledge/fsrs.ts`, `src/knowledge/{model,evidence,dimensions}.ts`, `src/review/*`,
+  Home, map card, App, tests.
+- **Accept:**
+  - FSRS matches the reference step by step;
+  - memory replayed from evidence, never stored;
+  - four review kinds, each with exactly one true answer;
+  - reconstruction never reveals the answer by elimination;
+  - a miss shows the refresher;
+  - review history.
+- **Status:** done 2026-11-22. Completion evidence:
+  - **FSRS:** parity with `fsrs4anki_scheduler.js @ ff7c85c` on an
+    8-review golden sequence.
+  - **Unit tests:** 14 new (FSRS, scheduling, review questions, queue,
+    history, transfer rule).
+  - **E2E:** a review journey on desktop and phone.
+  - **Checked in the browser:** reconstruction, trick and concept
+    questions, the refresher, the summary and history.
+  - **Bug fixed:** P4's `.dim` class collided with faded answer choices
+    (`.choice.dim`); renamed to `.mdim`.
+  - **Implementation recall:** re-solving remains the existing "Write it
+    yourself".
 
 ### P7 — Interview mode
 - **Scope:**

@@ -10,19 +10,25 @@
 //               most recent one right, AND either retention (right in two sessions at least 8 hours
 //               apart) or transfer (right in two different problems). Answering correctly seconds
 //               after being shown something is short-term memory, not understanding.
-// An understood concept comes back for review on a spaced schedule (1, 2, 4, 8… days after each
-// streak of right answers). Reviewing it right pushes the next review further out.
+// Reviews are scheduled by FSRS (./fsrs.ts): the concept's graded evidence is replayed into a memory
+// state (stability, difficulty), and a learning or understood concept is due when the chance of
+// recalling it falls to 90%. Right without a hint rates Good, right with a hint Hard, wrong Again.
 
 import { CONCEPTS, type ConceptId } from "./concepts";
-import type { Evidence } from "./evidence";
+import { type Evidence, inAProblem } from "./evidence";
 import { type Misconception, misconceptionById } from "./misconceptions";
+import { dueAt, type Memory, type Rating, recallNow, review } from "./fsrs";
 
 export type State = "unseen" | "seen" | "learning" | "shaky" | "understood";
 
 export interface ConceptState {
   id: ConceptId;
   state: State;
-  /** For understood concepts: when it's next worth reviewing, and whether that's now. */
+  /** FSRS memory, replayed from the graded evidence. */
+  memory?: Memory;
+  /** The chance of recalling it now (0–1), when there's a memory. */
+  recall?: number;
+  /** For learning and understood concepts: when it's next worth reviewing, and whether that's now. */
   reviewAt?: number;
   due: boolean;
   /** The evidence behind the state, newest first. */
@@ -33,7 +39,6 @@ export interface ConceptState {
   why: string;
 }
 
-const DAY = 86_400_000;
 const SESSION_GAP = 8 * 3_600_000;
 
 export function assess(log: Evidence[], now = Date.now()): Map<ConceptId, ConceptState> {
@@ -50,7 +55,8 @@ function judge(id: ConceptId, events: Evidence[], now: number): ConceptState {
   const recent = lastClean === -1 ? graded : graded.slice(0, lastClean);
   const misconceptions = [...new Set(recent.flatMap((e) => (e.misconception ? [e.misconception] : [])))]
     .map((m) => misconceptionById.get(m)).filter((m): m is Misconception => !!m);
-  const base = { id, evidence, misconceptions };
+  const memory = remember(graded);
+  const base = { id, evidence, misconceptions, memory, recall: memory && recallNow(memory, now) };
   if (!evidence.length) return { ...base, state: "unseen", due: false, why: "Not met yet." };
   if (!graded.length) return { ...base, state: "seen", due: false, why: "Watched, but not tested yet. Seeing isn’t understanding." };
 
@@ -63,14 +69,11 @@ function judge(id: ConceptId, events: Evidence[], now: number): ConceptState {
   const sources = new Set(clean.map((e) => `${e.task}|${e.problem}`));
   // Placement-check answers show what a student knew coming in, but never count as using a concept
   // in another problem: they're one sitting, about many concepts.
-  const problems = new Set(clean.filter((e) => e.task !== "diagnostic").map((e) => e.problem));
+  const problems = new Set(clean.filter(inAProblem).map((e) => e.problem));
   const span = clean.length ? clean[0].at - clean[clean.length - 1].at : 0;
   const lasting = problems.size >= 2 || span >= SESSION_GAP;
   if (clean.length >= 2 && sources.size >= 2 && lasting) {
-    // Consecutive right answers from the newest backwards set the review interval.
-    let streak = 0;
-    for (const e of graded) { if (e.correct) streak++; else break; }
-    const reviewAt = latest.at + DAY * 2 ** Math.min(streak - 2, 6);
+    const reviewAt = dueAt(memory!);
     const due = now >= reviewAt;
     return {
       ...base, state: "understood", reviewAt, due,
@@ -78,8 +81,9 @@ function judge(id: ConceptId, events: Evidence[], now: number): ConceptState {
     };
   }
   const need = Math.max(0, 2 - clean.length);
+  const reviewAt = memory && dueAt(memory);
   return {
-    ...base, state: "learning", due: false,
+    ...base, state: "learning", reviewAt, due: !!reviewAt && now >= reviewAt,
     why: need
       ? `Right so far. ${need} more right answer${need > 1 ? "s" : ""} without hints to show it’s understood.`
       : sources.size < 2 ? "Right so far. Show it in another kind of question too."
@@ -87,10 +91,21 @@ function judge(id: ConceptId, events: Evidence[], now: number): ConceptState {
   };
 }
 
+/** Replay graded evidence, oldest first, into an FSRS memory. */
+function remember(gradedNewestFirst: Evidence[]): Memory | undefined {
+  let m: Memory | null = null;
+  for (let i = gradedNewestFirst.length - 1; i >= 0; i--) {
+    const e = gradedNewestFirst[i];
+    const rating: Rating = !e.correct ? 1 : e.hinted ? 2 : 3;
+    m = review(m, rating, e.at);
+  }
+  return m ?? undefined;
+}
+
 /** Counts by state, for a one-line summary. */
 export function summarize(states: Map<ConceptId, ConceptState>) {
   const counts: Record<State, number> = { unseen: 0, seen: 0, learning: 0, shaky: 0, understood: 0 };
   let due = 0;
-  for (const s of states.values()) { counts[s.state]++; if (s.state === "understood" && s.due) due++; }
+  for (const s of states.values()) { counts[s.state]++; if (s.due && (s.state === "understood" || s.state === "learning")) due++; }
   return { ...counts, due };
 }

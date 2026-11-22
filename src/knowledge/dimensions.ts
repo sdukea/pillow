@@ -4,7 +4,7 @@
 //
 //   exposure        met it at all                       any evidence
 //   recognition     knows when it applies               recall, placement "which fits?" questions
-//   explanation     can say how it behaves and costs    predict, complexity, reason, placement "how?" questions
+//   explanation     can say how it behaves and costs    predict, complexity, reason, reconstruct, placement "how?" questions
 //   implementation  can write it                        implement (passing, as fast as the trick)
 //   transfer        uses it beyond one problem          right, unhinted, in two different problems
 //   retention       still has it later                  right, unhinted, in sessions 8+ hours apart
@@ -14,7 +14,7 @@
 // review). Coming back from slipping takes two right answers in a row. Hinted answers count
 // toward exposure only.
 
-import type { Evidence, Task } from "./evidence";
+import { type Evidence, inAProblem, type Task } from "./evidence";
 import type { ConceptState } from "./model";
 
 export type Dimension = "exposure" | "recognition" | "explanation" | "implementation" | "transfer" | "retention";
@@ -38,7 +38,7 @@ export const DIMENSIONS: { id: Dimension; name: string; question: string }[] = [
 
 const TASKS: Partial<Record<Dimension, Task[]>> = {
   recognition: ["recall"],
-  explanation: ["predict", "complexity", "reason"],
+  explanation: ["predict", "complexity", "reason", "reconstruct"],
   implementation: ["implement"],
 };
 
@@ -98,7 +98,7 @@ function judge(id: Dimension, state: ConceptState, graded: Evidence[]): Omit<Dim
   }
 
   if (id === "transfer") {
-    const inProblems = graded.filter((e) => e.task !== "diagnostic");
+    const inProblems = graded.filter(inAProblem);
     const problems = new Set(inProblems.filter(clean).map((e) => e.problem));
     const level = ladder(inProblems, (r) => new Set(r.map((e) => e.problem)).size >= 2);
     const why: Record<DimensionLevel, string> = {

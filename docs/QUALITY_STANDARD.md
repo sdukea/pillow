@@ -26,7 +26,8 @@ Never report a test as passing without running it.
 | Solve | The checker against right, wrong, slow and broken solutions | `src/solve/check.test.ts` |
 | Pipeline | Schema, validation, sandbox isolation | `pipeline/*.test.ts`, `engine/sandbox` |
 | Journeys | Every lesson end to end; map; recall; solve; roadmap | `e2e/app.spec.ts` (desktop and phone) |
-| Later | Scheduler time-zone tests (P8), FSRS parity with the reference implementation (P6), an accessibility audit (P9) | |
+| Retention | FSRS parity with the reference implementation; review questions; the queue | `src/knowledge/fsrs.test.ts`, `src/review/review.test.ts` |
+| Later | Scheduler time-zone tests (P8), an accessibility audit (P9) | |
 
 ## UI bar
 

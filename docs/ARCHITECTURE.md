@@ -57,7 +57,6 @@
 | `users` | id, email, display name, time zone, plan start, created at |
 | `evidence` | user id, at, task, problem, approach, concepts[], correct, hinted, misconception, detail (append-only: the same shape as today's `Evidence`) |
 | `preferences` | user id, per-type email toggles, quiet hours, delivery time |
-| `review_cards` (P6) | user id, concept or card id, FSRS stability, difficulty, due, last review |
 | `interviews` (P7) | user id, problem, started at, stages JSON, result |
 | `send_log` (P8) | user id, type, local date (unique), sent at, provider ID |
 

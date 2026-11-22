@@ -26,7 +26,10 @@ assessment moved to `docs/history/LEETSEE_ASSESSMENT.md`.)
 | Write it yourself | Student code vs the reference, on the example, edge cases and 8 seeded random inputs | All pass, then growth as fast as the trick | Built (Python) |
 | Placement check | Hand-written recognition and explanation questions, two per week | Exact choice; adaptive stop | Built (P5) |
 | Explain it (free text) | Interview Mode | Rubric; AI-assisted, human-auditable | Designed (P7) |
-| Reconstruction | Re-order or fill in the solution's lines | Exact | Designed (P6) |
+| Review: when to use it | A concept's "use it when", with concepts of the same kind as distractors | Exact | Built (P6) |
+| Review: the trick | A problem's trick among other problems' tricks | Exact | Built (P6) |
+| Review: rebuild the solution | The next line of the real optimal solution; distractors only from later lines | Exact | Built (P6) |
+| Review: how it grows | Measured growth of the optimal solution | Against measurement | Built (P6) |
 
 ## Placement check (built, P5)
 

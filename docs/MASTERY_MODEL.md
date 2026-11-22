@@ -20,7 +20,20 @@ For **Understood**, all of these must hold:
 3. Either **retention** (correct in sessions at least 8 hours apart) or
    **transfer** (correct in two different problems).
 
-Understood concepts come back for review after 1, 2, 4, 8… days.
+**Reviews are scheduled by FSRS-6** (`src/knowledge/fsrs.ts`, built in P6).
+
+- **Memory state:** each concept's graded evidence is replayed, oldest
+  first, into a memory state: **stability** (days until recall falls to
+  90%) and **difficulty** (1–10).
+- **Ratings:** right without a hint is Good, right with a hint is Hard, and
+  wrong is Again.
+- **When it's due:** a learning or understood concept is due when its
+  recall probability falls to 90%.
+- **On the card:** the reference card shows the next review date and the
+  chance of remembering it today.
+- **Nothing stored:** the memory is derived, never stored. The port matches
+  the reference implementation step by step, which is tested against golden
+  values.
 
 **Evidence tasks:**
 

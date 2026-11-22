@@ -11,6 +11,7 @@ import { Workspace } from "./workspace/Workspace";
 
 // The roadmap carries the 205-problem curriculum: load it only when it's opened.
 const Roadmap = lazy(() => import("./roadmap/Roadmap").then((m) => ({ default: m.Roadmap })));
+const Review = lazy(() => import("./review/Review").then((m) => ({ default: m.Review })));
 const Placement = lazy(() => import("./diagnostic/Placement").then((m) => ({ default: m.Placement })));
 
 // Routes:
@@ -22,6 +23,7 @@ const Placement = lazy(() => import("./diagnostic/Placement").then((m) => ({ def
 //   /map                   your knowledge map, from the evidence of what you've answered
 //   /roadmap               the 16-week plan, and where you are in it
 //   /placement             a few questions to find your starting week
+//   /review                today's reviews, scheduled by FSRS, and past reviews
 export function App() {
   const [route, go] = useRoute();
   const m = route.path.match(/^\/p\/([\w-]+)(\/lesson|\/play)?\/?$/);
@@ -57,6 +59,13 @@ export function App() {
       </Suspense>
     );
   }
+  if (route.path === "/review") {
+    return (
+      <Suspense fallback={<main className="review" aria-busy="true" />}>
+        <Review onOpen={(slug) => go(`/p/${slug}`)} onConcept={(id) => go(`/map?c=${id}`)} onHome={home} />
+      </Suspense>
+    );
+  }
   if (route.path === "/placement") {
     return (
       <Suspense fallback={<main className="placement" aria-busy="true" />}>
@@ -65,7 +74,7 @@ export function App() {
     );
   }
   if (route.path !== "/") return <NotFound onHome={home} message="There’s nothing at this address." />;
-  return <Home onOpen={(slug) => go(`/p/${slug}`)} onExplain={(q) => go(`/explain?q=${encodeURIComponent(q)}`)} onMap={() => go("/map")} onRoadmap={() => go("/roadmap")} onPlacement={() => go("/placement")} />;
+  return <Home onOpen={(slug) => go(`/p/${slug}`)} onExplain={(q) => go(`/explain?q=${encodeURIComponent(q)}`)} onMap={() => go("/map")} onRoadmap={() => go("/roadmap")} onPlacement={() => go("/placement")} onReview={() => go("/review")} />;
 }
 
 /** A problem explained live, loaded from Pillow's server, then shown like any other. */

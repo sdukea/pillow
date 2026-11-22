@@ -12,7 +12,8 @@ export type Task =
   | "recall"      // picked the right trick for a problem from memory
   | "reason"      // answered a Socratic question on the way to the trick
   | "implement"   // wrote a solution that passes every case (correct = as fast as the trick)
-  | "diagnostic"; // answered a placement-check question right (only right answers are recorded)
+  | "diagnostic"  // answered a placement-check question right (only right answers are recorded)
+  | "reconstruct"; // picked the next line of a solution in a review
 
 export interface Evidence {
   at: number;
@@ -29,9 +30,15 @@ export interface Evidence {
   /** For diagnostic answers: which dimension the question tested, and the week it placed. */
   facet?: "recognition" | "explanation";
   week?: number;
+  /** Answered in a scheduled review session. */
+  review?: boolean;
   /** What was asked and answered, in a few words, for the map's explanation. */
   detail: string;
 }
+
+/** Whether a piece of evidence shows the concept used in a real problem: placement answers and
+ *  questions about the concept itself ("review") don't count as using it somewhere else. */
+export const inAProblem = (e: Evidence) => e.task !== "diagnostic" && e.problem !== "review";
 
 const KEY = "pillow.evidence";
 const MAX = 5000;

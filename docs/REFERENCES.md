@@ -12,7 +12,7 @@ Pillow without checking its license first.
 | [cp-algorithms/cp-algorithms](https://github.com/cp-algorithms/cp-algorithms) | CC BY-SA 4.0 | Rigorous algorithm write-ups: correctness and complexity reference |
 | [TheAlgorithms/Python](https://github.com/TheAlgorithms/Python) | MIT | Reference Python implementations, categorised by technique |
 | [yangshun/tech-interview-handbook](https://github.com/yangshun/tech-interview-handbook) | MIT | Interview preparation: patterns, cheat sheets, a study plan (for M11, interview mode) |
-| [open-spaced-repetition/fsrs4anki](https://github.com/open-spaced-repetition/fsrs4anki) | MIT | FSRS, a proven review scheduler: candidate to replace our doubling review schedule |
+| [open-spaced-repetition/fsrs4anki](https://github.com/open-spaced-repetition/fsrs4anki) | MIT | FSRS-6: **used**. Its formulas and default weights are ported into `src/knowledge/fsrs.ts`, with the MIT notice |
 
 ## Licensing rules
 

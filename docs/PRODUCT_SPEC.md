@@ -32,7 +32,7 @@ interview by **April 2027**.
 | A. Adaptive roadmap | A 16-week plan of 205 problems in dependency order; next actions from evidence | **Built**: the plan, the roadmap, the placement check, per-learner start dates, and next steps that follow the current week, all from evidence |
 | B. Knowledge graph | A typed concept graph; each problem tagged; the student's state per concept | **Partial**: 55 concepts in 3 kinds, the map, reference cards and six mastery dimensions are built |
 | C. Lesson engine | First-principles lessons: overview, brute force, reasoning, trick, fast way, write it, note | **Built for 6 problems**; the schema upgrade is P3; the 199 others are planned |
-| D. Retention | Spaced review of concepts, patterns and code | **Partial**: a doubling schedule and recall notes. FSRS is P6 |
+| D. Retention | Spaced review of concepts, patterns and code | **Built**: FSRS-6 scheduling from evidence, a review session with four question kinds, a refresher on a miss, and history |
 | E. Interview readiness | Timed, unseen problems; explain, code, analyse, defend; a report | **Designed** (`INTERVIEW_MODE.md`), P7 |
 | F. Continuity | Accounts, devices, email reminders, quiet hours, time zones | **Designed** (`NOTIFICATIONS.md`, `SECURITY.md`), P8: needs provider approval |
 
